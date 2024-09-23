@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="./scss/index.css" type="text/css" rel="stylesheet">
+    
+</head>
+<body>
+  <div id="container">
+    <div id="output_part">
+        <textarea  class="input" cols="90" rows="45">
+          <%= a %>
+                                                        </textarea>
+        <!-- </div> -->
+        <div class="btb_container">
+          <button type="button" class="btb" onclick="convertInfo()">
+            Get Infomation
+          </button>
+          <button  class="btb copy_btb" onclick="convertContent()" >
+            Get Content
+          </button>
+          <button class="btb delete_btb" onclick="Push()">
+            Push
+          </button>
+  
+        </div>
+        <textarea class="output" cols="90" ></textarea>
+    </div>
+  </div>
+  </body>
+  <script type="text/javascript" src="./js/jquery.js"></script>
+  </script>
+  <script type="text/javascript" src="./js/main.js"></script>
+</html>
