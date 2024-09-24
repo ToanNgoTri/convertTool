@@ -70,6 +70,8 @@ app.get("/URL", async (req, res) => {
   // res.render('get')
 });
 
+
+
 app.post("/push", async (req, res) => {
   
   // console.log(req.body);
@@ -82,7 +84,7 @@ app.post("/push", async (req, res) => {
     console.log('pushed Info');
     
   })
-  // console.log(req.body.lawInfo);
+
   
   const ref2 = db.ref(`/LawContent/${req.body.lawNumber}`)
   ref2.set(req.body.dataLaw,()=>{
@@ -91,6 +93,145 @@ app.post("/push", async (req, res) => {
   })
 });
 
+app.post("/searchLaw", async (req, res) => {
+  
+  const db = admin.database();
+
+  let LawInfo 
+  let LawContent = {}
+  const ref = await db.ref(`/LawInfo`).once("value", function(snapshot) {
+    // console.log(snapshot.val());
+    LawInfo = snapshot.val()
+    // LawContent = snapshot.val()['LawContent']
+    
+  })
+
+let input = req.body.input
+// console.log(LawInfo);
+
+let lawFilter  
+if(Object.keys(LawInfo).length){
+  lawFilter= Object.values(LawInfo).filter( (key)=>{
+    
+return key['lawDescription'].match(new RegExp(`${input}`, "gim"))   || key['lawNumber'].match(new RegExp(`${input}`, "gim")) || key['lawNameDisplay'].match(new RegExp(`${input}`, "gim"))
+// console.log("key['lawDescription']",key['lawDescription']);
+
+})
+}
+res.send(lawFilter)
+});
+
+
+function Search(data,input) {
+  let searchArray = {};
+
+  if (input) {
+    if (input.match(/(\w+|\(|\)|\.|\+|\-|\,|\&|\?|\;|\!|\/)/gim)) {
+
+      function a(key, key1) {
+        // key ở đây là tên luật, key1 là Object 1 chương
+
+        Object.values(key1)[0].map((key2, i1) => {
+          // chọn từng điều
+
+          let replace = `(.*)${input}(.*)`;
+          let re = new RegExp(replace, 'gmi');
+          let article = Object.keys(key2)[0].replace(/(?<=\w*)\\(?=\w*)/gim, '/')
+          let point = Object.values(key2)[0].replace(/(?<=\w*)\\(?=\w*)/gim, '/')
+
+          if (Object.keys(key2)[0].match(re)) {
+            searchArray[key].push({
+              [article]: point,
+            });
+          } else if (point != '') {
+            if (point.match(re)) {
+              searchArray[key].push({
+                [article]: point,
+              });
+            }
+          }
+        });
+
+        
+      }
+
+      Object.keys(data).map(
+        (key, i) => {
+          // key là tên luật
+          //key là tên của luật
+          // tham nhap luat (array chuong)
+
+          searchArray[key] = [];
+            data[key].map(
+              (key1, i1) => {
+                // ra Object Chuong hoặc (array phần thứ...)
+                if (Object.keys(key1)[0].match(/^phần thứ .*/gim)) {
+                  // nếu có 'phần thứ
+                  // console.log('phần thứ');
+                  // console.log('Object.keys(key1)[0]',Object.keys(key1)[0]);
+                  if (
+                    Object.keys(Object.values(key1)[0][0])[0].match(
+                      /^Chương .*/gim,
+                    )
+                  ) {
+                    //nếu có chương trong phần thứ
+
+                    Object.values(key1)[0].map((key2, i) => {
+                      a(key, key2);
+                    });
+                  } else {
+                    //nếu không có chương trong phần thứ
+                    a(key, key1);
+                  }
+                } else if (Object.keys(key1)[0].match(/^chương .*/gim)) {
+                  a(key, key1);
+                } else {
+                  //nếu chỉ có điều
+                  if(i1==0){ //  đảm bảo chỉ chạy 1 lần
+                    a(key, {
+                      'chương Giả định':
+                        data[key],
+                    });
+
+                  }
+                }
+              },
+            );
+        },
+      );
+
+      let searchResult = {};
+
+      Object.keys(searchArray).map((key, i) => {
+        searchArray[key].map((key1, i) => {
+          searchResult[key] = searchArray[key];
+        });
+      });
+return searchResult
+      // console.log('searchResult',searchResult);
+    } else {
+    }
+  } else {
+  }
+}
+
+app.post("/searchContent", async (req, res) => {
+  
+  const db = admin.database();
+
+  let LawContent = {}
+  const ref = await db.ref(`/LawContent`).once("value", function(snapshot) {
+    LawContent = snapshot.val()
+  })
+
+let input = req.body.input
+
+let result = Search(LawContent,input)
+
+console.log('result',result);
+
+res.send(result)
+});
 
 
 app.listen(5000, () => {
