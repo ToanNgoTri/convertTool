@@ -109,16 +109,35 @@ app.post("/searchLaw", async (req, res) => {
 let input = req.body.input
 // console.log(LawInfo);
 
-let lawFilter  
-if(Object.keys(LawInfo).length){
-  lawFilter= Object.values(LawInfo).filter( (key)=>{
+let lawFilterName  
+// if(Object.keys(LawInfo).length){
+//   lawFilter= Object.values(LawInfo).filter( (key)=>{
     
-return key['lawDescription'].match(new RegExp(`${input}`, "gim"))   || key['lawNumber'].match(new RegExp(`${input}`, "gim")) || key['lawNameDisplay'].match(new RegExp(`${input}`, "gim"))
+// return key['lawDescription'].match(new RegExp(`${input}`, "gim"))   || key['lawNumber'].match(new RegExp(`${input}`, "gim")) || key['lawNameDisplay'].match(new RegExp(`${input}`, "gim"))
+// // console.log("key['lawDescription']",key['lawDescription']);
+
+// })
+// }
+
+let LawFilterFull = {}
+if(Object.keys(LawInfo).length){
+  lawFilterName= Object.keys(LawInfo).filter( (key)=>{
+    
+return LawInfo[key]['lawDescription'].match(new RegExp(`${input}`, "gim"))   || LawInfo[key]['lawNumber'].match(new RegExp(`${input}`, "gim")) || LawInfo[key]['lawNameDisplay'].match(new RegExp(`${input}`, "gim"))
 // console.log("key['lawDescription']",key['lawDescription']);
 
 })
+
+lawFilterName.map( key =>{
+  LawFilterFull[key] = LawInfo[key]
+})
+
 }
-res.send(lawFilter)
+
+
+// console.log('LawFilterFull',LawFilterFull);
+
+res.send(LawFilterFull)
 });
 
 
@@ -224,13 +243,19 @@ app.post("/searchContent", async (req, res) => {
     LawContent = snapshot.val()
   })
 
+  let LawInfo = {}
+  const inf = await db.ref(`/LawInfo`).once("value", function(snapshot) {
+    LawInfo = snapshot.val()
+  })
+
+
 let input = req.body.input
 
 let result = Search(LawContent,input)
 
-console.log('result',result);
+// console.log('result',result);
 
-res.send(result)
+res.send({'LawContent':result,'LawInfo':LawInfo})
 });
 
 

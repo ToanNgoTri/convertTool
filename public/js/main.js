@@ -6,6 +6,7 @@ function convertInfo() {
   // nếu dòng signRole có 2 dòng thì gộp 1 thôi
   // bỏ hàng cuối cùng nếu có sau tên
   // trong unitPublish chỉ cho phép cơ quan chứ không cho phép cá nhân
+  
   // văn bản hợp nhất thì ghi VBHN chứ không phải NĐ hay Thông tư
 
   let b = document.querySelector(".input").value;
