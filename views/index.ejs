@@ -12,31 +12,22 @@
 <body>
   <div id="container">
     <form class="input_part__container"  action="/URL" method="GET">
-      <span style="padding: 15px;border: 1px solid black;text-align: center;justify-self: center;">
+      <div style="padding: 15px;border: 1px solid black;text-align: center;justify-self: center;cursor: pointer;"
+      onclick="pasteContent()"
+      >
         URL
-      </span>
+      </div>
       <input type="text" placeholder="User Name" class="input_part__container_input"  name="URL"> 
       <!-- <textarea  cols="140" rows="3"></textarea> -->
-      <button type="submit">
+      <button style="width: 30%" type="submit">
         Click
       </button>
     </form>
-    <!-- <div id="output_part">
-        <textarea class="input" cols="90" rows="45"></textarea>
-        <div class="btb_container">
-          <div class="btb" >
-            Covert
-          </div>
-          <div class="btb copy_btb" >
-            Copy
-          </div>
-          <div class="btb delete_btb" >
-            Delete
-          </div>
-  
-        </div>
-        <textarea class="output" cols="90" rows="45"></textarea>
-    </div> -->
+    <div class="home_function">
+      <div class="home_function_refresh" onclick="window.location.reload()">
+        Reload
+      </div>
+    </div>
   </div>
   </body>
   <script type="text/javascript" src="./js/main.js"></script>
