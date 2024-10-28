@@ -19,18 +19,17 @@ app.use(bodyParer.urlencoded({limit: '50mb', extended: true}));
 app.use(cors())
 
 
-app.use(express.static('public'))
+app.use(express.static('./public'))
 
 const ejs = require('ejs')
 app.set('view engine','ejs')
 
 
-async function run(url) {
+async function eachRun(url) {
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.goto(url,{ waitUntil: 'load' })
     
-    // await page.goto(url,{ waitUntil: 'load' });
 
     // page.setDefaultNavigationTimeout(0)
     
@@ -39,15 +38,42 @@ async function run(url) {
     let source = await page.content({"waitUntil": "domcontentloaded"});
 
    const r =  await page.evaluate(async () => {
+
       let elements = document.querySelector('.content1').textContent;
       return (elements)
   });
 
-// console.log(r);
 
     await browser.close();
-    // console.log(source.toString());
     return (r);
+}
+
+
+async function allRun(url) {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto(url,{ waitUntil: 'load' })
+  
+  // OR the faster method that doesn't wait for images to load:
+  let source = await page.content({"waitUntil": "domcontentloaded"});
+
+ const r =  await page.evaluate(async () => {
+
+  let a = []
+    let elements = document.querySelectorAll('.nqTitle');
+    elements.forEach(link => {
+      a.push(link.querySelector('a').href); // In ra giá trị href của mỗi thẻ <a>
+    });
+    console.log('elements',elements);
+    
+return a
+});
+
+// console.log(r);
+
+  await browser.close();
+  // console.log(source.toString());
+  return (r);
 }
 
 
@@ -62,12 +88,53 @@ app.get("/URL", async (req, res) => {
   
   
   console.log(req.query.URL);
-  let a = await run(req.query.URL);
-  res.render('get',{a:a})
+  let content = ''
+   content = await eachRun(req.query.URL);
 
-  // console.log('a',a);
+     res.render('get',{content:content})
 
-  // res.render('get')
+});
+
+
+async function openBrowser(URL) {
+  // Khởi động trình duyệt
+  const browser = await puppeteer.launch({
+    headless: false,  // Chạy trình duyệt với giao diện (có cửa sổ trình duyệt)
+    devtools: true, // Mở DevTools
+  // defaultViewport: null,
+  args: ['--window-size=2200,1500'],
+  });
+
+  // Mở tab mới
+  const page = await browser.newPage();
+
+  // URL với tham số query string
+  const url = `http://localhost:5000/URL?URL=${URL}&auto=true`;
+
+  
+  await page.goto(url,{ waitUntil: 'domcontentloaded' });
+
+
+
+}
+
+let id =0
+app.get(`/AllURL/:id`, async (req, res) => {
+  
+  
+  // console.log(req.query.URL);
+  let arrayLink = await allRun(req.query.URL);
+// console.log('arrayLink',arrayLink);
+  
+
+  let content = ''
+  content = await eachRun(arrayLink[req.params.id]);
+
+    res.render('get',{content:content})
+
+  
+
+
 });
 
 
@@ -84,7 +151,6 @@ app.post("/push", async (req, res) => {
     console.log('pushed Info');
     
   })
-
   
   const ref2 = db.ref(`/LawContent/${req.body.lawNumber}`)
   ref2.set(req.body.dataLaw,()=>{
@@ -92,6 +158,68 @@ app.post("/push", async (req, res) => {
     
   })
 });
+
+app.post("/push1", async (req, res) => {
+  
+  // console.log(req.body);
+
+  const db = admin.database();
+
+  const ref = db.ref(`/LawInfo1/${req.body.lawNumber}`)
+
+  ref.set(req.body.lawInfo,()=>{
+    console.log('pushed Info');
+    
+  })
+  
+});
+
+
+
+
+app.get("/retriveInfo", async (req, res) => {
+  
+  // console.log(req.body);
+
+  const db = admin.database();
+
+  const ref = db.ref(`/LawInfo`)
+
+  ref.once("value", function(snapshot) {
+    res.send(snapshot.val());
+  });  
+
+});
+
+
+app.get("/retriveContent", async (req, res) => {
+  
+  // console.log(req.body);
+
+  const db = admin.database();
+
+  const ref = db.ref(`/LawContent`)
+
+  ref.once("value", function(snapshot) {
+    res.send(snapshot.val());
+  });  
+
+});
+
+
+app.get("/delete", async (req, res) => {
+  
+  const db = admin.database();
+
+  const ref = db.ref(`/LawInfo1`)
+
+  ref.remove()
+
+});
+
+
+
+
 
 app.post("/searchLaw", async (req, res) => {
   

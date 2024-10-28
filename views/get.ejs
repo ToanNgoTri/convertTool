@@ -4,21 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link href="./scss/index.css" type="text/css" rel="stylesheet">
+    <link href="/scss/index.css" type="text/css" rel="stylesheet">
     
 </head>
 <body>
   <div id="container">
     <div id="output_part">
         <textarea  class="input" cols="90" rows="45">
-          <%= a %>
+          <%= content %>
                                                         </textarea>
         <!-- </div> -->
-        <div class="btb_container">
-          <button class="btb PlainText_btb" onclick="convertPlainText()">
+        <div class="navi_container navi_input">
+          <button type="button" class="navi_btb" onclick="goToStartInput()">
+            Go to Start
+          </button>
+  
+          <button type="button" class="navi_btb" onclick="goToEndInput()">
+            Go to End
+          </button>
+        </div>
+  
+        <div class="navi_container navi_output" >
+          <button type="button" class="navi_btb" onclick="goToStartOutput()">
+            Go to Start
+          </button>
+  
+          <button type="button" class="navi_btb" onclick="goToEndOutput()">
+            Go to End
+          </button>
+        </div>
+  
+            <div class="btb_container">
+          <button class="btb PlainText_btb" onclick="convertInfo('plain')">
             Get Plain Text
           </button>
-          <button type="button" class="btb" onclick="convertInfo()">
+         <button class="btb TTLT_btb" onclick="convertInfo('TTLT')">
+            Get TTLT
+          </button>
+          <button type="button" class="btb" onclick="convertInfo('main')">
             Get Infomation
           </button>
           <button  class="btb copy_btb" onclick="convertContent()" >
@@ -27,16 +50,22 @@
           <button class="btb delete_btb" onclick="Push()">
             Push
           </button>
-          <a class="btb back_btb" href="./">
+          <button class="btb naviNext_btb" onclick="NaviNext()">
+            Next
+          </button>
+          <button class="btb noAddendum_btb" onclick="convertContent(false)">
+            No Addendum
+          </button>
+          <button class="btb back_btb" onclick='NaviHome()'>
             Back
-          </a>
+          </button>
 
         </div>
         <textarea class="output" cols="90" ></textarea>
     </div>
   </div>
   </body>
-  <script type="text/javascript" src="./js/jquery.js"></script>
+  <script type="text/javascript" src="/js/jquery.js"></script>
   </script>
-  <script type="text/javascript" src="./js/main.js"></script>
+  <script type="text/javascript" src="/js/main.js"></script>
 </html>

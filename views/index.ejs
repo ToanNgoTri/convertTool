@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link href="./scss/index.css" type="text/css" rel="stylesheet">
+    <link href="/scss/index.css" type="text/css" rel="stylesheet">
 </head>
 <script>
 
@@ -15,18 +15,50 @@
       <div style="padding: 15px;border: 1px solid black;text-align: center;justify-self: center;cursor: pointer;"
       onclick="pasteContent()"
       >
-        URL
+        Each
       </div>
-      <input type="text" placeholder="User Name" class="input_part__container_input"  name="URL"> 
+      <input type="text" placeholder="User Name" class="input_part__container_input" id="each"  name="URL"> 
       <!-- <textarea  cols="140" rows="3"></textarea> -->
       <button style="width: 30%" type="submit">
         Click
       </button>
     </form>
-    <div class="home_function">
-      <div class="home_function_refresh" onclick="window.location.reload()">
-        Reload
+    <form class="input_part__container"  action="/AllURL/0" method="get">
+      <div style="padding: 15px;border: 1px solid black;text-align: center;justify-self: center;cursor: pointer;"
+      onclick="pasteContentAll()"
+      >
+        All
       </div>
+      <input type="text" placeholder="User Name" class="input_part__container_input" id="all" name="URL"> 
+      <button style="width: 30%" type="submit">
+        Click
+      </button>
+    </form>
+    <div>
+      <button type="button" class="navi_btb" onclick="Compare()">
+        Compare
+      </button>
+      <button type="button" class="navi_btb" onclick="FixLawRelated()">
+        Fix Law Related
+      </button>
+      <button type="button" class="navi_btb" onclick="findMissingField()">
+        Find Missing Field
+      </button>
+      <button type="button" class="navi_btb" onclick="getLawNoExist()">
+        Get law related no exist yet
+      </button>
+      <button type="button" class="navi_btb" onclick="findError('nameSign')">
+        find Error Name
+      </button>
+      <button type="button" class="navi_btb" onclick="findError('roleSign')">
+        find Error RoleSign
+      </button>
+      <button type="button" class="navi_btb" onclick="findError('unitPublish')">
+        find Error Unit
+      </button>
+      <button type="button" class="navi_btb" onclick="Delete()">
+        Delete
+      </button>
     </div>
   </div>
   </body>
