@@ -75,7 +75,7 @@ return a
   // console.log(source.toString());
   return (r);
 }
-
+https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=&area=0&match=True&type=11&status=0&signer=0&bdate=01/01/2014&edate=31/12/2015&sort=1&lan=1&scan=0&org=0&fields=&page=7
 
 app.get("/", async (req, res) => {
     // let a = await run();
@@ -124,11 +124,11 @@ app.get(`/AllURL/:id`, async (req, res) => {
   
   // console.log(req.query.URL);
   let arrayLink = await allRun(req.query.URL);
-// console.log('arrayLink',arrayLink);
   
 
   let content = ''
   content = await eachRun(arrayLink[req.params.id]);
+console.log('Link:',arrayLink[req.params.id]);
 
     res.render('get',{content:content})
 
