@@ -1,71 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link href="/scss/index.css" type="text/css" rel="stylesheet">
-    
-</head>
-<body>
-  <div id="container">
-    <div id="output_part">
-        <textarea  class="input" cols="90" rows="45">
-          <%= content %>
-                                                        </textarea>
-        <!-- </div> -->
+    <link href="/scss/index.css" type="text/css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div id="container">
+      <div id="inner_container">
+        <div id="input_container">
+          <Span>lawNumber</Span>
+          <textarea class="input_area" id="lawNumber"><%=lawNumber%></textarea>
+          <Span>unitPublish</Span>
+          <textarea class="input_area" id="unitPublish"><%=unitPublish%></textarea>
+          <Span>lawKind</Span>
+          <textarea class="input_area" id="lawKind"><%=lawKind%></textarea>
+          <Span>nameSign</Span>
+          <textarea class="input_area" id="nameSign"><%=nameSign%></textarea>
+          <Span>lawDaySign</Span>
+          <textarea class="input_area" id="lawDaySign"><%=lawDaySign%></textarea>
+          <Span>lawDescription</Span>
+          <textarea class="input_area" id="lawDescription"><%=lawDescription%></textarea>
+          <Span>lawRelated</Span>
+          <textarea class="input_area" id="lawRelated"><%=lawRelated%></textarea>
+          <Span>roleSign</Span>
+          <textarea class="input_area" id="roleSign"><%=roleSign%></textarea>
+          <Span>lawDaySign</Span>
+          <textarea class="input_area" id="roleSign"><%=lawDaySign%></textarea>
+          <textarea class="input_area" id="content_input"><%=content%></textarea>
+        </div>
         <div class="navi_container navi_input">
           <button type="button" class="navi_btb" onclick="goToStartInput()">
             Go to Start
           </button>
-  
+
           <button type="button" class="navi_btb" onclick="goToEndInput()">
             Go to End
           </button>
         </div>
-  
-        <div class="navi_container navi_output" >
+
+        <div class="navi_container navi_output">
           <button type="button" class="navi_btb" onclick="goToStartOutput()">
             Go to Start
           </button>
-  
+
           <button type="button" class="navi_btb" onclick="goToEndOutput()">
             Go to End
           </button>
         </div>
-  
-            <div class="btb_container">
-          <button class="btb PlainText_btb" onclick="convertInfo('plain')">
-            Get Plain Text
-          </button>
-         <button class="btb TTLT_btb" onclick="convertInfo('TTLT')">
-            Get TTLT
-          </button>
-          <button type="button" class="btb" onclick="convertInfo('main')">
+
+        <div class="btb_container">
+          <button type="button" class="btb" onclick="getInfo()">
             Get Infomation
           </button>
-          <button  class="btb copy_btb" onclick="convertContent()" >
+          <button class="btb copy_btb" onclick="convertContent()">
             Get Content
           </button>
-          <button class="btb delete_btb" onclick="Push()">
-            Push
-          </button>
-          <button class="btb naviNext_btb" onclick="NaviNext()">
-            Next
-          </button>
-          <button class="btb noAddendum_btb" onclick="convertContent(false)">
-            No Addendum
-          </button>
-          <button class="btb back_btb" onclick='NaviHome()'>
-            Back
-          </button>
-
+          <button class="btb delete_btb" onclick="Push()">Push</button>
+          <button class="btb naviNext_btb" onclick="NaviNext()">Next</button>
+          <button class="btb back_btb" onclick="NaviHome()">Back</button>
         </div>
-        <textarea class="output" cols="90" ></textarea>
+        <textarea class="output" cols="90"></textarea>
+      </div>
     </div>
-  </div>
   </body>
   <script type="text/javascript" src="/js/jquery.js"></script>
-  </script>
   <script type="text/javascript" src="/js/main.js"></script>
 </html>

@@ -1,392 +1,303 @@
 const express = require("express");
 const app = express();
-const puppeteer = require('puppeteer');
-var cors = require('cors')
-const bodyParer = require('body-parser')
-var admin = require("firebase-admin");
+const puppeteer = require("puppeteer");
+var cors = require("cors");
+const bodyParer = require("body-parser");
+const { MongoClient } = require("mongodb");
 
-var serviceAccount = require("./project2-197c0-firebase-adminsdk-wgo9a-4a0448ab63.json");
+app.use(bodyParer.json({ limit: "50mb" }));
+app.use(bodyParer.urlencoded({ limit: "50mb", extended: true }));
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://project2-197c0-default-rtdb.firebaseio.com"
-});
+app.use(cors());
 
+app.use(express.static("./public"));
 
-app.use(bodyParer.json({limit: '50mb'}));
-app.use(bodyParer.urlencoded({limit: '50mb', extended: true}));
+const ejs = require("ejs");
+app.set("view engine", "ejs");
 
-app.use(cors())
+// mongoose.connect('mongodb+srv://gusteixeira25:JPwO1gvfCAjiuXKo@testdatabase.moky4.mongodb.net/', { useNewUrlParser: true })
+const client = new MongoClient(
+  "mongodb+srv://gusteixeira25:JPwO1gvfCAjiuXKo@testdatabase.moky4.mongodb.net/"
+);
 
+async function run(info, content, id,fullText) {
+  try {
+    const database = client.db("LawMachine");
+    const LawContent = database.collection("LawContent");
+    // Query for a movie that has the title 'Back to the Future'
+    // const query = { name: "toan" };
+    // const movie = await LawContent.findOne(query);
+    // console.log(movie);
 
-app.use(express.static('./public'))
-
-const ejs = require('ejs')
-app.set('view engine','ejs')
-
-
-async function eachRun(url) {
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
-    await page.goto(url,{ waitUntil: 'load' })
-    
-
-    // page.setDefaultNavigationTimeout(0)
-    
-    // let source = await page.content();
-    // OR the faster method that doesn't wait for images to load:
-    let source = await page.content({"waitUntil": "domcontentloaded"});
-
-   const r =  await page.evaluate(async () => {
-
-      let elements = document.querySelector('.content1').textContent;
-      return (elements)
-  });
-
-
-    await browser.close();
-    return (r);
+    await LawContent.insertOne({ _id: id, info, content,fullText });
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
 }
 
+async function eachRun(url) {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
+  await page.goto(url, { waitUntil: "load" });
+
+  // page.setDefaultNavigationTimeout(0)
+
+  // let source = await page.content();
+  // OR the faster method that doesn't wait for images to load:
+  let source = await page.content({ waitUntil: "domcontentloaded" });
+
+  const r = await page.evaluate(async () => {
+    // let elementContent = document.querySelectorAll("#chidanthaydoind >.docitem-1, .docitem-2, .docitem-5, .docitem-11, .docitem-12");
+    let elementContent = document.querySelectorAll(
+      "#chidanthaydoind >.docitem-1:not(.docitem-9 ~ div), .docitem-2:not(.docitem-9 ~ div), .docitem-5:not(.docitem-9 ~ div), .docitem-11:not(.docitem-9 ~ div), .docitem-12:not(.docitem-9 ~ div)"
+    );
+
+    var content = "";
+    for (let a = 0; a < elementContent.length; a++) {
+      content = content + "\n" + elementContent[a].innerText;
+    }
+    content = content.replace(/\n+/g, "\n");
+
+    let lawNumber = document.querySelector(
+      ".div-table tr:nth-child(2) td:nth-child(2)"
+    ).innerText;
+
+    let unitPublish = document.querySelector(
+      ".div-table tr:nth-child(1) td:nth-child(2)"
+    ).innerText;
+
+    let lawKind = document.querySelector(
+      ".div-table tr:nth-child(3) td:nth-child(2)"
+    ).innerText;
+
+    let nameSign = document.querySelector(
+      ".div-table tr:nth-child(3) td:nth-child(4)"
+    ).innerText;
+
+    let lawDaySign = document.querySelector(
+      ".div-table tr:nth-child(4) td:nth-child(2)"
+    ).innerText;
+
+    let lawDescription = document.querySelector(
+      ".the-document-summary"
+    ).innerText;
+    lawDescription = lawDescription.replace(/^ */, "");
+
+    let lawRelated = document.querySelector(
+      "#chidanthaydoind >.docitem-14"
+    ).innerText;
+    lawRelated =
+      lawRelated +
+      "\n" +
+      document.querySelector("#chidanthaydoind >.docitem-15").innerText;
+    lawRelated = lawRelated.replace(/\n+/g, "\n");
+
+    let roleSign = document.querySelector(
+      "#chidanthaydoind >.docitem-9"
+    ).innerText;
+    roleSign = roleSign.replace(/nơi nhận.*(\s{0,2}\S.*)*/gim, "");
+    roleSign = roleSign.replace(/^\n(\s)*/gim, "");
+    roleSign = roleSign.replace(/\n$/gim, "");
+
+    return {
+      content,
+      lawNumber,
+      unitPublish,
+      lawKind,
+      nameSign,
+      lawDaySign,
+      lawDescription,
+      lawRelated,
+      roleSign,
+    };
+  });
+
+  await browser.close();
+  return r;
+}
 
 async function allRun(url) {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-  await page.goto(url,{ waitUntil: 'load' })
-  
+  await page.goto(url, { waitUntil: "load" });
+
   // OR the faster method that doesn't wait for images to load:
-  let source = await page.content({"waitUntil": "domcontentloaded"});
+  let source = await page.content({ waitUntil: "domcontentloaded" });
 
- const r =  await page.evaluate(async () => {
-
-  let a = []
-    let elements = document.querySelectorAll('.nqTitle');
-    elements.forEach(link => {
-      a.push(link.querySelector('a').href); // In ra giá trị href của mỗi thẻ <a>
+  const r = await page.evaluate(async () => {
+    let a = [];
+    let elements = document.querySelectorAll(".nqTitle");
+    elements.forEach((link) => {
+      a.push(link.querySelector("a").href); // In ra giá trị href của mỗi thẻ <a>
     });
-    console.log('elements',elements);
-    
-return a
-});
+    console.log("elements", elements);
 
-// console.log(r);
+    return a;
+  });
+
+  // console.log(r);
 
   await browser.close();
   // console.log(source.toString());
-  return (r);
+  return r;
 }
-https://thuvienphapluat.vn/page/tim-van-ban.aspx?keyword=&area=0&match=True&type=11&status=0&signer=0&bdate=01/01/2014&edate=31/12/2015&sort=1&lan=1&scan=0&org=0&fields=&page=7
 
 app.get("/", async (req, res) => {
-    // let a = await run();
+  run();
 
-
-    res.render('index')
+  res.render("index");
 });
 
 app.get("/URL", async (req, res) => {
-  
-  
   console.log(req.query.URL);
-  let content = ''
-   content = await eachRun(req.query.URL);
+  let content = "";
+  content = await eachRun(req.query.URL);
 
-     res.render('get',{content:content})
-
+  //  res.render('get',{content:content['content'],UnitPublish:content['UnitPublish']})
+  res.render("get", {
+    content: content["content"],
+    lawNumber: content["lawNumber"],
+    unitPublish: content["unitPublish"],
+    lawKind: content["lawKind"],
+    nameSign: content["nameSign"],
+    lawDaySign: content["lawDaySign"],
+    lawDescription: content["lawDescription"],
+    lawRelated: content["lawRelated"],
+    roleSign: content["roleSign"],
+  });
 });
 
 
-async function openBrowser(URL) {
-  // Khởi động trình duyệt
-  const browser = await puppeteer.launch({
-    headless: false,  // Chạy trình duyệt với giao diện (có cửa sổ trình duyệt)
-    devtools: true, // Mở DevTools
-  // defaultViewport: null,
-  args: ['--window-size=2200,1500'],
-  });
-
-  // Mở tab mới
-  const page = await browser.newPage();
-
-  // URL với tham số query string
-  const url = `http://localhost:5000/URL?URL=${URL}&auto=true`;
-
-  
-  await page.goto(url,{ waitUntil: 'domcontentloaded' });
-
-
-
-}
-
-let id =0
 app.get(`/AllURL/:id`, async (req, res) => {
-  
-  
   // console.log(req.query.URL);
   let arrayLink = await allRun(req.query.URL);
-  
 
-  let content = ''
+  let content = "";
   content = await eachRun(arrayLink[req.params.id]);
-console.log('Link:',arrayLink[req.params.id]);
+  console.log("Link:", arrayLink[req.params.id]);
 
-    res.render('get',{content:content})
-
-  
-
-
+  res.render("get", { content: content });
 });
 
+// const db = admin.database();
 
+// const ref = db.ref(`/LawInfo/${req.body.lawNumber}`)
 
-app.post("/push", async (req, res) => {
-  
-  // console.log(req.body);
-
-  const db = admin.database();
-
-  const ref = db.ref(`/LawInfo/${req.body.lawNumber}`)
-
-  ref.set(req.body.lawInfo,()=>{
-    console.log('pushed Info');
-    
-  })
-  
-  const ref2 = db.ref(`/LawContent/${req.body.lawNumber}`)
-  ref2.set(req.body.dataLaw,()=>{
-    console.log('pushed Content');
-    
-  })
-});
-
-app.post("/push1", async (req, res) => {
-  
-  // console.log(req.body);
-
-  const db = admin.database();
-
-  const ref = db.ref(`/LawInfo1/${req.body.lawNumber}`)
-
-  ref.set(req.body.lawInfo,()=>{
-    console.log('pushed Info');
-    
-  })
-  
-});
-
-
-
-
-app.get("/retriveInfo", async (req, res) => {
-  
-  // console.log(req.body);
-
-  const db = admin.database();
-
-  const ref = db.ref(`/LawInfo`)
-
-  ref.once("value", function(snapshot) {
-    res.send(snapshot.val());
-  });  
-
-});
-
-
-app.get("/retriveContent", async (req, res) => {
-  
-  // console.log(req.body);
-
-  const db = admin.database();
-
-  const ref = db.ref(`/LawContent`)
-
-  ref.once("value", function(snapshot) {
-    res.send(snapshot.val());
-  });  
-
-});
-
-
-app.get("/delete", async (req, res) => {
-  
-  const db = admin.database();
-
-  const ref = db.ref(`/LawInfo1`)
-
-  ref.remove()
-
-});
-
-
-
-
-
-app.post("/searchLaw", async (req, res) => {
-  
-  const db = admin.database();
-
-  let LawInfo 
-  let LawContent = {}
-  const ref = await db.ref(`/LawInfo`).once("value", function(snapshot) {
-    // console.log(snapshot.val());
-    LawInfo = snapshot.val()
-    // LawContent = snapshot.val()['LawContent']
-    
-  })
-
-let input = req.body.input
-// console.log(LawInfo);
-
-let lawFilterName  
-// if(Object.keys(LawInfo).length){
-//   lawFilter= Object.values(LawInfo).filter( (key)=>{
-    
-// return key['lawDescription'].match(new RegExp(`${input}`, "gim"))   || key['lawNumber'].match(new RegExp(`${input}`, "gim")) || key['lawNameDisplay'].match(new RegExp(`${input}`, "gim"))
-// // console.log("key['lawDescription']",key['lawDescription']);
+// ref.set(req.body.lawInfo,()=>{
+//   console.log('pushed Info');
 
 // })
-// }
 
-let LawFilterFull = {}
-if(Object.keys(LawInfo).length){
-  lawFilterName= Object.keys(LawInfo).filter( (key)=>{
-    
-return LawInfo[key]['lawDescription'].match(new RegExp(`${input}`, "gim"))   || LawInfo[key]['lawNumber'].match(new RegExp(`${input}`, "gim")) || LawInfo[key]['lawNameDisplay'].match(new RegExp(`${input}`, "gim"))
-// console.log("key['lawDescription']",key['lawDescription']);
+// const ref2 = db.ref(`/LawContent/${req.body.lawNumber}`)
+// ref2.set(req.body.dataLaw,()=>{
+//   console.log('pushed Content');
 
-})
+// })
 
-lawFilterName.map( key =>{
-  LawFilterFull[key] = LawInfo[key]
-})
-
-}
-
-
-// console.log('LawFilterFull',LawFilterFull);
-
-res.send(LawFilterFull)
+app.post("/push", async (req, res) => {
+  run(req.body.lawInfo, req.body.dataLaw, req.body.lawNumber,req.body.contentText);
 });
 
+app.post("/searchlaw", async (req, res) => {
+  // dành cho Detail2
 
-function Search(data,input) {
-  let searchArray = {};
+  try {
+    const database = client.db("LawMachine");
+    const LawContent = database.collection("LawContent");
 
-  if (input) {
-    if (input.match(/(\w+|\(|\)|\.|\+|\-|\,|\&|\?|\;|\!|\/)/gim)) {
-
-      function a(key, key1) {
-        // key ở đây là tên luật, key1 là Object 1 chương
-
-        Object.values(key1)[0].map((key2, i1) => {
-          // chọn từng điều
-
-          let replace = `(.*)${input}(.*)`;
-          let re = new RegExp(replace, 'gmi');
-          let article = Object.keys(key2)[0].replace(/(?<=\w*)\\(?=\w*)/gim, '/')
-          let point = Object.values(key2)[0].replace(/(?<=\w*)\\(?=\w*)/gim, '/')
-
-          if (Object.keys(key2)[0].match(re)) {
-            searchArray[key].push({
-              [article]: point,
-            });
-          } else if (point != '') {
-            if (point.match(re)) {
-              searchArray[key].push({
-                [article]: point,
-              });
-            }
-          }
-        });
-
-        
-      }
-
-      Object.keys(data).map(
-        (key, i) => {
-          // key là tên luật
-          //key là tên của luật
-          // tham nhap luat (array chuong)
-
-          searchArray[key] = [];
-            data[key].map(
-              (key1, i1) => {
-                // ra Object Chuong hoặc (array phần thứ...)
-                if (Object.keys(key1)[0].match(/^phần thứ .*/gim)) {
-                  // nếu có 'phần thứ
-                  // console.log('phần thứ');
-                  // console.log('Object.keys(key1)[0]',Object.keys(key1)[0]);
-                  if (
-                    Object.keys(Object.values(key1)[0][0])[0].match(
-                      /^Chương .*/gim,
-                    )
-                  ) {
-                    //nếu có chương trong phần thứ
-
-                    Object.values(key1)[0].map((key2, i) => {
-                      a(key, key2);
-                    });
-                  } else {
-                    //nếu không có chương trong phần thứ
-                    a(key, key1);
-                  }
-                } else if (Object.keys(key1)[0].match(/^chương .*/gim)) {
-                  a(key, key1);
-                } else {
-                  //nếu chỉ có điều
-                  if(i1==0){ //  đảm bảo chỉ chạy 1 lần
-                    a(key, {
-                      'chương Giả định':
-                        data[key],
-                    });
-
-                  }
-                }
-              },
-            );
-        },
-      );
-
-      let searchResult = {};
-
-      Object.keys(searchArray).map((key, i) => {
-        searchArray[key].map((key1, i) => {
-          searchResult[key] = searchArray[key];
-        });
-      });
-return searchResult
-      // console.log('searchResult',searchResult);
-    } else {
-    }
-  } else {
+    LawContent.find({
+      $or: [
+        { _id: new RegExp(`${req.body.input}`, "i") },
+        { "info.lawDescription": new RegExp(`${req.body.input}`, "i") },
+        { "info.lawNameDisplay": new RegExp(`${req.body.input}`, "i") },
+      ],
+    })
+      .project({ info: 1 })
+      .toArray()
+      .then((o) => res.json(o));
+  } finally {
+    // Ensures that the client will close when you finish/error
+    // await client.close();
   }
-}
 
-app.post("/searchContent", async (req, res) => {
-  
-  const db = admin.database();
-
-  let LawContent = {}
-  const ref = await db.ref(`/LawContent`).once("value", function(snapshot) {
-    LawContent = snapshot.val()
-  })
-
-  let LawInfo = {}
-  const inf = await db.ref(`/LawInfo`).once("value", function(snapshot) {
-    LawInfo = snapshot.val()
-  })
-
-
-let input = req.body.input
-
-let result = Search(LawContent,input)
-
-// console.log('result',result);
-
-res.send({'LawContent':result,'LawInfo':LawInfo})
 });
 
 
-app.listen(5000, () => {
-  console.log("Backend server is running on port 5000");
+app.post("/searchcontent", async (req, res) => {
+  // dành cho AppNavigator
+
+  try {
+    const database = client.db("LawMachine");
+    const LawContent = database.collection("LawContent");
+    LawContent.find({ "fullText": new RegExp(`${req.body.input}`, "i") }).collation({ locale: 'vi' })
+      .project({ info: 1 })
+      .toArray()
+      .then((o) => res.json(o));
+  } finally {
+    // Ensures that the client will close when you finish/error
+    // await client.close();
+  }
+});
+
+
+app.post("/getonelaw", async (req, res) => {
+  // dành cho Detail5
+  let a;
+  console.log(req.body.input);
+
+  try {
+    const database = client.db("LawMachine");
+    const LawContent = database.collection("LawContent");
+    // Query for a movie that has the title 'Back to the Future'
+
+    a = await LawContent.findOne({ _id: req.body.input });
+  } finally {
+    // Ensures that the client will close when you finish/error
+    // await client.close();
+  }
+
+  // console.log(a);
+  res.json(a)
+  // res.write(a);
+});
+
+app.get("/stackscreen", async (req, res) => {
+  // dành cho AppNavigator
+
+  try {
+    const database = client.db("LawMachine");
+    const LawContent = database.collection("LawContent");
+    // Query for a movie that has the title 'Back to the Future'
+
+    LawContent.find({})
+      .project({ info: 1, content: 1 })
+      .toArray()
+      .then((o) => res.send(o));
+  } finally {
+    // Ensures that the client will close when you finish/error
+    // await client.close();
+  }
+});
+
+app.get("/forcreateindex", async (req, res) => {
+
+  const database = client.db("LawMachine");
+  const LawContent = database.collection("LawContent");
+  LawContent.createIndex({
+    "info.lawDescription": 1,
+    "info.lawNameDisplay": 1,
+    _id: 1,
+  });
+
+  res.send("success");
+});
+
+
+
+
+
+
+app.listen(5000, function () {
+  console.log("Server is running on port " + 5000);
 });

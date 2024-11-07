@@ -17,8 +17,7 @@
     "cors": "^2.8.5",
     "ejs": "^3.1.10",
     "express": "^4.19.2",
-    "firebase-admin": "^12.4.0",
-    "open": "^10.1.0",
+    "mongodb": "^6.10.0",
     "puppeteer": "^23.2.2",
     "puppeteer-core": "^23.3.0"
   }

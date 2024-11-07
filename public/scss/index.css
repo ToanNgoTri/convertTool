@@ -1,7 +1,14 @@
-#output_part{
+#inner_container{
     display: flex;
     flex-direction: row;
   }
+
+  #input_container{
+    display: flex;
+    flex-direction: column;
+    width: 46%;  
+  }
+
 
   #container{
     display: flex;
@@ -22,11 +29,10 @@
     flex-direction: row;
   }
   
-  textarea{
+  .input_area{
     word-break: break-word;
-    /* height: 100%; */
-    width: 46%;
-  }
+    field-sizing: content;  }
+
   
   .btb_container{
     height: 100vh;
@@ -104,7 +110,9 @@
 
   .output{
     right:-128px;
-    position: relative;}
+    position: relative;
+    width: 46%;  
+  }
 
     .home_function{
       background-color: red;
