@@ -151,7 +151,15 @@ function getLawRelated(text) {
 return lawRelated
 }
 
-async function convertInfo(kind) {
+function getInfo(){
+  if(document.querySelector("#roleSign").value){
+    getNormalTextInfo()
+  }else{
+    convertBareTextInfo('plain')
+  }
+}
+
+async function convertBareTextInfo(kind) {
   // có thể bị lỗi:
   // nếu Lawname nhiều hơn 2 dòng
   // nếu dòng signRole có 2 dòng thì gộp 1 thôi
@@ -455,7 +463,7 @@ async function convertInfo(kind) {
 }
 
 
-function getInfo() {
+function getNormalTextInfo() {
   
   let unitPublishString = document.querySelector("#unitPublish").value;
   unitPublish = unitPublishString.split("; ");
@@ -506,8 +514,8 @@ function getInfo() {
 
   let contentRoleSign = document.querySelector("#roleSign").value;
   for (let a = 0; a < nameSign.length; a++) {
-    console.log('nameSign',nameSign);
-    console.log('contentRoleSign',contentRoleSign);
+    // console.log('nameSign',nameSign);
+    // console.log('contentRoleSign',contentRoleSign);
     let roleSignString = contentRoleSign.match(
       new RegExp(`.*(?=\n.*${nameSign[a]})`, "img")
     )[0].toLowerCase();//key.charAt(0).toUpperCase() + key.slice(1);
