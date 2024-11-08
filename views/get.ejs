@@ -27,8 +27,6 @@
           <textarea class="input_area" id="lawRelated"><%=lawRelated%></textarea>
           <Span>roleSign</Span>
           <textarea class="input_area" id="roleSign"><%=roleSign%></textarea>
-          <Span>lawDaySign</Span>
-          <textarea class="input_area" id="roleSign"><%=lawDaySign%></textarea>
           <textarea class="input_area" id="content_input"><%=content%></textarea>
         </div>
         <div class="navi_container navi_input">
@@ -54,6 +52,9 @@
         <div class="btb_container">
           <button type="button" class="btb" onclick="getInfo()">
             Get Infomation
+          </button>
+          <button type="button" class="btb" onclick="convertInfo('plain')">
+            Get Infomation2
           </button>
           <button class="btb copy_btb" onclick="convertContent()">
             Get Content

@@ -32,7 +32,7 @@ async function run(info, content, id,fullText) {
     await LawContent.insertOne({ _id: id, info, content,fullText });
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 
@@ -41,17 +41,37 @@ async function eachRun(url) {
   const page = await browser.newPage();
   await page.goto(url, { waitUntil: "load" });
 
-  // page.setDefaultNavigationTimeout(0)
-
-  // let source = await page.content();
-  // OR the faster method that doesn't wait for images to load:
   let source = await page.content({ waitUntil: "domcontentloaded" });
 
   const r = await page.evaluate(async () => {
-    // let elementContent = document.querySelectorAll("#chidanthaydoind >.docitem-1, .docitem-2, .docitem-5, .docitem-11, .docitem-12");
     let elementContent = document.querySelectorAll(
-      "#chidanthaydoind >.docitem-1:not(.docitem-9 ~ div), .docitem-2:not(.docitem-9 ~ div), .docitem-5:not(.docitem-9 ~ div), .docitem-11:not(.docitem-9 ~ div), .docitem-12:not(.docitem-9 ~ div)"
+      ".noidungtracuu >.docitem-1:not(.docitem-9 ~ div), .docitem-2:not(.docitem-9 ~ div), .docitem-5:not(.docitem-9 ~ div), .docitem-11:not(.docitem-9 ~ div), .docitem-12:not(.docitem-9 ~ div)"
     );
+    console.log('elementContent',elementContent);
+    
+    let lawRelated =''
+    let roleSign =''
+
+    if(Object.keys(elementContent).length == 0){
+      elementContent = document.querySelectorAll(
+        ".noidungtracuu p"
+      );
+      lawRelated = ''
+      roleSign = ''
+    
+    }else{
+      lawRelated = (document.querySelector("#chidanthaydoind >.docitem-14")?document.querySelector("#chidanthaydoind >.docitem-14").innerText:'');
+      lawRelated =
+        lawRelated +
+        "\n" +
+        (document.querySelector("#chidanthaydoind >.docitem-15")?document.querySelector("#chidanthaydoind >.docitem-15").innerText:'')
+      lawRelated = lawRelated.replace(/\n+/g, "\n");///////////////////////////////////////////////////////////////////
+  
+      roleSign = document.querySelector(
+        "#chidanthaydoind >.docitem-9"
+      ).innerText;
+
+    }
 
     var content = "";
     for (let a = 0; a < elementContent.length; a++) {
@@ -59,46 +79,72 @@ async function eachRun(url) {
     }
     content = content.replace(/\n+/g, "\n");
 
-    let lawNumber = document.querySelector(
-      ".div-table tr:nth-child(2) td:nth-child(2)"
+    let a = document.querySelector(
+      ".div-table"
     ).innerText;
 
-    let unitPublish = document.querySelector(
-      ".div-table tr:nth-child(1) td:nth-child(2)"
-    ).innerText;
 
-    let lawKind = document.querySelector(
-      ".div-table tr:nth-child(3) td:nth-child(2)"
-    ).innerText;
-
-    let nameSign = document.querySelector(
-      ".div-table tr:nth-child(3) td:nth-child(4)"
-    ).innerText;
-
-    let lawDaySign = document.querySelector(
-      ".div-table tr:nth-child(4) td:nth-child(2)"
-    ).innerText;
-
+    let lawNumber
+    let unitPublish
+    let lawKind
+    let nameSign
+    let lawDaySign
     let lawDescription = document.querySelector(
       ".the-document-summary"
     ).innerText;
     lawDescription = lawDescription.replace(/^ */, "");
+    if(a.match(/VBHN/)){
+      lawNumber = document.querySelector(
+        ".div-table tr:nth-child(1) td:nth-child(2)"
+      ).innerText;
+  
+      unitPublish = document.querySelector(
+        ".div-table tr:nth-child(2) td:nth-child(4)"
+      ).innerText;
+  
+      lawKind = document.querySelector(
+        ".div-table tr:nth-child(2) td:nth-child(2)"
+      ).innerText;
+  
+      nameSign = document.querySelector(
+        ".div-table tr:nth-child(3) td:nth-child(4)"
+      ).innerText;
+  
+      lawDaySign = document.querySelector(
+        ".div-table tr:nth-child(2) td:nth-child(4)"
+      ).innerText;
+  
+      
+      }else{
+      lawNumber = document.querySelector(
+        ".div-table tr:nth-child(2) td:nth-child(2)"
+      ).innerText;
+  
+      unitPublish = document.querySelector(
+        ".div-table tr:nth-child(1) td:nth-child(2)"
+      ).innerText;
+  
+      lawKind = document.querySelector(
+        ".div-table tr:nth-child(3) td:nth-child(2)"
+      ).innerText;
+  
+      nameSign = document.querySelector(
+        ".div-table tr:nth-child(3) td:nth-child(4)"
+      ).innerText;
+  
+      lawDaySign = document.querySelector(
+        ".div-table tr:nth-child(4) td:nth-child(2)"
+      ).innerText;
+  
+      }
 
-    let lawRelated = document.querySelector(
-      "#chidanthaydoind >.docitem-14"
-    ).innerText;
-    lawRelated =
-      lawRelated +
-      "\n" +
-      document.querySelector("#chidanthaydoind >.docitem-15").innerText;
-    lawRelated = lawRelated.replace(/\n+/g, "\n");
 
-    let roleSign = document.querySelector(
-      "#chidanthaydoind >.docitem-9"
-    ).innerText;
+
     roleSign = roleSign.replace(/nơi nhận.*(\s{0,2}\S.*)*/gim, "");
     roleSign = roleSign.replace(/^\n(\s)*/gim, "");
-    roleSign = roleSign.replace(/\n$/gim, "");
+    roleSign = roleSign.replace(/\(*đã ký[^\w]+/gim, "");
+    roleSign = roleSign.replace(/\s*$/gim, "");
+    roleSign = roleSign.replace(/^\s*/gim, "");
 
     return {
       content,
@@ -110,7 +156,22 @@ async function eachRun(url) {
       lawDescription,
       lawRelated,
       roleSign,
+      a
     };
+
+
+    // return {
+    //   content,
+    //   lawNumber:'',
+    //   unitPublish:'',
+    //   lawKind:'',
+    //   nameSign:'',
+    //   lawDaySign:'',
+    //   lawDescription:'',
+    //   lawRelated:'',
+    //   roleSign:'',
+    //   elementContent:(elementContent)
+    // };
   });
 
   await browser.close();
@@ -127,7 +188,7 @@ async function allRun(url) {
 
   const r = await page.evaluate(async () => {
     let a = [];
-    let elements = document.querySelectorAll(".nqTitle");
+    let elements = document.querySelectorAll(".doc-title");
     elements.forEach((link) => {
       a.push(link.querySelector("a").href); // In ra giá trị href của mỗi thẻ <a>
     });
@@ -150,9 +211,11 @@ app.get("/", async (req, res) => {
 });
 
 app.get("/URL", async (req, res) => {
-  console.log(req.query.URL);
+  console.log('req.query.URL',req.query.URL);
   let content = "";
   content = await eachRun(req.query.URL);
+  // console.log("content['a']",content['a']);
+  // console.log("content['elementContent']", (content['elementContent']) );
 
   //  res.render('get',{content:content['content'],UnitPublish:content['UnitPublish']})
   res.render("get", {
@@ -175,25 +238,11 @@ app.get(`/AllURL/:id`, async (req, res) => {
 
   let content = "";
   content = await eachRun(arrayLink[req.params.id]);
-  console.log("Link:", arrayLink[req.params.id]);
+  console.log("Link:", arrayLink);
 
   res.render("get", { content: content });
 });
 
-// const db = admin.database();
-
-// const ref = db.ref(`/LawInfo/${req.body.lawNumber}`)
-
-// ref.set(req.body.lawInfo,()=>{
-//   console.log('pushed Info');
-
-// })
-
-// const ref2 = db.ref(`/LawContent/${req.body.lawNumber}`)
-// ref2.set(req.body.dataLaw,()=>{
-//   console.log('pushed Content');
-
-// })
 
 app.post("/push", async (req, res) => {
   run(req.body.lawInfo, req.body.dataLaw, req.body.lawNumber,req.body.contentText);
@@ -201,7 +250,6 @@ app.post("/push", async (req, res) => {
 
 app.post("/searchlaw", async (req, res) => {
   // dành cho Detail2
-
   try {
     const database = client.db("LawMachine");
     const LawContent = database.collection("LawContent");
@@ -244,14 +292,13 @@ app.post("/searchcontent", async (req, res) => {
 app.post("/getonelaw", async (req, res) => {
   // dành cho Detail5
   let a;
-  console.log(req.body.input);
 
   try {
     const database = client.db("LawMachine");
     const LawContent = database.collection("LawContent");
     // Query for a movie that has the title 'Back to the Future'
 
-    a = await LawContent.findOne({ _id: req.body.input });
+    a = await LawContent.findOne({ _id: req.body.screen });
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();

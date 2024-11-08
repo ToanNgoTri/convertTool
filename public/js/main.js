@@ -12,20 +12,200 @@ let lawRelated = []
 let lawKind = ''
 let lawNameDisplay = ''
 
-function uniqueArray(orinalArray) {
-  let noDuplicate = orinalArray.filter((elem, position, arr) => {
-    return arr.indexOf(elem) == position && elem != lawNumber;
-  });
 
-  let removeDayMonth = noDuplicate.map((value, index) => {
-    return value.replace(/ngày.*tháng.*(?=năm)/gim, "");
-  });
+function getLawDayActive(text,daySign,lawKind) {
+ let lawDayActive
+  if (
+    text.match(
+      // /(?<=^(Điều|Ðiều|Điều) \d.*(Hiệu lực|thi hành|thực hiện).*\n).*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực).* từ ngày k/im
+      new RegExp(`${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)\.* từ ngày k`,'im')
+    )
+  ) {
+    lawDayActive = daySign;
+  } else if (
+    text.match(new RegExp(`(?<=${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\\d]+)(ngày|ngày)\\s*\\d*\\s*(tháng|tháng)\\s*\\d*\\s*năm\\s*\\d*`,'im')
+      // /(?<=^(Điều|Ðiều|Điều) \d.{0,15}(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
+    )
+  ) {
+    let lawDayActiveDemo = text.match(
+      new RegExp(`(?<=${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\\d]+)(ngày|ngày)\\s*\\d*\\s*(tháng|tháng)\\s*\\d*\\s*năm\\s*\\d*`,'im')    
+    )[0];
+    let RemoveDay = lawDayActiveDemo.replace(/(ngày|ngày) */im, "");
+    let RemoveMonth = RemoveDay.replace(/ *(tháng|tháng) */im, "/");
+    lawDayActive = RemoveMonth.replace(/ *năm */im, "/");
+  } else if (
+    text.match(
+      // /(?<=^(Điều|Ðiều|Điều) \d.*(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)\d+\/\d+\/\d+/im
+      new RegExp(`(?<=${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\\d]+)\\d+\\/\\d+\\/\\d+`,'im')
+    )
+  ) {
+    lawDayActive = text.match(
+      new RegExp(`(?<=${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\\d]+)\\d+\\/\\d+\\/\\d+`,'im')
+    )[0];
+  } else if (
+    text.match(
+      // /(?<=^(Điều|Ðiều|Điều) \d.*\n.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \d* ngày/im
+      new RegExp(`(?<=${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \\d* ngày`,'im')
+    )
+  ) {
+    lawDayActive = text.match(
+      new RegExp(`(?<=${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \\d* ngày`,'im')
+    )[0];
+  } else {
+    lawDayActive = null;
+  }
 
-  return removeDayMonth;
+  return lawDayActive
 }
 
+function getLawRelated(text) {
+  function uniqueArray(orinalArray) {
+    let noDuplicate = orinalArray.filter((elem, position, arr) => {
+      return arr.indexOf(elem) == position && elem != lawNumber;
+    });
+  
+    let removeDayMonth = noDuplicate.map((value, index) => {
+      return value.replace(/ngày.*tháng.*(?=năm)/gim, "");
+    });
+  
+    return removeDayMonth;
+  }
+  
 
-function getInfo() {
+  let lawRelatedDemo = text.match(
+    /(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/\D[^(\s|,|.| |\:|\"|\'|\;|\{|\}|”)]+/gi
+  );
+  let lawRelatedDemo2 = lawRelatedDemo
+    ? lawRelatedDemo.map(function (item) {
+        return item.replace(/ */g, "");
+      })
+    : [];
+  // if (b13.match(/(?<=(căn cứ |; |và ))(luật|bộ luật)[^ số][^;]+năm \d+ (?=((và luật sửa đổi)|;))/gi)) {
+  if (text.match(/(?<=(căn cứ |; ))(luật|bộ luật)[^(;|\n)]+năm \d+/gi)) {
+    for (
+      let y = 0;
+      y <
+      text.match(/(?<=(căn cứ |; ))(luật|bộ luật)[^(;|\n)]+năm \d+/gi).length;
+      y++
+    ) {
+      if (
+        !text
+          .match(/(?<=(căn cứ |; ))(luật|bộ luật)[^(;|\n)]+năm \d+/gi)
+          [y].match(/(?<=năm \d+) và (?=luật sửa)/gi)
+      ) {
+        let lawRelatedString = text
+          .match(/(?<=(căn cứ |; ))(luật|bộ luật)[^(;|\n)]+năm \d+/gi)
+          [y].replace(/ số \d+[^( |,)]+/gim, "");
+        lawRelatedString = lawRelatedString.replace(
+          / ngày \d+\/\d+\/\d+/gim,
+          ""
+        );
+        lawRelatedString = lawRelatedString.replace(
+          / ngày \d+ *\d+ *\d+/gim,
+          ""
+        );
+        lawRelatedString = lawRelatedString.replace(
+          / (ngày|ngày) *\d+ *(tháng|tháng) *\d+/gim,
+          ""
+        );
+
+        lawRelatedDemo2 = [...lawRelatedDemo2, lawRelatedString];
+      } else {
+        let lawRelatedString = text
+          .match(/(?<=(căn cứ |; ))(luật|bộ luật)[^(;|\n)]+năm \d+/gi)
+          [y].replace(/ số \d+[^( |,)]+/gim, "");
+        lawRelatedString = lawRelatedString.replace(
+          / ngày \d+\/\d+\/\d+/gim,
+          ""
+        );
+        lawRelatedString = lawRelatedString.replace(
+          / ngày \d+ *\d+ *\d+/gim,
+          ""
+        );
+        lawRelatedString = lawRelatedString.replace(
+          / (ngày|ngày) *\d+ *(tháng|tháng) *\d+/gim,
+          ""
+        );
+        lawRelatedDemo2 = [
+          ...lawRelatedDemo2,
+          ...lawRelatedString.split(/(?<=năm \d+) và (?=luật sửa)/gi),
+        ];
+      }
+    }
+  }
+  if (text.match(/(?<=(căn cứ |; |vào ))(hiến pháp)[^(;|\n)]+/gi)) {
+    // let lawRelatedString = lawRelatedString.match(/(?<=(căn cứ |; |vào ))(hiến pháp)[^;]+/gi).replace(/ số \d+[^( |,)]+/igm,'')
+    // lawRelatedString = lawRelatedString.replace(/ ngày \d+\/\d+\/\d+/igm,'')
+
+    lawRelatedDemo2 = [
+      ...lawRelatedDemo2,
+      ...text.match(/(?<=(căn cứ |; |vào ))(hiến pháp)[^(;|\n)]+/gi),
+    ];
+  }
+  lawRelatedDemo2 = lawRelatedDemo2.map((item) => {
+    return item.replace(/ ngày ?\d+ ?tháng ?\d+/gim, "");
+  });
+
+ let lawRelated = uniqueArray(lawRelatedDemo2);
+
+return lawRelated
+}
+
+async function convertInfo(kind) {
+  // có thể bị lỗi:
+  // nếu Lawname nhiều hơn 2 dòng
+  // nếu dòng signRole có 2 dòng thì gộp 1 thôi
+  // bỏ hàng cuối cùng nếu có sau tên
+  // trong unitPublish chỉ cho phép cơ quan chứ không cho phép cá nhân
+  // phải có chữ "ban hành"
+  // đối với liên tịch phải có ./. ở cuối
+
+  // văn bản hợp nhất thì ghi VBHN chứ không phải NĐ hay Thông tư
+  // đôi khi không nhận diện được lawKind thì cần tách Thông tư với nội dung miêu tả ra 1 dòng tách biệt
+
+  let b = document.querySelector("#content_input").value;
+  addendum = undefined;
+
+  let b1 = b.replace(/^ */gim, ""); // bỏ các space ở đầu mỗi dòng
+  let b2 = b1.replace(/\(đã ký\)/gim, "");
+
+  let b3 = b2.replace(/\n+\s+$/gim, "");
+  let b4 = b3.replace(/\n*$/gim, ""); //bỏ xuống dòng ở cuối
+  let b5 = b4.replace(/^\s*/gim, ""); // bỏ space, xuống dòng ở đầu
+  let b6 = b5.replace(/\s*$/gim, ""); // bỏ space, xuống dòng ở cuối
+  // let b7 = b6.replace(/^(nơi nhận|Nơi nhận).*/gim, "");
+  let b7 = b6
+  let b8 = b7.replace(/(?<=\w)\n\[\d+\].*$(\n.*)*$/gim, ""); // bỏ mấy cái chỉ mục của VBHN đi
+  let b9 = b8.replace(/\n+/gim, "\n"); // biến nhiều xuống dòng thành 1 xuống dòng
+  let b10
+  if(b9.match(/^Nơi nhận/mi)){    // bỏ phụ lục, danh mục các thư
+    b10 = b9.replace(
+      /(?<=^(Nơi nhận|Nơi Nhận).*(\n.*)*)\n(PHỤ LỤC|PHỤ LỤC|Phụ lục|DANH MỤC|MỤC LỤC|QUY CHẾ|QUY CHUẨN|NỘI QUY|BIỂU THUẾ|ĐIỀU LỆ|Mẫu|MẪU|BIỂU KHUNG|QCVN|QCVN|ĐỊNH MỨC|HỆ THỐNG|QUY ĐỊNH|CHƯƠNG TRÌNH).*(\n.*)*/gm,
+      ""
+    ); // bỏ Phụ lục,danh mục
+
+  }else{
+    b10 = b9.replace(
+      /(?<!^(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|Điều|Ðiều|Điều|Chương|CHƯƠNG|Phần thứ|PHẦN THỨ|MỤC|Mục|Mục|Mẫu số).*)\n(PHỤ LỤC|PHỤ LỤC|Phụ lục|DANH MỤC|QUY CHẾ|QUY CHUẨN|NỘI QUY|BIỂU THUẾ|ĐIỀU LỆ|Mẫu|MẪU|BIỂU KHUNG|QCVN|QCVN|ĐỊNH MỨC|HỆ THỐNG|QUY ĐỊNH|CHƯƠNG TRÌNH).*(\n.*)*/gm,
+      ""
+    ); // bỏ Phụ lục,danh mục
+    }
+
+
+  // b10 = b10.replace(/^(nơi nhận|Nơi nhận).*(\n.*)*/gim, "");
+
+  // b10 = b10.replace(
+  //   /(?<!(Điều|Ðiều|Điều|chương|Phần thứ|Mục|Mục) (\d|II|V|X)+\:*)\n(PHỤ LỤC|PHỤ LỤC|Phụ lục|DANH MỤC|QUY CHẾ|QUY CHUẨN|NỘI QUY|BIỂU THUẾ|ĐIỀU LỆ).*(\n.*)*/gim,
+  //   ""
+  // ); // bỏ Phụ lục,danh mục
+  let b11 = b10.replace(/(\[|\()\d*(\]|\))/gim, ""); // bỏ chỉ mục số đi
+  // let b12 = b11.replace(/\n.*ĐÍNH KÈM.*$/gi, ""); // bỏ FILE ĐƯỢC ĐÍNH KÈM THEO VĂN BẢN
+  let b12 = b11.replace(/(?<=^Chương.*)l(?=.*)/gim, "I"); // đôi khi số la mã 'I' bị chuyển thành 'l' nên đổi lại
+  let b13 = b12.replace(/  +/gim, " "); // bỏ khoảng cách 2 space
+
+
+
+
   
   let unitPublishString = document.querySelector("#unitPublish").value;
   unitPublish = unitPublishString.split("; ");
@@ -54,463 +234,15 @@ function getInfo() {
 
 
 
-  let roleSignString = document.querySelector("#roleSign").value;
-  let unitPbDemo = unitPublish
-  for(let a = 0;a<nameSignArrayDemo.length;a++){
-    let nameSignString = roleSignString.match(new RegExp(`.*${nameSignArrayDemo[a]}.*`,'img'))[0]
-    nameSign.push(nameSignString)
-   let nameSignStringEffectArea = roleSignString.match(new RegExp(`${roleSignString.match(new RegExp(`(\.*\\n){0,3}\.*${nameSignArrayDemo[a]}\.*`,'img'))[0]  }`,'img'))[0]
-   
-   if(lawKind.match(/liên tịch/i)){
-     for(let b = 0;b<unitPublish.length;b++){
 
-       if(nameSignStringEffectArea.match(new RegExp(`${unitPublish[b]}`,'igm'))){
-         unitPbDemo[a] = unitPublish[b]         
-       }
-     }
-    }
-  }
-  unitPublish = unitPbDemo
 
-
-  let contentRoleSign = document.querySelector("#roleSign").value;
-  for (let a = 0; a < nameSign.length; a++) {
-    let roleSignString = contentRoleSign.match(
-      new RegExp(`.*(?=\n.*${nameSign[a]})`, "img")
-    )[0].toLowerCase();//key.charAt(0).toUpperCase() + key.slice(1);
-
-    roleSignString = roleSignString.charAt(0).toUpperCase() + roleSignString.slice(1);
-    if(roleSignString.match(/^phó/i)){
-      roleSignString = 'Phó '+roleSignString.charAt(4).toUpperCase() + roleSignString.slice(5);
-    }else if(roleSignString.match(/quốc hội/i)){
-      roleSignString = roleSignString.replace(/quốc hội/i,'Quốc hội')
-    }
-    roleSign.push(roleSignString);
-  }
-
-
-
-  contentText = document.querySelector("#content_input").value;
-  let content = contentText
-  if (
-    content.match(
-      // /(?<=^(Điều|Ðiều|Điều) \d.*(Hiệu lực|thi hành|thực hiện).*\n).*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực).* từ ngày k/im
-      new RegExp(`${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)\.* từ ngày k`,'im')
-    )
-  ) {
-    lawDayActive = lawDaySign;
-  } else if (
-    content.match(new RegExp(`(?<=${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\\d]+)(ngày|ngày)\\s*\\d*\\s*(tháng|tháng)\\s*\\d*\\s*năm\\s*\\d*`,'im')
-      // /(?<=^(Điều|Ðiều|Điều) \d.{0,15}(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
-    )
-  ) {
-    let lawDayActiveDemo = content.match(
-      new RegExp(`(?<=${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\\d]+)(ngày|ngày)\\s*\\d*\\s*(tháng|tháng)\\s*\\d*\\s*năm\\s*\\d*`,'im')    
-    )[0];
-    let RemoveDay = lawDayActiveDemo.replace(/(ngày|ngày) */im, "");
-    let RemoveMonth = RemoveDay.replace(/ *(tháng|tháng) */im, "/");
-    lawDayActive = RemoveMonth.replace(/ *năm */im, "/");
-  } else if (
-    content.match(
-      // /(?<=^(Điều|Ðiều|Điều) \d.*(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)\d+\/\d+\/\d+/im
-      new RegExp(`(?<=${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\\d]+)\\d+\\/\\d+\\/\\d+`,'im')
-    )
-  ) {
-    lawDayActive = content.match(
-      new RegExp(`(?<=${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\\d]+)\\d+\\/\\d+\\/\\d+`,'im')
-    )[0];
-  } else if (
-    content.match(
-      // /(?<=^(Điều|Ðiều|Điều) \d.*\n.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \d* ngày/im
-      new RegExp(`(?<=${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \\d* ngày`,'im')
-    )
-  ) {
-    lawDayActive = content.match(
-      new RegExp(`(?<=${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \\d* ngày`,'im')
-    )[0];
-  } else {
-    lawDayActive = null;
-  }
-
-
-  let introduceString = document.querySelector("#lawRelated").value;
-  let lawRelatedDemo = introduceString.match(
-    /(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/\D[^(\s|,|.| |\:|\"|\'|\;|\{|\})]+/gi
-  );
-  let lawRelatedDemo2 = lawRelatedDemo
-    ? lawRelatedDemo.map(function (item) {
-        return item.replace(/ */g, "");
-      })
-    : [];
-  // if (b13.match(/(?<=(căn cứ |; |và ))(luật|bộ luật)[^ số][^;]+năm \d+ (?=((và luật sửa đổi)|;))/gi)) {
-  if (introduceString.match(/(?<=(căn cứ |; ))(luật|bộ luật)[^(;|\n)]+năm \d+/gi)) {
-    for (
-      let y = 0;
-      y <
-      introduceString.match(/(?<=(căn cứ |; ))(luật|bộ luật)[^(;|\n)]+năm \d+/gi).length;
-      y++
-    ) {
-      if (
-        !introduceString
-          .match(/(?<=(căn cứ |; ))(luật|bộ luật)[^(;|\n)]+năm \d+/gi)
-          [y].match(/(?<=năm \d+) và (?=luật sửa)/gi)
-      ) {
-        let lawRelatedString = introduceString
-          .match(/(?<=(căn cứ |; ))(luật|bộ luật)[^(;|\n)]+năm \d+/gi)
-          [y].replace(/ số \d+[^( |,)]+/gim, "");
-        lawRelatedString = lawRelatedString.replace(
-          / ngày \d+\/\d+\/\d+/gim,
-          ""
-        );
-        lawRelatedString = lawRelatedString.replace(
-          / ngày \d+ *\d+ *\d+/gim,
-          ""
-        );
-        lawRelatedString = lawRelatedString.replace(
-          / (ngày|ngày) *\d+ *(tháng|tháng) *\d+/gim,
-          ""
-        );
-
-        lawRelatedDemo2 = [...lawRelatedDemo2, lawRelatedString];
-      } else {
-        let lawRelatedString = introduceString
-          .match(/(?<=(căn cứ |; ))(luật|bộ luật)[^(;|\n)]+năm \d+/gi)
-          [y].replace(/ số \d+[^( |,)]+/gim, "");
-        lawRelatedString = lawRelatedString.replace(
-          / ngày \d+\/\d+\/\d+/gim,
-          ""
-        );
-        lawRelatedString = lawRelatedString.replace(
-          / ngày \d+ *\d+ *\d+/gim,
-          ""
-        );
-        lawRelatedString = lawRelatedString.replace(
-          / (ngày|ngày) *\d+ *(tháng|tháng) *\d+/gim,
-          ""
-        );
-        lawRelatedDemo2 = [
-          ...lawRelatedDemo2,
-          ...lawRelatedString.split(/(?<=năm \d+) và (?=luật sửa)/gi),
-        ];
-      }
-    }
-  }
-  if (introduceString.match(/(?<=(căn cứ |; |vào ))(hiến pháp)[^(;|\n)]+/gi)) {
-    // let lawRelatedString = lawRelatedString.match(/(?<=(căn cứ |; |vào ))(hiến pháp)[^;]+/gi).replace(/ số \d+[^( |,)]+/igm,'')
-    // lawRelatedString = lawRelatedString.replace(/ ngày \d+\/\d+\/\d+/igm,'')
-
-    lawRelatedDemo2 = [
-      ...lawRelatedDemo2,
-      ...introduceString.match(/(?<=(căn cứ |; |vào ))(hiến pháp)[^(;|\n)]+/gi),
-    ];
-  }
-  lawRelatedDemo2 = lawRelatedDemo2.map((item) => {
-    return item.replace(/ ngày ?\d+ ?tháng ?\d+/gim, "");
-  });
-
-  lawRelated = uniqueArray(lawRelatedDemo2);
-
-
-
-
-   
-
-  lawInfo = {unitPublish,lawDaySign,nameSign,roleSign,lawDayActive,lawDescription,lawNumber,lawRelated,lawKind,lawNameDisplay};
-
-  console.log('lawInfo',lawInfo);
-  
-}
-
-
-
-
-// function getNameSign() {
-//   let content = document.querySelector("#nameSign").value;
-
-//   let nameSignArrayDemo = content.split("; ");
-
-//   let roleSignString = document.querySelector("#roleSign").value;
-
-//   let unitPbDemo = []
-//   for(let a = 0;a<nameSignArrayDemo.length;a++){
-//     let nameSignString = roleSignString.match(new RegExp(`.*${nameSignArrayDemo[a]}.*`,'img'))[0]
-//     nameSignArray.push(nameSignString)
-
-//    let nameSignStringEffectArea = roleSignString.match(new RegExp(`${roleSignString.match(new RegExp(`(.*\n){0,3}.*${nameSignArrayDemo[a]}.*`,'img'))[0]  }`,'img'))[0]
-
-//    if(lawKind.match(/liên tịch/i)){
-//      for(let b = 0;b<unitPublishArray.length;b++){
-//        if(nameSignStringEffectArea.match(new RegExp(`${unitPublishArray[b]}`,'igm'))){
-//          unitPbDemo[a] = unitPublishArray[b]
-//          break
-//        }
-//      }
-//      unitPublishArray = unitPbDemo
-//    }
-//   }
-//   console.log("nameSignArray", nameSignArray);
-//   console.log("unitPublishArray", unitPublishArray);
-// }
-
-// function getRoleSign() {
-//   let content = document.querySelector("#roleSign").value;
-
-//   for (let a = 0; a < nameSignArray.length; a++) {
-//     let roleSignString = content.match(
-//       new RegExp(`.*(?=\n.*${nameSignArray[a]})`, "img")
-//     )[0].toLowerCase();//key.charAt(0).toUpperCase() + key.slice(1);
-
-//     roleSignString = roleSignString.charAt(0).toUpperCase() + roleSignString.slice(1);
-//     if(roleSignString.match(/^phó/i)){
-//       roleSignString = 'Phó '+roleSignString.charAt(4).toUpperCase() + roleSignString.slice(5);
-//     }
-//     roleSign.push(roleSignString);
-
-
-
-
-
-
-//   }
-//   console.log('roleSign',roleSign);
-
-
-
-  
-// }
-
-
-// function getLawDayActive() {
-
-//   let content = document.querySelector("#content_input").value;
-//   if (
-//     content.match(
-//       // /(?<=^(Điều|Ðiều|Điều) \d.*(Hiệu lực|thi hành|thực hiện).*\n).*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực).* từ ngày k/im
-//       new RegExp(`${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)\.* từ ngày k`,'im')
-//     )
-//   ) {
-//     lawDayActive = lawDaySign;
-//   } else if (
-//     content.match(new RegExp(`(?<=${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\\d]+)(ngày|ngày)\\s*\\d*\\s*(tháng|tháng)\\s*\\d*\\s*năm\\s*\\d*`,'im')
-//       // /(?<=^(Điều|Ðiều|Điều) \d.{0,15}(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
-//     )
-//   ) {
-//     let lawDayActiveDemo = content.match(
-//       new RegExp(`(?<=${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\\d]+)(ngày|ngày)\\s*\\d*\\s*(tháng|tháng)\\s*\\d*\\s*năm\\s*\\d*`,'im')    
-//     )[0];
-//     let RemoveDay = lawDayActiveDemo.replace(/(ngày|ngày) */im, "");
-//     let RemoveMonth = RemoveDay.replace(/ *(tháng|tháng) */im, "/");
-//     lawDayActive = RemoveMonth.replace(/ *năm */im, "/");
-//   } else if (
-//     content.match(
-//       // /(?<=^(Điều|Ðiều|Điều) \d.*(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)\d+\/\d+\/\d+/im
-//       new RegExp(`(?<=${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\\d]+)\\d+\\/\\d+\\/\\d+`,'im')
-//     )
-//   ) {
-//     lawDayActive = content.match(
-//       new RegExp(`(?<=${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\\d]+)\\d+\\/\\d+\\/\\d+`,'im')
-//     )[0];
-//   } else if (
-//     content.match(
-//       // /(?<=^(Điều|Ðiều|Điều) \d.*\n.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \d* ngày/im
-//       new RegExp(`(?<=${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \\d* ngày`,'im')
-//     )
-//   ) {
-//     lawDayActive = content.match(
-//       new RegExp(`(?<=${lawKind} này\.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \\d* ngày`,'im')
-//     )[0];
-//   } else {
-//     lawDayActive = null;
-//   }
-//   console.log('lawDayActive',lawDayActive);
-
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-async function convertInfo(kind) {
-  let b = document.querySelector(".content_input").value;
-
-  let b1 = b.replace(/^ */gim, ""); // bỏ các space ở đầu mỗi dòng
-  let b2 = b1.replace(/\n(\S)/gim, " $1");
-  if (kind == "plain") {
-    b2 = b1;
-  }
-  b2 = b2.replace(/---+/gim, ""); // bỏ các space ở đầu mỗi dòng
-  b2 = b2.replace(/^ */gim, ""); // bỏ các space ở đầu mỗi dòng
-  b2 = b2.replace(/\(đã ký\)/gim, "");
-
-  let b3 = b2.replace(/\n+\s+$/gim, "");
-  let b4 = b3.replace(/\n*$/gim, ""); //bỏ xuống dòng ở cuối
-  let b5 = b4.replace(/^\s*/gim, ""); // bỏ space, xuống dòng ở đầu
-  let b6 = b5.replace(/\s*$/gim, ""); // bỏ space, xuống dòng ở cuối
-  // let b7 = b6.replace(/^(nơi nhận|Nơi nhận).*/gim, "");
-  let b7 = b6;
-  let b8 = b7.replace(/(?<=\w)\n\[\d+\].*$(\n.*)*$/gim, ""); // bỏ mấy cái chỉ mục của VBHN đi
-  let b9 = b8.replace(/\n+/gim, "\n"); // biến nhiều xuống dòng thành 1 xuống dòng
-  b9 = b9.replace(
-    /^(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|QUY ĐỊNH)\n(.*)/m,
-    "$1 $2"
-  ); // biến LUẬT GÌ ĐÓ 2 DÒNG THÀNH 1 DÒNG
-
-  let b10;
-  if (b9.match(/^Nơi nhận/im)) {
-    b10 = b9.replace(
-      /(?<=^(Nơi nhận|Nơi Nhận).*(\n.*)*)\n(PHỤ LỤC|PHỤ LỤC|Phụ lục|DANH MỤC|MỤC LỤC|QUY CHẾ|QUY CHUẨN|NỘI QUY|BIỂU THUẾ|ĐIỀU LỆ|Mẫu|MẪU|BIỂU KHUNG|QCVN|QCVN|ĐỊNH MỨC|HỆ THỐNG|QUY ĐỊNH|CHƯƠNG TRÌNH).*(\n.*)*/gm,
-      ""
-    ); // bỏ Phụ lục,danh mục
-  } else {
-    b10 = b9.replace(
-      /(?<!^(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|Điều|Ðiều|Điều|Chương|CHƯƠNG|Phần thứ|PHẦN THỨ|MỤC|Mục|Mục|Mẫu số).*)\n(PHỤ LỤC|PHỤ LỤC|Phụ lục|DANH MỤC|QUY CHẾ|QUY CHUẨN|NỘI QUY|BIỂU THUẾ|ĐIỀU LỆ|Mẫu|MẪU|BIỂU KHUNG|QCVN|QCVN|ĐỊNH MỨC|HỆ THỐNG|QUY ĐỊNH|CHƯƠNG TRÌNH).*(\n.*)*/gm,
-      ""
-    ); // bỏ Phụ lục,danh mục
-  }
-
-  b10 = b10.replace(/^(nơi nhận|Nơi nhận).*/gim, "");
-  // b10 = b10.replace(
-  //   /(?<!(Điều|Ðiều|Điều|chương|Phần thứ|Mục|Mục) (\d|II|V|X)+\:*)\n(PHỤ LỤC|PHỤ LỤC|Phụ lục|DANH MỤC|QUY CHẾ|QUY CHUẨN|NỘI QUY|BIỂU THUẾ|ĐIỀU LỆ).*(\n.*)*/gim,
-  //   ""
-  // ); // bỏ Phụ lục,danh mục
-  let b11 = b10.replace(/(\[|\()\d*(\]|\))/gim, ""); // bỏ chỉ mục số đi
-  let b12 = b11.replace(/\n.*ĐÍNH KÈM.*$/gi, ""); // bỏ FILE ĐƯỢC ĐÍNH KÈM THEO VĂN BẢN
-  b12 = b12.replace(/(?<=^Chương.*)l(?=.*)/gim, "I"); // đôi khi số la mã 'I' bị chuyển thành 'l' nên đổi lại
-  let b13 = b12.replace(/  +/gim, " "); // bỏ khoảng cách 2 space
-
-  let lawNumberDemo = b13.match(/(?<=(.*số.*: *)).*(?=\s)/im)[0];
-  let lawNumber = lawNumberDemo.replace(/ /gim, "");
-
-  let lawKindDemo = b13.match(
-    // /^(luật|bộ luật|nghị định|thông tư|nghị quyết|thông tư liên tịch|quyết định|pháp lệnh|chỉ thị|báo cáo|hướng dẫn|hiến pháp)$/im
-    /^(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|QUY ĐỊNH)/m
-  )[0];
-
-  function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-  }
-  let lawKind = capitalize(lawKindDemo);
-
-  let unitPublishForDescription = b13.match(/^.*/)[0];
-  let lawDescriptionDemo = b13.match(
-    new RegExp(
-      `(?<=${unitPublishForDescription} )[^\n]+(?=\n(Chương|CHƯƠNG|Phần|PHẦN|Điều))`,
-      "im"
-    )
-  );
-  console.log(lawDescriptionDemo);
-
-  // let lawDescriptionDemo = b13.match(
-  //   /(?<=(.*(liên tịch)?(ban hành|ban hành)* .{0,15}))(luật|bộ luật|nghị định|Nghị định|thông tư|nghị quyết|thông tư liên tịch|quyết định|pháp lệnh|chỉ thị|báo cáo|hướng dẫn|hiến pháp|quy định|Quy chuẩn|công bố).*(?=\n(Chương|CHƯƠNG|Phần||PHẦN|Điều))/m
-  // );
-  // console.log('lawDescriptionDemo',lawDescriptionDemo);
-
-  // let lawDescriptionDemo = b13.match(
-  //   /.*(?=( (luật|Luật|bộ luật|nghị định|Nghị định|thông tư|nghị quyết|thông tư liên tịch|quyết định|pháp lệnh|chỉ thị|báo cáo|hướng dẫn|hiến pháp|quy định).*\n(Chương|Phần|Điều)))/im
-  // );
-  lawDescriptionDemo = [lawDescriptionDemo[0].replace(/^ban hành/gim)];
-  if (!lawKind.match(/nghị quyết/i) && lawDescriptionDemo) {
-  } else {
-    lawDescriptionDemo = [b13.match(/NGHỊ QUYẾT.*/im)[0].replace(/\n/gim, " ")];
-  }
-
-  // if (lawKind.match(/nghị quyết/i)) {
-  //   lawDescriptionDemo = [
-  //     b13.match(/NGHỊ QUYẾT(\n).*/im)[0].replace(/\n/gim, " "),
-  //   ];
-  // } else if(lawNumber.match(/VBHN/igm)) {
-  //   // lawDescriptionDemo = lawDescriptionDemo+`năm ${lawDaySign.match(/\d\d\d\d$/gim)[0]}`
-  // }
-
-  let lawDescription;
-  let unitPublish = "";
   let roleSign = "";
   let nameSign = [];
 
   if (kind == "TTLT") {
-    if (!lawDescriptionDemo && lawKind.match(/liên tịch/i)) {
-      lawDescriptionDemo = b13.match(
-        /(?<=(.* (liên tịch quy định) .*)).*(?=\n(Chương|Phần|Điều))/im
-      );
-    } else if (!lawKind.match(/nghị quyết/i) && lawDescriptionDemo) {
-    } else {
-      lawDescriptionDemo = [
-        b13.match(/NGHỊ QUYẾT(\n).*/im)[0].replace(/\n/gim, " "),
-      ];
-    }
 
-    lawDescription = lawDescriptionDemo
-      ? lawDescriptionDemo[0].replace(/(.*)(\.\/\.|\.|\,|\;)$/im, "$1")
-      : "";
 
-    lawDescription =
-      lawDescription.charAt(0).toUpperCase() + lawDescription.slice(1);
-    lawDescription = lawDescription.replace(/ \(sau đây.*\)/gim, "");
-    lawDescription = lawDescription.replace(/ như sau.*/gim, "");
-
-    let unitPublishTrail = b13.match(
-      /.*(?=( (luật|Luật|bộ luật|nghị định|Nghị định|thông tư|nghị quyết|thông tư liên tịch|quyết định|pháp lệnh|chỉ thị|báo cáo|hướng dẫn|hiến pháp|quy định|công bố).*\n(Chương|Phần|Điều)))/i
-    );
-    unitPublishTrail = [unitPublishTrail[0].replace(/.*ban hành/im, "")];
-    if (!unitPublishTrail && lawKind.match(/liên tịch/i)) {
-      unitPublishTrail = b13.match(
-        /.*(?=( (liên tịch quy định).*\n(Chương|Phần|Điều)))/i
-      );
-    }
-
-    if (unitPublishTrail[0].match(/ và bộ/gim)) {
-      unitPublishTrail = [unitPublishTrail[0].replace(/ và bộ/gim, ", Bộ")];
-    } else if (unitPublishTrail[0].match(/ và viện/gim)) {
-      unitPublishTrail = [unitPublishTrail[0].replace(/ và viện/gim, ", Viện")];
-    } else if (unitPublishTrail[0].match(/ và chánh/gim)) {
-      unitPublishTrail = [
-        unitPublishTrail[0].replace(/ và chánh/gim, ", Chánh"),
-      ];
-    } else if (unitPublishTrail[0].match(/ và văn/gim)) {
-      unitPublishTrail = [unitPublishTrail[0].replace(/ và văn/gim, ", Văn")];
-    } else if (unitPublishTrail[0].match(/ và thống/gim)) {
-      unitPublishTrail = [
-        unitPublishTrail[0].replace(/ và thống/gim, ", Thống"),
-      ];
-    }
-
-    if (lawNumber.match(/.*VPQH$/gim)) {
-      unitPublish = ["Văn phòng Quốc hội"];
-    } else if (unitPublishTrail) {
-      unitPublish = unitPublishTrail[0].replace(
-        /(Bộ trưởng|Bộ trưởng|viện trưởng|chánh án) /gim,
-        ""
-      );
-
-      unitPublish = unitPublish.replace(/ liên tịch/gim, "");
-      unitPublish = unitPublish.replace(/ thống nhất/gim, "");
-      unitPublish = unitPublish.split(/\, (?!Thể)/gim);
-    } else if (lawNumber.match(/.*HĐTP$/gim)) {
-      unitPublish = ["Hội đồng Thẩm phán Tòa án nhân dân tối cao"];
-    }
+    
 
     let a0 = b13.match(/(?<=.*\.\/\.)(\n.*)*/gim)[0];
     let ppArray = a0.match(/(?<=KT\. ?)\w+.*/gim); // pp là KT.
@@ -603,13 +335,6 @@ async function convertInfo(kind) {
   } else {
     // nếu không là TTLT
 
-    lawDescription = lawDescriptionDemo
-      ? lawDescriptionDemo[0].replace(/(.*)(\.\/\.|\.|\,|\;)$/im, "$1") // bỏ mấy dấu sau cùng
-      : "";
-    lawDescription =
-      lawDescription.charAt(0).toUpperCase() + lawDescription.slice(1);
-    lawDescription = lawDescription.replace(/ \(sau đây.*\)/gim, "");
-    lawDescription = lawDescription.replace(/ như sau.*/gim, "");
 
     let roleSignDemo = b13.match(/.*(?=\n.*$)/)[0].toLowerCase();
 
@@ -629,330 +354,65 @@ async function convertInfo(kind) {
     }
     roleSign = roleSign.charAt(0).toUpperCase() + roleSign.slice(1);
 
-    let unitPublishTrail = b13.match(/^.*/);
-    unitPublishTrail = b13.match(new RegExp(`${unitPublishTrail[0]}`, "img"));
 
-    for (let d = 0; d < unitPublishTrail.length; d++) {
-      if (unitPublishTrail[d].charAt(1) != unitPublishTrail[0].charAt(1)) {
-        unitPublishTrail = unitPublishTrail[d];
-        break;
-      }
-    }
 
-    unitPublishTrail = unitPublishTrail
-      ? unitPublishTrail.replace(/theo đề nghị[^;]+/gim, "") // đôi khi xảy ra lỗi BỘ .. không có chữ viết thường
-      : "";
-    unitPublishTrail = unitPublishTrail
-      ? unitPublishTrail.replace(/Căn cứ Hiến pháp[^(;|\n)]+/gim, "")
-      : "";
-    unitPublishTrail = unitPublishTrail
-      ? unitPublishTrail.replace(/; */gim, "")
-      : "";
 
-    let Role = roleSign.replace(/ +phó+ /gim, "");
-    let replaceRole = `${Role} `;
-    let reRole = new RegExp(replaceRole, "gim");
-    let unitPublishTrail1 = unitPublishTrail
-      ? unitPublishTrail.replace(reRole, "")
-      : roleSign.match(/chánh án/i)
-      ? "Tòa án nhân dân tối cao"
-      : "";
-    unitPublish = unitPublishTrail1.replace(/(Bộ trưởng|Bộ trưởng) /gim, "");
-    if (lawNumber.match(/.*VPQH$/gim)) {
-      // let Role = roleSign.replace(/ +phó+ /gim, "");
-      // let replaceRole = `${Role} `;
-      // let reRole = new RegExp(replaceRole, "gim");
-      // let unitPublishTrail1 = unitPublishTrail?unitPublishTrail[0].replace(reRole, ""):roleSign.match(/chánh án/i)?'Tòa án nhân dân tối cao':'';
-      // console.log('p',p);
-      unitPublish = ["Văn phòng Quốc hội"];
-    }
-    // else if (lawNumber.match(/.*HĐTP$/gim)) {
-    //   unitPublish = ["Hội đồng Thẩm phán Tòa án nhân dân tối cao"];
-    // }
-    else {
-      unitPublish = [unitPublish];
-    }
-
-    nameSign = b13.match(/.*$/);
   }
 
-  //   let nameSign = b13.match(/.*$/)[0];
+  
+  let lawDayActive = getLawDayActive(b13,lawDaySign,lawKind)
 
-  let lawDaySignDemo = b13.match(
-    /(ngày|ngày) *(\d)* *(tháng|tháng) *(\d)* *năm *(\d)*$/im
-  );
-  let RemoveDay = lawDaySignDemo[0].replace(/(ngày|ngày) */im, "");
-  let RemoveMonth = RemoveDay.replace(/ *(tháng|tháng) */im, "/");
-  let lawDaySign = RemoveMonth.replace(/ *năm */im, "/");
+  
+  let lawRelated =  getLawRelated(b13)
 
-  let lawDayActive;
+  if (lawKind.match(/nghị quyết/i)) {// bỏ phần đầu
+    b14 = b13.replace(/^(.*\n)*QUYẾT NGHỊ(:|\.|\s|)\n/i, ""); 
+  } else if(b13.match(/^(Phần|PHẦN) (THỨ|I|l|1)/img)){
+    
+    let firstSection = b13.match(/^(Phần|PHẦN) (THỨ|I|l|1).*/im)[0]
 
-  if (
-    b13.match(
-      /(?<=^(Điều|Ðiều|Điều) \d.*(Hiệu lực|thi hành|thực hiện).*\n).*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực).* từ ngày k/im
-    )
-  ) {
-    lawDayActive = lawDaySign;
-  } else if (
-    b13.match(
-      // /(?<=^(Điều|Ðiều|Điều) \d.*(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực)[^\d]+)(ngày|ngày) *\d* *(tháng|tháng) *\d* *năm *\d*/im
-      /(?<=^(Điều|Ðiều|Điều) \d+.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^,]+).*từ ngày k/im
-    )
-  ) {
-    lawDayActive = lawDaySign;
-  } else if (
-    b13.match(
-      // /(?<=^(Điều|Ðiều|Điều) \d.*(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực)[^\d]+)(ngày|ngày) *\d* *(tháng|tháng) *\d* *năm *\d*/im
-      /(?<=^(Điều|Ðiều|Điều) \d.{0,15}(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
-    )
-  ) {
-    let lawDayActiveDemo = b13.match(
-      /(?<=^(Điều|Ðiều|Điều) \d.{0,15}(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
-    )[0];
-    let RemoveDay = lawDayActiveDemo.replace(/(ngày|ngày) */im, "");
-    let RemoveMonth = RemoveDay.replace(/ *(tháng|tháng) */im, "/");
-    lawDayActive = RemoveMonth.replace(/ *năm */im, "/");
-  } else if (
-    b13.match(
-      /(?<=^(Điều|Ðiều|Điều) \d.*(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)\d+\/\d+\/\d+/im
-    )
-  ) {
-    lawDayActive = b13.match(
-      /(?<=^(Điều|Ðiều|Điều) \d.*(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)\d+\/\d+\/\d+/im
-    )[0];
-  } else if (
-    b13.match(
-      /(?<=^(Điều|Ðiều|Điều) \d.*\n.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \d* ngày/im
-    )
-  ) {
-    lawDayActive = b13.match(
-      /(?<=^(Điều|Ðiều|Điều) \d.*\n.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \d* ngày[^.]+/im
-    )[0];
-  } else if (
-    b13.match(
-      // nếu thời gian đó gắn liền với (Điều|Ðiều|Điều) mà không tách ra 1 dòng riêng
-      /(?<=^(Điều|Ðiều|Điều) \d+.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^,]{0,15})(ngày|ngày)? *\d* *(tháng|tháng) *\d* *năm *\d*/im
-    )
-  ) {
-    let lawDayActiveDemo = b13.match(
-      /(?<=^(Điều|Ðiều|Điều) \d+.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^,]{0,15})(ngày|ngày)? *\d* *(tháng|tháng) *\d* *năm *\d*/im
-    )[0];
-    let RemoveDay = lawDayActiveDemo.replace(/(ngày|ngày) */im, "");
-    let RemoveMonth = RemoveDay.replace(/ *(tháng|tháng) */im, "/");
-    lawDayActive = RemoveMonth.replace(/ *năm */im, "/");
-  } else if (
-    b13.match(
-      // nếu thời gian đó gắn liền với (Điều|Ðiều|Điều) mà không tách ra 1 dòng riêng
-      /(?<=^(Điều|Ðiều|Điều) \d.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)\d+\/\d+\/\d+/im
-    )
-  ) {
-    lawDayActive = b13.match(
-      /(?<=^(Điều|Ðiều|Điều) \d.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)\d+\/\d+\/\d+/im
-    )[0];
-  } else if (
-    b13.match(
-      // nếu thời gian đó gắn liền với (Điều|Ðiều|Điều) mà không tách ra 1 dòng riêng
-      /(?<=(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,15} )(ngày|ngày)?\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
-    )
-  ) {
-    let lawDayActiveDemo = b13.match(
-      /(?<=(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,15} )(ngày|ngày)?\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
-    )[0];
+    b14 = b13.replace(new RegExp(`(.*\n)*(?=${firstSection})`,'img'),'')
+  }else if(b13.match(/^(Chương|CHƯƠNG) (I|l|1)/img)){
+    
+    let firstChapter = b13.match(/^(Chương|CHƯƠNG) (I|l|1).*/im)[0]
 
-    let RemoveDay = lawDayActiveDemo.replace(/(ngày|ngày) */im, "");
-    let RemoveMonth = RemoveDay.replace(/ *(tháng|tháng) */im, "/");
-    lawDayActive = RemoveMonth.replace(/ *năm */im, "/");
-  } else {
-    lawDayActive = null;
-  }
+    b14 = b13.replace(new RegExp(`(.*\n)*(?=${firstChapter})`,'img'),'')
+  }else if(b13.match(/^(Điều|Ðiều|Điều) (I|l|1)/img)){
+    
+    let firstArticle = b13.match(/^(Điều|Ðiều|Điều) (I|l|1).*/im)[0]
 
-  // if (b13.match(new RegExp(`(?<=${lawKind}.*có hiệu lực (.){0,30})ngày *\d* *tháng *\d* *năm *\d*`,'im'))) {
-  //   let lawDayActiveDemo = b13.match(
-  //     new RegExp(`(?<=${lawKind}.*có hiệu lực (.){0,30})ngày *\d* *tháng *\d* *năm *\d*`,'im')
-  //   )[0];
-  //   let RemoveDay = lawDayActiveDemo.replace(/ngày */im, "");
-  //   let RemoveMonth = RemoveDay.replace(/ *tháng */im, "/");
-  //   lawDayActive = RemoveMonth.replace(/ *năm */im, "/");
-  //   console.log(1);
-
-  // } else if (b13.match(new RegExp(`(?<=${lawKind}.*có hiệu lực (.){0,30})sau \d* ngày`,'im'))) {
-  //   console.log(2);
-  //   lawDayActive = b13.match(new RegExp(`(?<=${lawKind}.*có hiệu lực (.){0,30})sau \d* ngày[^.]+`,'im'))
-  // } else if (b13.match(new RegExp(`(?<=${lawKind}.*có hiệu lực (.){0,30}).*từ ngày k`,'im'))) {
-  //   console.log(3);
-  //   lawDayActive = lawDaySign;
-  // } else {
-  //   console.log(4);
-  //   lawDayActive = null;
-  // }
-
-  let lawNameDisplay;
-  let lawNumberDisplay = lawNumber.replace(/\\/gim, "/");
-  if (lawNumber.match(/VBHN/gim)) {
-    lawNameDisplay =
-      "Văn bản hợp nhất số " +
-      lawNumberDisplay +
-      " năm " +
-      lawDaySign.match(/\d\d\d\d$/gim)[0];
-  } else if (lawDescription.match(/^(luật|bộ luật).*/gim)) {
-    lawNameDisplay = `${lawKind.toUpperCase()} ${
-      b13.match(
-        /(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|QUY ĐỊNH) )[^\n]+/
-      )[0]
-    } NĂM ${lawDaySign.match(/\d\d\d\d$/gim)[0]}`;
-
-    lawNameDisplay = lawNameDisplay.toUpperCase();
-    lawNameDisplay = lawNameDisplay.replace(/ số \d+[^( |,)]+/gim, "");
-    lawNameDisplay = lawNameDisplay.replace(/ ngày \d+\/\d+\/\d+/gim, "");
-    lawNameDisplay = lawNameDisplay.replace(/ ngày \d+ *\d+ *\d+/gim, "");
-    lawNameDisplay = lawNameDisplay.replace(
-      / (ngày|ngày) *\d+ *(tháng|tháng) *\d+/gim,
-      ""
-    );
-  } else {
-    lawNameDisplay = `${lawKind} số ${lawNumberDisplay}`;
-  }
-
-  let lawRelatedDemo = b13.match(
-    /(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/\D[^(\s|,|.| |\:|\"|\'|\;|\{|\})]+/gi
-  );
-  let lawRelatedDemo2 = lawRelatedDemo
-    ? lawRelatedDemo.map(function (item) {
-        return item.replace(/ */g, "");
-      })
-    : [];
-  // if (b13.match(/(?<=(căn cứ |; |và ))(luật|bộ luật)[^ số][^;]+năm \d+ (?=((và luật sửa đổi)|;))/gi)) {
-  if (b13.match(/(?<=(căn cứ |; ))(luật|bộ luật)[^(;|\n)]+năm \d+/gi)) {
-    for (
-      let y = 0;
-      y <
-      b13.match(/(?<=(căn cứ |; ))(luật|bộ luật)[^(;|\n)]+năm \d+/gi).length;
-      y++
-    ) {
-      if (
-        !b13
-          .match(/(?<=(căn cứ |; ))(luật|bộ luật)[^(;|\n)]+năm \d+/gi)
-          [y].match(/(?<=năm \d+) và (?=luật sửa)/gi)
-      ) {
-        let lawRelatedString = b13
-          .match(/(?<=(căn cứ |; ))(luật|bộ luật)[^(;|\n)]+năm \d+/gi)
-          [y].replace(/ số \d+[^( |,)]+/gim, "");
-        lawRelatedString = lawRelatedString.replace(
-          / ngày \d+\/\d+\/\d+/gim,
-          ""
-        );
-        lawRelatedString = lawRelatedString.replace(
-          / ngày \d+ *\d+ *\d+/gim,
-          ""
-        );
-        lawRelatedString = lawRelatedString.replace(
-          / (ngày|ngày) *\d+ *(tháng|tháng) *\d+/gim,
-          ""
-        );
-
-        lawRelatedDemo2 = [...lawRelatedDemo2, lawRelatedString];
-      } else {
-        let lawRelatedString = b13
-          .match(/(?<=(căn cứ |; ))(luật|bộ luật)[^(;|\n)]+năm \d+/gi)
-          [y].replace(/ số \d+[^( |,)]+/gim, "");
-        lawRelatedString = lawRelatedString.replace(
-          / ngày \d+\/\d+\/\d+/gim,
-          ""
-        );
-        lawRelatedString = lawRelatedString.replace(
-          / ngày \d+ *\d+ *\d+/gim,
-          ""
-        );
-        lawRelatedString = lawRelatedString.replace(
-          / (ngày|ngày) *\d+ *(tháng|tháng) *\d+/gim,
-          ""
-        );
-        lawRelatedDemo2 = [
-          ...lawRelatedDemo2,
-          ...lawRelatedString.split(/(?<=năm \d+) và (?=luật sửa)/gi),
-        ];
-      }
-    }
-  }
-  if (b13.match(/(?<=(căn cứ |; |vào ))(hiến pháp)[^(;|\n)]+/gi)) {
-    // let lawRelatedString = b13.match(/(?<=(căn cứ |; |vào ))(hiến pháp)[^;]+/gi).replace(/ số \d+[^( |,)]+/igm,'')
-    // lawRelatedString = lawRelatedString.replace(/ ngày \d+\/\d+\/\d+/igm,'')
-
-    lawRelatedDemo2 = [
-      ...lawRelatedDemo2,
-      ...b13.match(/(?<=(căn cứ |; |vào ))(hiến pháp)[^(;|\n)]+/gi),
-    ];
-  }
-  lawRelatedDemo2 = lawRelatedDemo2.map((item) => {
-    return item.replace(/ ngày ?\d+ ?tháng ?\d+/gim, "");
-  });
-
-  function uniqueArray(orinalArray) {
-    let noDuplicate = orinalArray.filter((elem, position, arr) => {
-      return arr.indexOf(elem) == position && elem != lawNumber;
-    });
-
-    let removeDayMonth = noDuplicate.map((value, index) => {
-      return value.replace(/ngày.*tháng.*(?=năm)/gim, "");
-    });
-
-    return removeDayMonth;
-  }
-  let lawRelated = uniqueArray(lawRelatedDemo2);
-
-  // let nameSign = []
-  // if(kind=='TTLT'){
-
-  //   let representative= a0.match(/(?<=TM\. ?)\w+.*/gim);
-  //   if(ppArray){
-  //     for(let g=0;g<ppArray.length;g++){
-
-  //       nameSign.push(a0.match(new RegExp(`.*(?=(\n.*){${(ppArray.length-1-g)*2}}$)`, "g"))[0])
-  //     }
-  //   }else if(representative){
-  //     for(let g=0;g<representative.length;g++){
-
-  //       nameSign.push(a0.match(new RegExp(`.*(?=(\n.*){${(representative.length-1-g)*2}}$)`, "g"))[0])
-  //     }
-  //   }else{
-  //     nameSign = a0.match(/.*$/);
-  //   }
-
-  // }else{
-  //   nameSign = b13.match(/.*$/)[0];
-
-  // }
-  if (lawKind.match(/nghị quyết/i)) {
-    b14 = b13.replace(/^(.*\n)*QUYẾT NGHỊ(:|\.|\s|)\n/i, ""); // bỏ phần đầu
-  } else {
+    b14 = b13.replace(new RegExp(`(.*\n)*(?=${firstArticle})`,'img'),'')
+  }else{
     b14 = b13.replace(
       /^(.*\n)*.+(ban hành|ban hành|quy định|hướng dẫn|công bố)[^\n]+\n(?=(Chương (I|l|1)|phần thứ|Điều 1|Điều 1)(:|\.|\s))/i,
       ""
-    ); // bỏ phần đầu
+    ); 
 
-    // if(b13.match(new RegExp(`^(.*\n)*.*${unitPublish[0]}.*\n(?=(Chương (I|1)|phần thứ|Điều 1|Điều 1)(:|\.|\s))`,'i'))){
-
-    // }
-    // b14 = b13.replace(
-    //   /^(.*\n)*.*Chính phủ.*\n(?=(Chương (I|1)|phần thứ|Điều 1|Điều 1)(:|\.|\s))/i,
-    //   ""
-    // ); // bỏ phần đầu
-    // console.log(1, b13.match(new RegExp('^(.*\n)*.*Chính phủ.*\n(?=(Chương (I|1)|phần thứ|Điều 1|Điều 1)(:|\.|\s))','i')));
-    // console.log(unitPublish[0]);
   }
 
   let b15 = b14;
-  if (kind == "TTLT") {
-    b15 = b14.replace(/(?<=.*\.\/\.)(\n.*)*/gim, ""); // bỏ tất cả sau ./.
-  } else {
     if (b14.match(/(?<=.*\.\/\.)(\n.*)*/gim)) {
       b15 = b14.replace(/(?<=.*\.\/\.)(\n.*)*/gim, ""); //  bỏ tất cả sau ./.
     } else {
       b15 = b14.match(/(.*\n)*(?=.*\n.*$)/gim)[0]; // bỏ 2 hàng cuối
     }
-  }
+  
   b15 = b15.replace(/\.+\/+\.*/gim, ""); // bỏ ./. ở sau cùng
+  b15 = b15.replace(/^(nơi nhận|Nơi nhận).*(\n.*)*/gim, "");
   let b16 = b15.replace(/\n$/gim, ""); // bỏ hàng dư trống ở cuối
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   lawInfo["lawDescription"] = lawDescription;
   lawInfo["lawNumber"] = lawNumber;
@@ -962,11 +422,8 @@ async function convertInfo(kind) {
   lawInfo["lawDayActive"] = lawDayActive;
   lawInfo["lawNameDisplay"] = lawNameDisplay;
   lawInfo["lawRelated"] = lawRelated;
-  lawInfo["nameSign"] = nameSign;
+  lawInfo["nameSign"] = nameSignArrayDemo;
 
-  if (kind == "TTLT") {
-    lawInfo["roleSign"] = roleSign;
-  } else {
     if (roleSign.match(/phó thủ tướng/gim)) {
       lawInfo["roleSign"] = ["Phó Thủ Tướng"];
     } else if (
@@ -981,9 +438,7 @@ async function convertInfo(kind) {
     } else {
       lawInfo["roleSign"] = [roleSign];
     }
-  }
 
-  // console.log(JSON.stringify(lawInfo))
   console.log("lawDescription", lawInfo["lawDescription"]);
   console.log("lawNumber", lawInfo["lawNumber"]);
   console.log("lawKind", lawInfo["lawKind"]);
@@ -996,15 +451,105 @@ async function convertInfo(kind) {
   console.log("roleSign", lawInfo["roleSign"]);
 
   document.querySelector(".output").value = b16;
-  return { lawInfo };
+  return { lawInfo, addendum };
 }
+
+
+function getInfo() {
+  
+  let unitPublishString = document.querySelector("#unitPublish").value;
+  unitPublish = unitPublishString.split("; ");
+
+  lawKind = document.querySelector("#lawKind").value;
+
+  lawDaySign = document.querySelector("#lawDaySign").value;
+
+
+  lawNumber = document.querySelector("#lawNumber").value;
+
+  let nameSignString = document.querySelector("#nameSign").value;
+  let nameSignArrayDemo = nameSignString.split("; ");
+
+
+  lawDescription = document.querySelector("#lawDescription").value;
+
+  lawNameDisplay = lawDescription
+  if(lawKind.match(/^(luật|bộ luật)/i)){
+    lawNameDisplay = lawDescription.replace(/ của Quốc hội.*số.*/i,'')
+    lawNameDisplay = lawNameDisplay.replace(/ số.*của Quốc hội.*/i,'')
+    lawNameDisplay = lawNameDisplay+' năm '+lawDaySign.match(/\d+$/i)[0]
+  }else{
+    lawNameDisplay = lawKind+' số '+lawNumber
+  }
+
+
+
+  let roleSignString = document.querySelector("#roleSign").value;
+  let unitPbDemo = unitPublish
+  for(let a = 0;a<nameSignArrayDemo.length;a++){
+
+    let nameSignString = roleSignString.match(new RegExp(`.*${nameSignArrayDemo[a]}.*`,'img'))[0]
+    nameSign.push(nameSignString)
+   let nameSignStringEffectArea = roleSignString.match(new RegExp(`${roleSignString.match(new RegExp(`(\.*\\n){0,3}\.*${nameSignArrayDemo[a]}\.*`,'img'))[0]  }`,'img'))[0]
+   
+   if(lawKind.match(/liên tịch/i)){
+     for(let b = 0;b<unitPublish.length;b++){
+
+       if(nameSignStringEffectArea.match(new RegExp(`${unitPublish[b]}`,'igm'))){
+         unitPbDemo[a] = unitPublish[b]         
+       }
+     }
+    }
+  }
+  unitPublish = unitPbDemo
+
+
+  let contentRoleSign = document.querySelector("#roleSign").value;
+  for (let a = 0; a < nameSign.length; a++) {
+    console.log('nameSign',nameSign);
+    console.log('contentRoleSign',contentRoleSign);
+    let roleSignString = contentRoleSign.match(
+      new RegExp(`.*(?=\n.*${nameSign[a]})`, "img")
+    )[0].toLowerCase();//key.charAt(0).toUpperCase() + key.slice(1);
+
+    roleSignString = roleSignString.charAt(0).toUpperCase() + roleSignString.slice(1);
+    if(roleSignString.match(/^phó/i)){
+      roleSignString = 'Phó '+roleSignString.charAt(4).toUpperCase() + roleSignString.slice(5);
+    }else if(roleSignString.match(/quốc hội/i)){
+      roleSignString = roleSignString.replace(/quốc hội/i,'Quốc hội')
+    }
+    roleSign.push(roleSignString);
+  }
+
+
+
+  contentText = document.querySelector("#content_input").value;
+  let content = contentText
+
+  lawDayActive = getLawDayActive(content,lawDaySign,lawKind)
+
+  let introduceString = document.querySelector("#lawRelated").value;
+
+  lawRelated =  getLawRelated(introduceString)
+
+
+
+  document.querySelector(".output").value = document.querySelector("#content_input").value
+   
+
+  lawInfo = {unitPublish,lawDaySign,nameSign,roleSign,lawDayActive,lawDescription,lawNumber,lawRelated,lawKind,lawNameDisplay};
+
+  console.log('lawInfo',lawInfo);
+  
+}
+
 
 let data = [];
 async function convertContent() {
   data = [];
 
 
-  let input = document.querySelector("#content_input").value;
+  let input = document.querySelector(".output").value;
 
   let i0 = input.replace(/^(Điều|Ðiều|Điều) (\d+\w?)\.(.*)/gim, "Điều $2:$3");
   // điều . thành điều:
@@ -1048,27 +593,27 @@ async function convertContent() {
 
   let i6 = i5.replace(/(\[|\()\d*(\]|\))/gim, ""); // bỏ chỉ mục
 
-  let i7;
+  let i7 =i6.replace(/(?<=^Chương (V|I|X|\d).*)\n(?!(Điều|Ðiều|Điều) \d.*)/gim,': ')
 
-  let i7a = [];
+  // let i7a = [];
 
-  for (let b = 0; b < initial; b++) {
-    if (!b) {
-      i7a[b] = i6.replace(
-        /(?<=^Chương (V|I|X|\d).*)\n(?!(Điều|Ðiều|Điều) \d.*)/gim,
-        ": "
-      );
-    } else {
-      i7a[b] = i7a[b - 1].replace(
-        /(?<=^Chương (V|I|X|\d).*)\n(?!(Điều|Ðiều|Điều) \d.*)/gim,
-        " "
-      );
-    }
-  }
+  // for (let b = 0; b < initial; b++) {
+  //   if (!b) {
+  //     i7a[b] = i6.replace(
+  //       /(?<=^Chương (V|I|X|\d).*)\n(?!(Điều|Ðiều|Điều) \d.*)/gim,
+  //       ": "
+  //     );
+  //   } else {
+  //     i7a[b] = i7a[b - 1].replace(
+  //       /(?<=^Chương (V|I|X|\d).*)\n(?!(Điều|Ðiều|Điều) \d.*)/gim,
+  //       " "
+  //     );
+  //   }
+  // }
 
-  i7 = i7a[initial - 1];
+  // i7 = i7a[initial - 1];
 
-  let i8 = i7.replace(/^Chương (.*)\./gim, "Chương $1"); // bỏ dấu chấm sau chương
+  let i8 = i7
 
   let i9;
 
