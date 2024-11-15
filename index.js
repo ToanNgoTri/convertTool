@@ -20,21 +20,33 @@ const client = new MongoClient(
   "mongodb+srv://gusteixeira25:JPwO1gvfCAjiuXKo@testdatabase.moky4.mongodb.net/"
 );
 
-async function run(info, content, id,fullText) {
+async function pushLawContent(info, content, id) {
   try {
     const database = client.db("LawMachine");
     const LawContent = database.collection("LawContent");
-    // Query for a movie that has the title 'Back to the Future'
-    // const query = { name: "toan" };
-    // const movie = await LawContent.findOne(query);
-    // console.log(movie);
-
-    await LawContent.insertOne({ _id: id, info, content,fullText });
+    await LawContent.insertOne({ _id: id, info, content });
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
   }
 }
+
+async function pushLawSearch(info,id,fullText) {
+  try {
+    const database = client.db("LawMachine");
+    const LawContent = database.collection("LawSearch");
+    await LawContent.insertOne({ _id: id, 
+      info:{
+      lawNumber: info["lawNumber"],
+      lawDescription: info["lawDescription"],
+      lawNameDisplay: info["lawNameDisplay"],
+    },fullText });
+  } finally {
+    // Ensures that the client will close when you finish/error
+    // await client.close();
+  }
+}
+
 
 async function eachRun(url) {
   const browser = await puppeteer.launch();
@@ -44,17 +56,25 @@ async function eachRun(url) {
   let source = await page.content({ waitUntil: "domcontentloaded" });
 
   const r = await page.evaluate(async () => {
+    let m = []
+
+    
+    let bg_phantich = document.querySelectorAll('.bg_phantich')  // loại bỏ phần tử khong cần thiết
+    for(let f = 0 ; f<bg_phantich.length;f++){
+      bg_phantich[f].remove()
+    }
+
     let elementContent = document.querySelectorAll(
-      ".noidungtracuu >.docitem-1:not(.docitem-9 ~ div), .docitem-2:not(.docitem-9 ~ div), .docitem-5:not(.docitem-9 ~ div), .docitem-11:not(.docitem-9 ~ div), .docitem-12:not(.docitem-9 ~ div)"
+        ".noidungtracuu >.docitem-1:not(.docitem-9 ~ div), .docitem-2:not(.docitem-9 ~ div), .docitem-5:not(.docitem-9 ~ div), .docitem-11:not(.docitem-9 ~ div), .docitem-12:not(.docitem-9 ~ div)"
     );
-    console.log('elementContent',elementContent);
+    
     
     let lawRelated =''
     let roleSign =''
 
     if(Object.keys(elementContent).length == 0){
       elementContent = document.querySelectorAll(
-        ".noidungtracuu p"
+        ".noidungtracuu"
       );
       lawRelated = ''
       roleSign = ''
@@ -65,12 +85,11 @@ async function eachRun(url) {
         lawRelated +
         "\n" +
         (document.querySelector("#chidanthaydoind >.docitem-15")?document.querySelector("#chidanthaydoind >.docitem-15").innerText:'')
-      lawRelated = lawRelated.replace(/\n+/g, "\n");///////////////////////////////////////////////////////////////////
+        lawRelated = lawRelated.replace(/\_*/g, "");
+        lawRelated = lawRelated.replace(/\n+/g, "\n");
   
-      roleSign = document.querySelector(
-        "#chidanthaydoind >.docitem-9"
-      ).innerText;
-
+      roleSign = document.querySelector("#chidanthaydoind >.docitem-9")?document.querySelector("#chidanthaydoind >.docitem-9").innerText:'';
+      roleSign = roleSign.replace(/\u00A0/img,' ')
     }
 
     var content = "";
@@ -78,8 +97,9 @@ async function eachRun(url) {
       content = content + "\n" + elementContent[a].innerText;
     }
     content = content.replace(/\n+/g, "\n");
+    content = content.replace(/  /gm, " ");
 
-    let a = document.querySelector(
+    let tableInfomation = document.querySelector(
       ".div-table"
     ).innerText;
 
@@ -93,11 +113,12 @@ async function eachRun(url) {
       ".the-document-summary"
     ).innerText;
     lawDescription = lawDescription.replace(/^ */, "");
-    if(a.match(/VBHN/)){
+    if(tableInfomation.match(/VBHN/)){
       lawNumber = document.querySelector(
         ".div-table tr:nth-child(1) td:nth-child(2)"
       ).innerText;
-  
+      lawNumber= lawNumber.replace(/(^ | $)/img,'')
+
       unitPublish = document.querySelector(
         ".div-table tr:nth-child(2) td:nth-child(4)"
       ).innerText;
@@ -105,13 +126,13 @@ async function eachRun(url) {
       lawKind = document.querySelector(
         ".div-table tr:nth-child(2) td:nth-child(2)"
       ).innerText;
-  
+      
       nameSign = document.querySelector(
         ".div-table tr:nth-child(3) td:nth-child(4)"
       ).innerText;
   
       lawDaySign = document.querySelector(
-        ".div-table tr:nth-child(2) td:nth-child(4)"
+        ".div-table tr:nth-child(1) td:nth-child(4)"
       ).innerText;
   
       
@@ -119,7 +140,8 @@ async function eachRun(url) {
       lawNumber = document.querySelector(
         ".div-table tr:nth-child(2) td:nth-child(2)"
       ).innerText;
-  
+      lawNumber= lawNumber.replace(/(^ | $)/img,'')
+
       unitPublish = document.querySelector(
         ".div-table tr:nth-child(1) td:nth-child(2)"
       ).innerText;
@@ -140,9 +162,11 @@ async function eachRun(url) {
 
 
 
-    roleSign = roleSign.replace(/nơi nhận.*(\s{0,2}\S.*)*/gim, "");
+    // roleSign = roleSign.replace(/nơi nhận.*(\s{0,2}\S.*)*/gim, "");
     roleSign = roleSign.replace(/^\n(\s)*/gim, "");
     roleSign = roleSign.replace(/\(*đã ký[^\w]+/gim, "");
+    roleSign = roleSign.replace(/\(*đã k(ý|í)\)*/gim, "");
+    roleSign = roleSign.replace(/\n\[daky\]/gim, "");
     roleSign = roleSign.replace(/\s*$/gim, "");
     roleSign = roleSign.replace(/^\s*/gim, "");
 
@@ -156,7 +180,7 @@ async function eachRun(url) {
       lawDescription,
       lawRelated,
       roleSign,
-      a
+      m
     };
 
 
@@ -205,8 +229,6 @@ async function allRun(url) {
 }
 
 app.get("/", async (req, res) => {
-  run();
-
   res.render("index");
 });
 
@@ -214,7 +236,6 @@ app.get("/URL", async (req, res) => {
   console.log('req.query.URL',req.query.URL);
   let content = "";
   content = await eachRun(req.query.URL);
-  // console.log("content['a']",content['a']);
   // console.log("content['elementContent']", (content['elementContent']) );
 
   //  res.render('get',{content:content['content'],UnitPublish:content['UnitPublish']})
@@ -233,19 +254,29 @@ app.get("/URL", async (req, res) => {
 
 
 app.get(`/AllURL/:id`, async (req, res) => {
-  // console.log(req.query.URL);
   let arrayLink = await allRun(req.query.URL);
+  console.log(arrayLink[req.params.id]);
 
   let content = "";
   content = await eachRun(arrayLink[req.params.id]);
-  console.log("Link:", arrayLink);
 
-  res.render("get", { content: content });
+  res.render("get", {
+    content: content["content"],
+    lawNumber: content["lawNumber"],
+    unitPublish: content["unitPublish"],
+    lawKind: content["lawKind"],
+    nameSign: content["nameSign"],
+    lawDaySign: content["lawDaySign"],
+    lawDescription: content["lawDescription"],
+    lawRelated: content["lawRelated"],
+    roleSign: content["roleSign"],
+  });
 });
 
 
 app.post("/push", async (req, res) => {
-  run(req.body.lawInfo, req.body.dataLaw, req.body.lawNumber,req.body.contentText);
+  pushLawContent(req.body.lawInfo, req.body.dataLaw, req.body.lawNumber);
+  pushLawSearch(req.body.lawInfo,req.body.lawNumber,req.body.contentText)
 });
 
 app.post("/searchlaw", async (req, res) => {
@@ -262,6 +293,7 @@ app.post("/searchlaw", async (req, res) => {
       ],
     })
       .project({ info: 1 })
+      .sort({ "info.lawDaySign": -1 })
       .toArray()
       .then((o) => res.json(o));
   } finally {
@@ -277,8 +309,8 @@ app.post("/searchcontent", async (req, res) => {
 
   try {
     const database = client.db("LawMachine");
-    const LawContent = database.collection("LawContent");
-    LawContent.find({ "fullText": new RegExp(`${req.body.input}`, "i") }).collation({ locale: 'vi' })
+    const LawSearch = database.collection("LawSearch");
+    LawSearch.find({ "fullText": new RegExp(`${req.body.input}`, "i") }).collation({ locale: 'vi' })
       .project({ info: 1 })
       .toArray()
       .then((o) => res.json(o));
@@ -309,37 +341,22 @@ app.post("/getonelaw", async (req, res) => {
   // res.write(a);
 });
 
-app.get("/stackscreen", async (req, res) => {
+app.post("/stackscreen", async (req, res) => {
   // dành cho AppNavigator
 
   try {
     const database = client.db("LawMachine");
-    const LawContent = database.collection("LawContent");
-    // Query for a movie that has the title 'Back to the Future'
+    const LawSearch = database.collection("LawSearch");
 
-    LawContent.find({})
-      .project({ info: 1, content: 1 })
+    LawSearch.find({})
+      .project({ info: 1 })
       .toArray()
-      .then((o) => res.send(o));
+      .then((o) => res.json(o));
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
   }
 });
-
-app.get("/forcreateindex", async (req, res) => {
-
-  const database = client.db("LawMachine");
-  const LawContent = database.collection("LawContent");
-  LawContent.createIndex({
-    "info.lawDescription": 1,
-    "info.lawNameDisplay": 1,
-    _id: 1,
-  });
-
-  res.send("success");
-});
-
 
 
 
