@@ -337,7 +337,7 @@ app.get("/getonelaw", async (req, res) => {
   }
 
   // console.log(a);
-  res.json(a)
+  res.send(a)
   // res.write(a);
 });
 
