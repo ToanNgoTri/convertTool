@@ -330,7 +330,7 @@ app.get("/getonelaw", async (req, res) => {
     const LawContent = database.collection("LawContent");
     // Query for a movie that has the title 'Back to the Future'
 
-    a = await LawContent.findOne({ _id: 41/2024/QH15 });
+    a = await LawContent.findOne({ _id: '41/2024/QH15' });
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
