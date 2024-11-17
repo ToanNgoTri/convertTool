@@ -321,7 +321,7 @@ app.post("/searchcontent", async (req, res) => {
 });
 
 
-app.post("/getonelaw", async (req, res) => {
+app.get("/getonelaw", async (req, res) => {
   // dành cho Detail5
   let a;
 
@@ -330,7 +330,7 @@ app.post("/getonelaw", async (req, res) => {
     const LawContent = database.collection("LawContent");
     // Query for a movie that has the title 'Back to the Future'
 
-    a = await LawContent.findOne({ _id: req.body.screen });
+    a = await LawContent.findOne({ _id: 41/2024/QH15 });
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
