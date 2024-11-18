@@ -15,7 +15,6 @@ app.use(express.static("./public"));
 const ejs = require("ejs");
 app.set("view engine", "ejs");
 
-// mongoose.connect('mongodb+srv://gusteixeira25:JPwO1gvfCAjiuXKo@testdatabase.moky4.mongodb.net/', { useNewUrlParser: true })
 const client = new MongoClient(
   "mongodb+srv://gusteixeira25:JPwO1gvfCAjiuXKo@testdatabase.moky4.mongodb.net/"
 );
