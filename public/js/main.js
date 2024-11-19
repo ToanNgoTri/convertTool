@@ -752,25 +752,25 @@ async function convertContent() {
   // i7 = i7a[initial - 1];
 
 
-  let i9;
+  let i9 = i8.replace(/(?<=^(Phần|PHẦN)\s(THỨ|I|l|\d)+)[^\.]*\./im,'')
 
-  let i9a = []; // kết nối "Phần thứ với nội dung "phần thứ ...", trường hợp bị tách 2 hàng
+  // let i9a = []; // kết nối "Phần thứ với nội dung "phần thứ ...", trường hợp bị tách 2 hàng
 
-  for (let c = 0; c < initial; c++) {
-    if (!c) {
-      i9a[c] = i8.replace(
-        /(?<=^Phần thứ.*)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
-        ": "
-      );
-    } else {
-      i9a[c] = i9a[c - 1].replace(
-        /(?<=^Phần thứ.*)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
-        " "
-      );
-    }
-  }
-  // i9= i9a[initial-1]
-  i9 = i9a[initial - 1];
+  // for (let c = 0; c < initial; c++) {
+  //   if (!c) {
+  //     i9a[c] = i8.replace(
+  //       /(?<=^Phần thứ.*)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
+  //       ": "
+  //     );
+  //   } else {
+  //     i9a[c] = i9a[c - 1].replace(
+  //       /(?<=^Phần thứ.*)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
+  //       " "
+  //     );
+  //   }
+  // }
+
+  // i9 = i9a[initial - 1];
 
   // let i10 = i9.replace(/(?<=\w)\/(?=\w)/gim, "\\"); // loại dấu division spla sh bằng dấu \
   let i10 = i9
@@ -887,13 +887,13 @@ async function convertContent() {
         }
       }
     }
-  } else if (i10.match(/^(Phần|PHẦN)\s(THỨ|I|l|1).*/i)) {
+  } else if (i10.match(/^(Phần|PHẦN)\s(THỨ|I|l|\d).*/i)) {
     //////////////////////////////////////////////////////////////////////////////////////////////  // nếu có phần thứ ...
 
     let sectionArray;
 
-    if (i10.match(/^(Phần|PHẦN)\s(THỨ|I|l|1).*$/gim)) {
-      sectionArray = i10.match(/^(Phần|PHẦN)\s(THỨ|I|l|1).*$/gim);
+    if (i10.match(/^(Phần|PHẦN)\s(THỨ|I|l|\d).*/gim)) {
+      sectionArray = i10.match(/^(Phần|PHẦN)\s(THỨ|I|l|\d).*/gim);
     } else {
       sectionArray = null;
     }
