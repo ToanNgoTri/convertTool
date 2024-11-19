@@ -140,44 +140,54 @@ function getLawDayActive(text,daySign) {
   if (
     text.match(
       // /(?<=^(Điều|Ðiều|Điều) \d.*(Hiệu lực|thi hành|thực hiện).*\n).*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực).* từ ngày k/im
-      new RegExp(`(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\\s(này|này))?\\s(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)\.* từ ngày k`,'im')
+      /(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)\.* từ ngày k/im
     )
   ) {
+       console.log(1);
+       
     lawDayActive = addDaysToDate(daySign,0);
   } else if (
-    text.match(new RegExp(`(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\\s(này|này))?\\s(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\\d]{0,17})(ngày|ngày)\\s*\\d*\\s*(tháng|tháng)\\s*\\d*\\s*năm\\s*\\d*`,'im')
+    text.match(/(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,17})(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
       // /(?<=^(Điều|Ðiều|Điều) \d.{0,15}(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
     )
   ) {
-    let lawDayActiveDemo = text.match(
-      new RegExp(`(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\\s(này|này))?\\s(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\\d]{0,17})(ngày|ngày)\\s*\\d*\\s*(tháng|tháng)\\s*\\d*\\s*năm\\s*\\d*`,'igm')    
+       let lawDayActiveDemo = text.match(
+/(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,17})(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
     )[text.match(
-      new RegExp(`(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\\s(này|này))?\\s(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\\d]{0,17})(ngày|ngày)\\s*\\d*\\s*(tháng|tháng)\\s*\\d*\\s*năm\\s*\\d*`,'igm')    
+/(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,17})(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
     ).length-1];
     let RemoveDay = lawDayActiveDemo.replace(/(ngày|ngày) */im, "");
     let RemoveMonth = RemoveDay.replace(/ *(tháng|tháng) */im, "/");
+    console.log(2);
     lawDayActive = addDaysToDate(RemoveMonth.replace(/ *năm */im, "/"),0)
   } else if (
     text.match(
       // /(?<=^(Điều|Ðiều|Điều) \d.*(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)\d+\/\d+\/\d+/im
-      new RegExp(`(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\\s(này|này))?\\s(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\\d]{0,17}ngày )\\d+\\/\\d+\\/\\d+`,'im')
+      /(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,17}ngày\s)\d+(\/|\-)\d+(\/|\-)\d+/im
     )
   ) {
-    lawDayActive = addDaysToDate(text.match(
-      new RegExp(`(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\\s(này|này))?\\s(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\\d]{0,17}ngày )\\d+\\/\\d+\\/\\d+`,'im')
-    )[0],0)
+    
+    lawDayActive = text.match(
+      /(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,17}ngày\s)\d+(\/|\-)\d+(\/|\-)\d+/im
+    )[0]
+    lawDayActive = lawDayActive.replace(/-/img,'/')
+    console.log('lawDayActive',lawDayActive);
+    
+    lawDayActive = addDaysToDate(lawDayActive,0)
   } else if (
     text.match(
       // /(?<=^(Điều|Ðiều|Điều) \d.*\n.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \d* ngày/im
-      new RegExp(`(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\\s(này|này))?\\s(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \\d* ngày`,'im')
+      /(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \d* ngày/im
     )
   ) {
-    lawDayActive = text.match(
-      new RegExp(`(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\\s(này|này))?\\s(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \\d* ngày`,'im')
-    )[0];
+       lawDayActive = text.match(
+        /(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \d* ngày/im
+      )[0];
     countDaysAfter = lawDayActive.match(/\d+/img)[0]
     lawDayActive = addDaysToDate(daySign,parseInt(countDaysAfter))
+    console.log(3);
   } else {
+    console.log(4);
     lawDayActive = null;
   }
 
@@ -435,7 +445,26 @@ async function convertBareTextInfo() {
   // let b7 = b6.replace(/nơi nhận.*\n([^\s].*\n)*/gim, ""); 
   let b8 = b7.replace(/(?<=\w)\n\[\d+\].*$(\n.*)*$/gim, ""); // bỏ mấy cái chỉ mục của VBHN đi
   let b9 = b8.replace(/\n+/gim, "\n"); // biến nhiều xuống dòng thành 1 xuống dòng
-  let b10 = b9
+  // let b10 = b9
+  let b10;
+
+  let b10a = []; // kết nối "Phần thứ với nội dung "phần thứ ...", trường hợp bị tách 2 hàng
+
+  for (let c = 0; c < 5; c++) {
+    if (!c) {
+      b10a[c] = b9.replace(
+        /(?<=^(Phần|PHẦN)\s(THỨ|I|l|1).*)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
+        ": "
+      );
+    } else {
+      b10a[c] = b10a[c - 1].replace(
+        /(?<=^(Phần|PHẦN)\s(THỨ|I|l|1).*)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
+        " "
+      );
+    }
+  }
+  b10 = b10a[4];
+
   // if(b9.match(/^Nơi nhận/mi)){    // bỏ phụ lục, danh mục các thư
   //   b10 = b9.replace(
   //     /(?<=^(Nơi nhận|Nơi Nhận).*(\n.*)*)\n(PHỤ LỤC|PHỤ LỤC|Phụ lục|DANH MỤC|MỤC LỤC|QUY CHẾ|QUY CHUẨN|NỘI QUY|BIỂU THUẾ|ĐIỀU LỆ|Mẫu|MẪU|BIỂU KHUNG|QCVN|QCVN|ĐỊNH MỨC|HỆ THỐNG|CHƯƠNG TRÌNH).*(\n.*)*/gm,
@@ -496,33 +525,28 @@ roleSign = getRoleSign(b13,nameSign)
   
   if (lawKind.match(/nghị quyết/i)) {// bỏ phần đầu
     b14 = b13.replace(/^(.*\n)*QUYẾT NGHỊ(:|\.|\s|)\n/i, ""); 
-    // console.log(1);
     break
   } else if(clause.match(/^(Phần|PHẦN)\s(THỨ|I|l|1)/img)){
-    // console.log(2);
 
     let firstSection = b13.match(/^(Phần|PHẦN)\s(THỨ|I|l|1).*/im)[0]
 
-    b14 = b13.replace(new RegExp(`(.*\n)*(?=${firstSection})\b`,'img'),'')
+    b14 = b13.replace(new RegExp(`(.*\\n)*(?=${firstSection})\\b`,'img'),'')
     break
   }else if(clause.match(/^(Chương|CHƯƠNG)\s(I|l|1)/img)){
-    // console.log(3);
 
     let firstChapter = b13.match(/^(Chương|CHƯƠNG)\s(I|l|1).{0,10}/im)[0]
 
-    b14 = b13.replace(new RegExp(`(.*\n)*(?=${firstChapter})`,'img'),'')
+    b14 = b13.replace(new RegExp(`(.*\\n)*(?=${firstChapter})`,'img'),'')
     break
   }else if(clause.match(/^(Điều|Ðiều|Điều)\s(I|l|1)/img)){
     
     let firstArticle = b13.match(/^(Điều|Ðiều|Điều)\s(I|l|1).{0,10}/im)[0]   // lấy 10 ký tự thôi cho chắc
-    // console.log('firstArticle',firstArticle);
-    b14 = b13.replace(new RegExp(`(.*\n)*(?=${firstArticle})`,'img'),'')
+    b14 = b13.replace(new RegExp(`(.*\\n)*(?=${firstArticle})`,'img'),'')
     break
   }
   }
 
   if(!b14){
-      // console.log(5);
       b14 = b13.replace(
         /^(.*\n)*.+(ban hành|ban hành|quy định|hướng dẫn|công bố)[^\n]+\n(?=(Chương (I|l|1)|phần thứ|Điều 1|Điều 1)(:|\.|\s))/i,
         ""
@@ -541,7 +565,11 @@ roleSign = getRoleSign(b13,nameSign)
     }else if(b14.match(/^KT ?\./m)){
       b15 = b14.replace(/KT.*(\n.*)*/m,''); 
     } else {
-      b15 = b14.match(/(.*\n)*(?=.*\n.*$)/gim)[0]; // bỏ 2 hàng cuối
+      for(let k = 0;k<nameSign.length;k++){
+        
+        b15 = b14.replace(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n)*)*`,'img'),''); // bỏ 2 hàng cuối
+
+      }
     }
   
   b15 = b15.replace(/\.+\/+\.*/gim, ""); // bỏ ./. ở sau cùng
@@ -859,13 +887,13 @@ async function convertContent() {
         }
       }
     }
-  } else if (i10.match(/^phần thứ.*/i)) {
+  } else if (i10.match(/^(Phần|PHẦN)\s(THỨ|I|l|1).*/i)) {
     //////////////////////////////////////////////////////////////////////////////////////////////  // nếu có phần thứ ...
 
     let sectionArray;
 
-    if (i10.match(/^phần thứ.*$/gim)) {
-      sectionArray = i10.match(/^phần thứ.*$/gim);
+    if (i10.match(/^(Phần|PHẦN)\s(THỨ|I|l|1).*$/gim)) {
+      sectionArray = i10.match(/^(Phần|PHẦN)\s(THỨ|I|l|1).*$/gim);
     } else {
       sectionArray = null;
     }
