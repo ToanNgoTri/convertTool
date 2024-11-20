@@ -435,14 +435,14 @@ async function convertBareTextInfo() {
   let b1 = b.replace(/^ */gim, ""); // bỏ các space ở đầu mỗi dòng
   let b2 = b1.replace(/\(*đã k(ý|í)\)*/gim, "");
   b2 = b2.replace(/\[daky\]/gim, "");
-  let b3 = b2.replace(/^nơi nhận.*\n([^\s].*\n)*/gim, ""); 
+  let b3 = b2.replace(/^(\t| |\u00A0)*/gim, "");
+  b3 = b3.replace(/^nơi nhận.*\n([^\s].*\n)*/gim, ""); 
 
   let b4 = b3.replace(/\n+\s+$/gim, "");
   let b5 = b4.replace(/\n*$/gim, ""); //bỏ xuống dòng ở cuối
-  let b6 = b5.replace(/^\s*/gim, ""); // bỏ space, xuống dòng ở đầu
+  let b6 = b5
+  // let b6 = b5.replace(/^\s*/gim, ""); // bỏ space, xuống dòng ở đầu
   let b7 = b6.replace(/\s*$/gim, ""); // bỏ space, xuống dòng ở cuối
-  // let b7 = b6.replace(new RegExp(`(?<=${nameSign[0]})`), ""); ////////////////////////////////////////////////////////////////////////
-  // let b7 = b6.replace(/nơi nhận.*\n([^\s].*\n)*/gim, ""); 
   let b8 = b7.replace(/(?<=\w)\n\[\d+\].*$(\n.*)*$/gim, ""); // bỏ mấy cái chỉ mục của VBHN đi
   let b9 = b8.replace(/\n+/gim, "\n"); // biến nhiều xuống dòng thành 1 xuống dòng
   // let b10 = b9
