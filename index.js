@@ -204,7 +204,7 @@ async function eachRun(url) {
 async function allRun(url) {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-  await page.goto(url, { waitUntil: "load" });
+  await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 });
 
   // OR the faster method that doesn't wait for images to load:
   let source = await page.content({ waitUntil: "domcontentloaded" });
