@@ -50,6 +50,8 @@ async function pushLawSearch(info,id,fullText) {
 async function eachRun(url) {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
+  page.setDefaultNavigationTimeout(60000);
+
   await page.goto(url, { waitUntil: "load" });
 
   let source = await page.content({ waitUntil: "domcontentloaded" });
@@ -204,7 +206,8 @@ async function eachRun(url) {
 async function allRun(url) {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-  await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 });
+  page.setDefaultNavigationTimeout(60000);
+  await page.goto(url );
 
   // OR the faster method that doesn't wait for images to load:
   let source = await page.content({ waitUntil: "domcontentloaded" });
