@@ -112,6 +112,7 @@ function getArrangeUnitPublic(roleSignString,nameSignArrayDemo,lawKind,unitPubli
   let unitPbDemo = []
   // console.log('nameSignArrayDemo',nameSignArrayDemo);
   // console.log('roleSignString',roleSignString);
+  // console.log('unitPublish',unitPublish);
   
   nameSignArrayDemo.map( (nameSignDemo,i) => {
     let nameSignString = roleSignString.match(new RegExp(`.*${nameSignDemo}.*`,'img'))[0]
@@ -123,7 +124,10 @@ function getArrangeUnitPublic(roleSignString,nameSignArrayDemo,lawKind,unitPubli
    if(lawKind.match(/liên tịch/i)){
 
      for(let b = 0;b<unitPublish.length;b++){      
-       if(nameSignStringEffectArea.match(new RegExp(`${unitPublish[b]}`,'igm'))){
+      // console.log(unitPublish[b]);
+      
+       if(nameSignStringEffectArea.match(new RegExp(`${unitPublish[b].slice(0,6)}`,'igm'))
+      && nameSignStringEffectArea.match(new RegExp(`${unitPublish[b].slice(unitPublish[b].length-6,unitPublish[b].length)}`,'igm'))){
          unitPbDemo[i] = unitPublish[b]    
          break
        }
@@ -207,8 +211,9 @@ function getLawRelated(text) {
     return removeDayMonth;
   }
   
+  text = text.replace(/\s/img,' ' )
+  // console.log('text',text);
   
-
   let lawRelatedDemo = text.match(
     /(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/\D[^(\s|,|.| |\:|\"|\'|\;|\{|\}|”)]+/gi
   );
@@ -435,8 +440,8 @@ async function convertBareTextInfo() {
   let b1 = b.replace(/^ */gim, ""); // bỏ các space ở đầu mỗi dòng
   let b2 = b1.replace(/\(*đã k(ý|í)\)*/gim, "");
   b2 = b2.replace(/\[daky\]/gim, "");
-  let b3 = b2.replace(/^(\t| |\u00A0)*/gim, "");
-  b3 = b3.replace(/^nơi nhận.*\n([^\s].*\n)*/gim, ""); 
+  // let b3 = b2.replace(/^(\t| |\u00A0)*/gim, "");
+  let b3 = b2.replace(/^\s*nơi nhận.*\n([^\s].*\n)*/gim, ""); 
 
   let b4 = b3.replace(/\n+\s+$/gim, "");
   let b5 = b4.replace(/\n*$/gim, ""); //bỏ xuống dòng ở cuối
@@ -502,8 +507,8 @@ async function convertBareTextInfo() {
   nameSign = nameSignArrayDemo
 roleSign = getRoleSign(b13,nameSign)
 
+nameSign = getArrangeUnitPublic(b13,nameSignArrayDemo,lawKind,unitPublish)['nameSign']
   unitPublish = getArrangeUnitPublic(b13,nameSignArrayDemo,lawKind,unitPublish)['unitPbDemo']
-  nameSign = getArrangeUnitPublic(b13,nameSignArrayDemo,lawKind,unitPublish)['nameSign']
   
   lawDayActive = getLawDayActive(b13,lawDaySign)
 
@@ -639,8 +644,8 @@ console.log('getNormalTextInfo');
 
   let roleSignString = document.querySelector("#roleSign").value;
 
-  unitPublish = getArrangeUnitPublic(roleSignString,nameSignArrayDemo,lawKind,unitPublish)['unitPbDemo']
   nameSign = getArrangeUnitPublic(roleSignString,nameSignArrayDemo,lawKind,unitPublish)['nameSign']
+  unitPublish = getArrangeUnitPublic(roleSignString,nameSignArrayDemo,lawKind,unitPublish)['unitPbDemo']
 
   let contentRoleSign = document.querySelector("#roleSign").value;
   roleSign = getRoleSign(contentRoleSign,nameSign)
@@ -777,7 +782,7 @@ async function convertContent() {
   // let i10 = i9.replace(/(?<=\w)\/(?=\w)/gim, "\\"); // loại dấu division spla sh bằng dấu \
   // let i10 = i9
 
-
+  contentText = i10
   document.querySelector(".output").value = i10;
 
   if (i10.match(/^CHƯƠNG.*/i)) {
@@ -1215,13 +1220,15 @@ if (
       goToEndInput(), goToEndOutput(), convertContent(false);
     })
     .then((r) => {
+      // console.log('lawInfo["unitPublish"].indexOf(undefined)',lawInfo["unitPublish"].indexOf(undefined));
+      
       if (
         data.length &&
         lawInfo["lawDayActive"] &&
         lawInfo["unitPublish"][0] &&
         lawInfo["nameSign"][0]&&
-        lawInfo["roleSign"][0]
-
+        lawInfo["roleSign"][0] &&
+        lawInfo["unitPublish"].indexOf(undefined) < 0
       ){
         
         if(lawInfo["lawDayActive"]>=lawInfo["lawDaySign"])
