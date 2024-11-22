@@ -187,7 +187,6 @@ function getLawDayActive(text,daySign) {
       /(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,19}ngày\s)\d+(\/|\-)\d+(\/|\-)\d+/im
     )[0]
     lawDayActive = lawDayActive.replace(/-/img,'/')
-    console.log('lawDayActive',lawDayActive);
     
     lawDayActive = addDaysToDate(lawDayActive,0)
   }  else {
@@ -566,11 +565,11 @@ nameSign = getArrangeUnitPublic(b13,nameSignArrayDemo,lawKind,unitPublish)['name
       b15 = b14.replace(/(?<=.*\.\/\.)(\n.*)*/gim, ""); //  bỏ tất cả sau ./.
     }
     
-    if(b14.match(/^TM ?\./m)){
+    if(b14.match(/^TM\s?\./m)){
       // b15 = b14.match(/(^[^T][^M].*\n)*(?=^(KT|TM|Xác thực|XÁC THỰC|CHỦ NHIỆM|CHỦ TỊCH))/m)[0]; 
-      b15 = b14.replace(/TM.*(\n.*)*/m,''); 
-    }else if(b14.match(/^KT ?\./m)){
-      b15 = b14.replace(/KT.*(\n.*)*/m,''); 
+      b15 = b14.replace(/^TM\s.*(\n.*)*/m,''); 
+    }else if(b14.match(/^KT\s?\./m)){
+      b15 = b14.replace(/^KT\s.*(\n.*)*/m,''); 
     } else {
       for(let k = 0;k<nameSign.length;k++){
         
