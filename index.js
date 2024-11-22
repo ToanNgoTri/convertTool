@@ -50,7 +50,7 @@ async function pushLawSearch(info,id,fullText) {
 async function eachRun(url) {
   const browser = await puppeteer.launch();
   const page = await browser.newPage();
-  page.setDefaultNavigationTimeout(70000);
+  page.setDefaultNavigationTimeout(50000);
 
   await page.goto(url, { waitUntil: "load" });
 

@@ -440,13 +440,13 @@ async function convertBareTextInfo() {
   let b1 = b.replace(/^ */gim, ""); // bỏ các space ở đầu mỗi dòng
   let b2 = b1.replace(/\(*đã k(ý|í)\)*/gim, "");
   b2 = b2.replace(/\[daky\]/gim, "");
-  // let b3 = b2.replace(/^(\t| |\u00A0)*/gim, "");
-  let b3 = b2.replace(/^\s*nơi nhận.*\n([^\s].*\n)*/gim, ""); 
+  let b3 = b2.replace(/^\s*nơi nhận.*\n([^\s].*\n)*/img,'')
+  // b3 = b3.replace(/^nơi nhận.*\n([^\s].*\n)*/gim, ""); 
 
   let b4 = b3.replace(/\n+\s+$/gim, "");
   let b5 = b4.replace(/\n*$/gim, ""); //bỏ xuống dòng ở cuối
-  let b6 = b5
-  // let b6 = b5.replace(/^\s*/gim, ""); // bỏ space, xuống dòng ở đầu
+  // let b6 = b5
+  let b6 = b5.replace(/^\s*/gim, ""); // bỏ space, xuống dòng ở đầu
   let b7 = b6.replace(/\s*$/gim, ""); // bỏ space, xuống dòng ở cuối
   let b8 = b7.replace(/(?<=\w)\n\[\d+\].*$(\n.*)*$/gim, ""); // bỏ mấy cái chỉ mục của VBHN đi
   let b9 = b8.replace(/\n+/gim, "\n"); // biến nhiều xuống dòng thành 1 xuống dòng
@@ -564,7 +564,9 @@ nameSign = getArrangeUnitPublic(b13,nameSignArrayDemo,lawKind,unitPublish)['name
     if (b14.match(/(?<=.*\.\/\.)(\n.*)*/gim)) {
       
       b15 = b14.replace(/(?<=.*\.\/\.)(\n.*)*/gim, ""); //  bỏ tất cả sau ./.
-    }else if(b14.match(/^TM ?\./m)){
+    }
+    
+    if(b14.match(/^TM ?\./m)){
       // b15 = b14.match(/(^[^T][^M].*\n)*(?=^(KT|TM|Xác thực|XÁC THỰC|CHỦ NHIỆM|CHỦ TỊCH))/m)[0]; 
       b15 = b14.replace(/TM.*(\n.*)*/m,''); 
     }else if(b14.match(/^KT ?\./m)){
@@ -1181,7 +1183,7 @@ async function pasteContentAll() {
 }
 
 function goToStartInput() {
-  document.querySelector("#content_input").focus();
+  document.querySelector("#lawNumber").focus();
   document.querySelector("#content_input").setSelectionRange(0, 0);
 }
 
