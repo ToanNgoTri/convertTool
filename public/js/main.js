@@ -501,8 +501,8 @@ function convertPartTwo(partOne){
   //   }
   
 
-    break
-  }
+    // break
+  // }
 
   if (lawKind ?lawKind.match(/nghị quyết/i) : partOne.match(/^nghị quyết/i)) {// bỏ phần đầu
     b14 = partOne.replace(/^(.*\n)*QUYẾT NGHỊ(:|\.|\s|)\n/i, ""); 
