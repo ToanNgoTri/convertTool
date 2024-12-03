@@ -16,7 +16,7 @@ const ejs = require("ejs");
 app.set("view engine", "ejs");
 
 const client = new MongoClient(
-  "mongodb+srv://gusteixeira25:JPwO1gvfCAjiuXKo@testdatabase.moky4.mongodb.net/"
+  "mongodb+srv://gusteixeira25:JPwO1gvfCAjiuXKo@lawdatabase.jnsdwt3.mongodb.net/?retryWrites=true&w=majority&appName=LawDatabase"
 );
 
 async function pushLawContent(info, content, id) {
