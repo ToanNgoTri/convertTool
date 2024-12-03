@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link href="/scss/index.css" type="text/css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div id="container">
+      <div id="inner_container">
+        <div id="input_container">
+          <textarea class="input_area" id="id"><%=id%></textarea>
+        <textarea class="input_area" id="content_input"><%=content%></textarea>
+  
+        </div>
+        <div class="navi_container navi_input">
+          <button type="button" class="navi_btb" onclick="goToStartInput()">
+            Go to Start
+          </button>
+
+          <button type="button" class="navi_btb" onclick="goToEndInput()">
+            Go to End
+          </button>
+        </div>
+
+        <div class="btb_container">
+          <button type="button" class="btb" onclick="convertFullText()">
+            Convert Full Text
+          </button>
+          <button type="button" class="btb" onclick="pushFullText()">
+            Push Full Text
+          </button>
+          <button type="button" class="btb" onclick="naviNextConvertFullText()">
+            Next page
+          </button>
+        </div>
+        <textarea class="output" cols="90"></textarea>
+      </div>
+    </div>
+  </body>
+  <script type="text/javascript" src="/js/jquery.js"></script>
+  <script type="text/javascript" src="/js/main.js"></script>
+</html>

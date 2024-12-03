@@ -1,42 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link href="/scss/index.css" type="text/css" rel="stylesheet">
-</head>
-<body>
-  <div id="container">
-    <form class="input_part__container"  action="/URL" method="GET">
-      <div style="padding: 15px;border: 1px solid black;text-align: center;justify-self: center;cursor: pointer;"
-      onclick="pasteContent()"
-      >
-        Each
+    <link href="/scss/index.css" type="text/css" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="container">
+      <form class="input_part__container" action="/URL" method="GET">
+        <div
+          style="
+            padding: 15px;
+            border: 1px solid black;
+            text-align: center;
+            justify-self: center;
+            cursor: pointer;
+          "
+          onclick="pasteContent()"
+        >
+          Each
+        </div>
+        <input
+          type="text"
+          placeholder="User Name"
+          class="input_part__container_input"
+          id="each"
+          name="URL"
+        />
+        <!-- <textarea  cols="140" rows="3"></textarea> -->
+        <button style="width: 30%" type="submit">Click</button>
+      </form>
+      <form class="input_part__container" action="/AllURL/0" method="get">
+        <div
+          style="
+            padding: 15px;
+            border: 1px solid black;
+            text-align: center;
+            justify-self: center;
+            cursor: pointer;
+          "
+          onclick="pasteContentAll()"
+        >
+          All
+        </div>
+        <input
+          type="text"
+          placeholder="User Name"
+          class="input_part__container_input"
+          id="all"
+          name="URL"
+        />
+        <button style="width: 30%" type="submit">Click</button>
+      </form>
+      <div>
+        <!-- <form class="input_part__container" action="/convertfulltext" method="get">
+          <button type="submit" class="navi_btb" onclick="">convert EACH text</button>
+        </form> -->
+        <form class="input_part__container" action="/AllConvertfulltext/0" method="get">
+          <button type="submit" class="navi_btb" onclick="">convert full text</button>
+        </form>
       </div>
-      <input type="text" placeholder="User Name" class="input_part__container_input" id="each"  name="URL"> 
-      <!-- <textarea  cols="140" rows="3"></textarea> -->
-      <button style="width: 30%" type="submit">
-        Click
-      </button>
-    </form>
-    <form class="input_part__container"  action="/AllURL/0" method="get">
-      <div style="padding: 15px;border: 1px solid black;text-align: center;justify-self: center;cursor: pointer;"
-      onclick="pasteContentAll()"
-      >
-        All
-      </div>
-      <input type="text" placeholder="User Name" class="input_part__container_input" id="all" name="URL"> 
-      <button style="width: 30%" type="submit">
-        Click
-      </button>
-    </form>
-    <div>
-      <button type="button" class="navi_btb" onclick="">
-        Exam
-      </button>
     </div>
-  </div>
   </body>
-  <script type="text/javascript"  src="./js/main.js"></script>
+  <script type="text/javascript" src="./js/main.js"></script>
 </html>
