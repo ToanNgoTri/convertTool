@@ -39,7 +39,7 @@ let lawNameDisplay
 function getValueinArea() {
   unitPublishString = document.querySelector("#unitPublish").value;
   unitPublish = unitPublishString.split("; ");
-  lawDaySign = document.querySelector("#lawDaySign").value;
+  lawDaySign = document.querySelector("#lawDaySign").value.replace(/\s/img,'');
   
   
   nameSignString = document.querySelector("#nameSign").value;
@@ -47,10 +47,10 @@ function getValueinArea() {
   nameSign  = []
   
   lawDescription = document.querySelector("#lawDescription").value;
-  lawNumber = document.querySelector("#lawNumber").value;
+  lawNumber = document.querySelector("#lawNumber").value.replace(/\s/img,'');
   lawRelated = []
   
-  lawKind = document.querySelector("#lawKind").value;
+  lawKind = document.querySelector("#lawKind").value.replace(/(^\s*|\s*$)/img,'');
   
   lawNameDisplay = lawDescription
   if(lawKind.match(/^(luật|bộ luật)/i)){
@@ -144,11 +144,11 @@ function getLawDayActive(text,daySign) {
  if (
   text.match(
     // /(?<=^(Điều|Ðiều|Điều) \d.*\n.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \d* ngày/im
-    /(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \d* ngày/im
+    /(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \d* ngày/im
   )
 ) {
      lawDayActive = text.match(
-      /(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \d* ngày/im
+      /(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \d* ngày/im
     )[0];
   countDaysAfter = lawDayActive.match(/\d+/img)[0]
   lawDayActive = addDaysToDate(daySign,parseInt(countDaysAfter))
@@ -156,21 +156,21 @@ function getLawDayActive(text,daySign) {
 }else if (
     text.match(
       // /(?<=^(Điều|Ðiều|Điều) \d.*(Hiệu lực|thi hành|thực hiện).*\n).*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực).* từ ngày k/im
-      /(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực).{0,19}từ ngày (k|ban hành)/im
+      /(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực).{0,19}từ ngày (k|ban hành)/im
     )
   ) {
        console.log(1);
        
     lawDayActive = addDaysToDate(daySign,0);
   } else if (
-    text.match(/(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|Quy chuẩn kỹ thuật|Định mức)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,19})(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
-      // /(?<=^(Điều|Ðiều|Điều) \d.{0,15}(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
+    text.match(/(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|Quy chuẩn kỹ thuật|Định mức)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,19})(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
+      // /(?<=^(Điều|Ðiều|Điều) \d.{0,15}(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
     )
   ) {
        let lawDayActiveDemo = text.match(
-/(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|Quy chuẩn kỹ thuật|Định mức)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,19})(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/img
+/(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|Quy chuẩn kỹ thuật|Định mức)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,19})(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/img
     )[text.match(
-/(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|Quy chuẩn kỹ thuật|Định mức)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,19})(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/img
+/(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|Quy chuẩn kỹ thuật|Định mức)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,19})(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/img
     ).length-1];
     console.log(2);
     let RemoveDay = lawDayActiveDemo.replace(/(ngày|ngày) */im, "");
@@ -178,19 +178,18 @@ function getLawDayActive(text,daySign) {
     lawDayActive = addDaysToDate(RemoveMonth.replace(/ *năm */im, "/"),0)
   } else if (
     text.match(
-      // /(?<=^(Điều|Ðiều|Điều) \d.*(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)\d+\/\d+\/\d+/im
-      /(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,19}ngày\s)\d+(\/|\-)\d+(\/|\-)\d+/im
+      // /(?<=^(Điều|Ðiều|Điều) \d.*(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)\d+\/\d+\/\d+/im
+      /(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,19}ngày\s)\d+(\/|\-)\d+(\/|\-)\d+/im
     )
   ) {
     
     lawDayActive = text.match(
-      /(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,19}ngày\s)\d+(\/|\-)\d+(\/|\-)\d+/im
+      /(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,19}ngày\s)\d+(\/|\-)\d+(\/|\-)\d+/im
     )[0]
     lawDayActive = lawDayActive.replace(/-/img,'/')
-    console.log('lawDayActive',lawDayActive);
     
     lawDayActive = addDaysToDate(lawDayActive,0)
-  }  else {
+  } else {
     console.log(4);
     lawDayActive = null;
   }
@@ -433,130 +432,128 @@ async function getInfo(){
   }
 }
 
-async function convertBareTextInfo() {
-  console.log('convertBareTextInfo');
-  
+function convertPartOne(){
+
   let b = document.querySelector("#content_input").value;
   let b1 = b.replace(/^ */gim, ""); // bỏ các space ở đầu mỗi dòng
   let b2 = b1.replace(/\(*đã k(ý|í)\)*/gim, "");
   b2 = b2.replace(/\[daky\]/gim, "");
-  // let b3 = b2.replace(/^(\t| |\u00A0)*/gim, "");
-  let b3 = b2.replace(/^\s*nơi nhận.*\n([^\s].*\n)*/gim, ""); 
-
+  let b3 = b2.replace(/^\s*nơi nhận.*\n([^\s].*\n)*/img,'')
   let b4 = b3.replace(/\n+\s+$/gim, "");
   let b5 = b4.replace(/\n*$/gim, ""); //bỏ xuống dòng ở cuối
-  let b6 = b5
-  // let b6 = b5.replace(/^\s*/gim, ""); // bỏ space, xuống dòng ở đầu
+  let b6 = b5.replace(/^\s*/gim, ""); // bỏ space, xuống dòng ở đầu
   let b7 = b6.replace(/\s*$/gim, ""); // bỏ space, xuống dòng ở cuối
   let b8 = b7.replace(/(?<=\w)\n\[\d+\].*$(\n.*)*$/gim, ""); // bỏ mấy cái chỉ mục của VBHN đi
   let b9 = b8.replace(/\n+/gim, "\n"); // biến nhiều xuống dòng thành 1 xuống dòng
-  // let b10 = b9
-  let b10;
 
-  let b10a = []; // kết nối "Phần thứ với nội dung "phần thứ ...", trường hợp bị tách 2 hàng
+  let b10 = b9
+  // let b10a = []; // kết nối "Phần thứ với nội dung "phần thứ ...", trường hợp bị tách 2 hàng
 
-  for (let c = 0; c < 5; c++) {
-    if (!c) {
-      b10a[c] = b9.replace(
-        /(?<=^(Phần|PHẦN)\s(THỨ|I|l|1).*)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
-        ": "
-      );
-    } else {
-      b10a[c] = b10a[c - 1].replace(
-        /(?<=^(Phần|PHẦN)\s(THỨ|I|l|1).*)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
-        " "
-      );
-    }
-  }
-  b10 = b10a[4];
-
-  // if(b9.match(/^Nơi nhận/mi)){    // bỏ phụ lục, danh mục các thư
-  //   b10 = b9.replace(
-  //     /(?<=^(Nơi nhận|Nơi Nhận).*(\n.*)*)\n(PHỤ LỤC|PHỤ LỤC|Phụ lục|DANH MỤC|MỤC LỤC|QUY CHẾ|QUY CHUẨN|NỘI QUY|BIỂU THUẾ|ĐIỀU LỆ|Mẫu|MẪU|BIỂU KHUNG|QCVN|QCVN|ĐỊNH MỨC|HỆ THỐNG|CHƯƠNG TRÌNH).*(\n.*)*/gm,
-  //     ""
-  //   ); // bỏ Phụ lục,danh mục
-
-  // }else{
-  //   b10 = b9.replace(
-  //     /(?<!^(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|Điều|Ðiều|Điều|Chương|CHƯƠNG|Phần thứ|PHẦN THỨ|MỤC|Mục|Mục|Mẫu số).*)\n(PHỤ LỤC|PHỤ LỤC|Phụ lục|DANH MỤC|QUY CHẾ|QUY CHUẨN|NỘI QUY|BIỂU THUẾ|ĐIỀU LỆ|Mẫu|MẪU|BIỂU KHUNG|QCVN|QCVN|ĐỊNH MỨC|HỆ THỐNG|CHƯƠNG TRÌNH).*(\n.*)*/gm,
-  //     ""
-  //   ); // bỏ Phụ lục,danh mục
+  // for (let c = 0; c < 5; c++) {
+  //   if (!c) {
+  //     b10a[c] = b9.replace(
+  //       /(?<=^(Phần|PHẦN)\s(THỨ|I|l|1).*)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
+  //       ": "
+  //     );
+  //   } else {
+  //     b10a[c] = b10a[c - 1].replace(
+  //       /(?<=^(Phần|PHẦN)\s(THỨ|I|l|1).*)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
+  //       " "
+  //     );
   //   }
+  // }
+  // b10 = b10a[4];
 
-
-  // b10 = b10.replace(/^(nơi nhận|Nơi nhận).*(\n.*)*/gim, "");
-
-  // b10 = b10.replace(
-  //   /(?<!(Điều|Ðiều|Điều|chương|Phần thứ|Mục|Mục) (\d|II|V|X)+\:*)\n(PHỤ LỤC|PHỤ LỤC|Phụ lục|DANH MỤC|QUY CHẾ|QUY CHUẨN|NỘI QUY|BIỂU THUẾ|ĐIỀU LỆ).*(\n.*)*/gim,
-  //   ""
-  // ); // bỏ Phụ lục,danh mục
   let b11 = b10.replace(/(\[|\()\d*(\]|\))/gim, ""); // bỏ chỉ mục số đi
-  // let b12 = b11.replace(/\n.*ĐÍNH KÈM.*$/gi, ""); // bỏ FILE ĐƯỢC ĐÍNH KÈM THEO VĂN BẢN  
-  // let b12 = b11.replace(/(?<=^CHƯƠNG.*)\W*$/img, ""); 
-  let b12 = b11.replace(/(?<=^Chương (V|I|X|\d).*)\n(?!(Điều|Ðiều|Điều) \d.*)/gim,' ')
+
+  let b12 =b11
+  // let b12a = []
+
+  // for (let c = 0; c < 5; c++) {
+  //   if (!c) {
+  //     b12a[c] = b11.replace(
+  //       /(?<=^Chương (V|I|X|\d).*)\n(?!(Điều|Ðiều|Điều) \d.*)/gim,
+  //       ": "
+  //     );
+  //   } else {
+  //     b12a[c] = b12a[c - 1].replace(
+  //       /(?<=^Chương (V|I|X|\d).*)\n(?!(Điều|Ðiều|Điều) \d.*)/gim,
+  //       " "
+  //     );
+  //   }
+  // }
+  // b12 = b12a[4];
+
+
   let b13 = b12.replace(/  +/gim, " "); // bỏ khoảng cách 2 space
 
+  return b13
+}
 
+function convertPartTwo(partOne){
 
-
-  
-
-  // document.querySelector(".output").value = b9;
-
-
-  nameSign = nameSignArrayDemo
-roleSign = getRoleSign(b13,nameSign)
-
-nameSign = getArrangeUnitPublic(b13,nameSignArrayDemo,lawKind,unitPublish)['nameSign']
-  unitPublish = getArrangeUnitPublic(b13,nameSignArrayDemo,lawKind,unitPublish)['unitPbDemo']
-  
-  lawDayActive = getLawDayActive(b13,lawDaySign)
-
-  if(document.querySelector("#lawRelated").value){
-    lawRelated =  getLawRelated(document.querySelector("#lawRelated").value)
-
-  }else{
-    lawRelated =  getLawRelated(b13)
-
-  }
-
-  // document.querySelector(".output").value = b13;
-  
   let b14=''
   for(let t = 0;t<=30;t++){
     let clause
-    clause = b13.match(`(?<=(\n.*){${t}}).*`,'im')[0]
+    clause = partOne.match(`(?<=(\n.*){${t}}).*`,'im')[[0]]
   // console.log('clause',clause);
   
-  if (lawKind.match(/nghị quyết/i)) {// bỏ phần đầu
-    b14 = b13.replace(/^(.*\n)*QUYẾT NGHỊ(:|\.|\s|)\n/i, ""); 
+  // if(clause){
+  //   clause = clause[0]
+  // } else{
+
+  //   if(partOne.match(/PHẦN\sTHỨ\s/img)){
+  //     b14 = partOne.replace(
+  //       /^(.*\n)*.+(?=(PHẦN\sTHỨ\s)(:|\.|\s))/i,
+  //       ""
+  //     ); 
+  //   }else if(partOne.match(/Chương (I|l|1)[^I]/img)){
+  //     b14 = partOne.replace(
+  //       /^(.*\n)*.+(?=(Chương (I|l|1))[^I])/i,
+  //       ""
+  //     ); 
+  //   }else if(partOne.match(/(Điều 1|Điều 1)/img)){
+  //     b14 = partOne.replace(
+  //       /^(.*\n)*.+(?=(Điều 1|Điều 1)(:|\.))/i,
+  //       ""
+  //     ); 
+  //   }
+  
+
+    // break
+  // }
+
+  if (lawKind ?lawKind.match(/nghị quyết/i) : partOne.match(/^nghị quyết/i)) {// bỏ phần đầu
+    b14 = partOne.replace(/^(.*\n)*QUYẾT NGHỊ(:|\.|\s|)\n/i, ""); 
     break
   } else if(clause.match(/^(Phần|PHẦN)\s(THỨ|I|l|1)/img)){
 
-    let firstSection = b13.match(/^(Phần|PHẦN)\s(THỨ|I|l|1).*/im)[0]
+    let firstSection = partOne.match(/^(Phần|PHẦN)\s(THỨ|I|l|1).*/im)[0]
 
-    b14 = b13.replace(new RegExp(`(.*\\n)*(?=${firstSection})\\b`,'img'),'')
+    b14 = partOne.replace(new RegExp(`(.*\\n)*(?=${firstSection})\\b`,'img'),'')
     break
   }else if(clause.match(/^(Chương|CHƯƠNG)\s(I|l|1)/img)){
 
-    let firstChapter = b13.match(/^(Chương|CHƯƠNG)\s(I|l|1).{0,10}/im)[0]
+    let firstChapter = partOne.match(/^(Chương|CHƯƠNG)\s(I|l|1).{0,10}/im)[0]
 
-    b14 = b13.replace(new RegExp(`(.*\\n)*(?=${firstChapter})`,'img'),'')
+    b14 = partOne.replace(new RegExp(`(.*\\n)*(?=${firstChapter}\n)`,'img'),'')
     break
   }else if(clause.match(/^(Điều|Ðiều|Điều)\s(I|l|1)/img)){
     
-    let firstArticle = b13.match(/^(Điều|Ðiều|Điều)\s(I|l|1).{0,10}/im)[0]   // lấy 10 ký tự thôi cho chắc
-    b14 = b13.replace(new RegExp(`(.*\\n)*(?=${firstArticle})`,'img'),'')
+    let firstArticle = partOne.match(/^(Điều|Ðiều|Điều)\s(I|l|1).{0,10}/im)[0]   // lấy 10 ký tự thôi cho chắc
+    b14 = partOne.replace(new RegExp(`(.*\\n)*(?=${firstArticle})`,'img'),'')
     break
   }
   }
 
-  if(!b14){
-      b14 = b13.replace(
-        /^(.*\n)*.+(ban hành|ban hành|quy định|hướng dẫn|công bố)[^\n]+\n(?=(Chương (I|l|1)|phần thứ|Điều 1|Điều 1)(:|\.|\s))/i,
-        ""
-      ); 
-    }
+  // if(!b14){
+  //     b14 = partOne.replace(
+  //       /^(.*\n)*.+(ban hành|ban hành|quy định|hướng dẫn|công bố)[^\n]+\n(?=(Chương (I|l|1)|phần thứ|Điều 1|Điều 1)(:|\.|\s))/i,
+  //       ""
+  //     ); 
+  //   }
+
+
 
 
 
@@ -564,12 +561,17 @@ nameSign = getArrangeUnitPublic(b13,nameSignArrayDemo,lawKind,unitPublish)['name
     if (b14.match(/(?<=.*\.\/\.)(\n.*)*/gim)) {
       
       b15 = b14.replace(/(?<=.*\.\/\.)(\n.*)*/gim, ""); //  bỏ tất cả sau ./.
-    }else if(b14.match(/^TM ?\./m)){
+    } 
+    // else{
+    //   b15 = b14.replace(/Nơi nhận.{0,5}(\n.*)*/gim, ""); //  bỏ tất cả sau ./.
+    // }
+    
+    if(b14.match(/^TM\s?\./m)){
       // b15 = b14.match(/(^[^T][^M].*\n)*(?=^(KT|TM|Xác thực|XÁC THỰC|CHỦ NHIỆM|CHỦ TỊCH))/m)[0]; 
-      b15 = b14.replace(/TM.*(\n.*)*/m,''); 
-    }else if(b14.match(/^KT ?\./m)){
-      b15 = b14.replace(/KT.*(\n.*)*/m,''); 
-    } else {
+      b15 = b14.replace(/^TM\s?.*(\n.*)*/m,''); 
+    }else if(b14.match(/^KT\s?\./m)){
+      b15 = b14.replace(/^KT\s?.*(\n.*)*/m,''); 
+    } else if(nameSign) {
       for(let k = 0;k<nameSign.length;k++){
         
         b15 = b14.replace(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n)*)*`,'img'),''); // bỏ 2 hàng cuối
@@ -579,6 +581,76 @@ nameSign = getArrangeUnitPublic(b13,nameSignArrayDemo,lawKind,unitPublish)['name
   
   b15 = b15.replace(/\.+\/+\.*/gim, ""); // bỏ ./. ở sau cùng
   let b16 = b15.replace(/\n$/gim, ""); // bỏ hàng dư trống ở cuối
+
+return b16
+}
+
+
+
+async function convertBareTextInfo() {
+  console.log('convertBareTextInfo');
+  
+  // let b = document.querySelector("#content_input").value;
+  // let b1 = b.replace(/^ */gim, ""); // bỏ các space ở đầu mỗi dòng
+  // let b2 = b1.replace(/\(*đã k(ý|í)\)*/gim, "");
+  // b2 = b2.replace(/\[daky\]/gim, "");
+  // let b3 = b2.replace(/^\s*nơi nhận.*\n([^\s].*\n)*/img,'')
+  // let b4 = b3.replace(/\n+\s+$/gim, "");
+  // let b5 = b4.replace(/\n*$/gim, ""); //bỏ xuống dòng ở cuối
+  // let b6 = b5.replace(/^\s*/gim, ""); // bỏ space, xuống dòng ở đầu
+  // let b7 = b6.replace(/\s*$/gim, ""); // bỏ space, xuống dòng ở cuối
+  // let b8 = b7.replace(/(?<=\w)\n\[\d+\].*$(\n.*)*$/gim, ""); // bỏ mấy cái chỉ mục của VBHN đi
+  // let b9 = b8.replace(/\n+/gim, "\n"); // biến nhiều xuống dòng thành 1 xuống dòng
+
+  // let b10;
+  // let b10a = []; // kết nối "Phần thứ với nội dung "phần thứ ...", trường hợp bị tách 2 hàng
+
+  // for (let c = 0; c < 5; c++) {
+  //   if (!c) {
+  //     b10a[c] = b9.replace(
+  //       /(?<=^(Phần|PHẦN)\s(THỨ|I|l|1).*)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
+  //       ": "
+  //     );
+  //   } else {
+  //     b10a[c] = b10a[c - 1].replace(
+  //       /(?<=^(Phần|PHẦN)\s(THỨ|I|l|1).*)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
+  //       " "
+  //     );
+  //   }
+  // }
+  // b10 = b10a[4];
+
+  // let b11 = b10.replace(/(\[|\()\d*(\]|\))/gim, ""); // bỏ chỉ mục số đi
+  // let b12 = b11.replace(/(?<=^Chương (V|I|X|\d).*)\n(?!(Điều|Ðiều|Điều) \d.*)/gim,' ')
+  // let b13 = b12.replace(/  +/gim, " "); // bỏ khoảng cách 2 space
+
+
+  let partOne = convertPartOne()
+
+  let partTwo = convertPartTwo(partOne)
+  
+
+  // document.querySelector(".output").value = b9;
+
+
+  nameSign = nameSignArrayDemo
+roleSign = getRoleSign(partOne,nameSign)
+
+nameSign = getArrangeUnitPublic(partOne,nameSignArrayDemo,lawKind,unitPublish)['nameSign']
+  unitPublish = getArrangeUnitPublic(partOne,nameSignArrayDemo,lawKind,unitPublish)['unitPbDemo']
+  
+  lawDayActive = getLawDayActive(partOne,lawDaySign)
+
+  if(document.querySelector("#lawRelated").value){
+    lawRelated =  getLawRelated(document.querySelector("#lawRelated").value)
+
+  }else{
+    lawRelated =  getLawRelated(partOne)
+
+  }
+
+  // document.querySelector(".output").value = b13;
+  
 
 
 
@@ -633,7 +705,7 @@ nameSign = getArrangeUnitPublic(b13,nameSignArrayDemo,lawKind,unitPublish)['name
 
   // console.log('lawInfo',lawInfo);
   
-  document.querySelector(".output").value = b16;
+  document.querySelector(".output").value = partTwo;
   return { lawInfo };
 }
 
@@ -737,25 +809,24 @@ async function convertContent() {
   let i7 = i6.replace(/\u00A0/img,' ')
 
   // let i8 =i7.replace(/(?<=^Chương (V|I|X|\d).*)\n(?!(Điều|Ðiều|Điều) \d.*)/gim,' ')
-  let i8 =i7
 
-  // let i7a = [];
+  let i8;
+  let i8a = []; // kết nối "Phần thứ với nội dung "phần thứ ...", trường hợp bị tách 2 hàng
 
-  // for (let b = 0; b < initial; b++) {
-  //   if (!b) {
-  //     i7a[b] = i6.replace(
-  //       /(?<=^Chương (V|I|X|\d).*)\n(?!(Điều|Ðiều|Điều) \d.*)/gim,
-  //       ": "
-  //     );
-  //   } else {
-  //     i7a[b] = i7a[b - 1].replace(
-  //       /(?<=^Chương (V|I|X|\d).*)\n(?!(Điều|Ðiều|Điều) \d.*)/gim,
-  //       " "
-  //     );
-  //   }
-  // }
-
-  // i7 = i7a[initial - 1];
+  for (let c = 0; c < 5; c++) {
+    if (!c) {
+      i8a[c] = i7.replace(
+        /(?<=^(Phần|PHẦN)\s(THỨ|I|l|1).*)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
+        ": "
+      );
+    } else {
+      i8a[c] = i8a[c - 1].replace(
+        /(?<=^(Phần|PHẦN)\s(THỨ|I|l|1).*)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
+        " "
+      );
+    }
+  }
+  i8 = i8a[4];
 
 
   let i9 = i8.replace(/(?<=^(Phần|PHẦN)\s(THỨ|I|l|\d)+[^\.]*)\./im,'')      // bỏ dấu chấm cuối chữ phần thứ ...
@@ -766,12 +837,12 @@ async function convertContent() {
   for (let c = 0; c < initial; c++) {
     if (!c) {
       i10a[c] = i9.replace(
-        /(?<=^(Phần|PHẦN)\s(THỨ|I|l|\d)+)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
+        /(?<=^Chương (V|I|X|\d).*)\n(?!(Điều|Ðiều|Điều) \d.*)/gim,
         ": "
       );
     } else {
       i10a[c] = i10a[c - 1].replace(
-        /(?<=^(Phần|PHẦN)\s(THỨ|I|l|\d)+)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
+        /(?<=^Chương (V|I|X|\d).*)\n(?!(Điều|Ðiều|Điều) \d.*)/gim,
         " "
       );
     }
@@ -1119,14 +1190,14 @@ async function convertContent() {
   return data;
 }
 
-function Push() {
+ function Push() {
   let yearSign = parseInt(lawInfo["lawDaySign"].getYear())+1900
   let lawNumberForPush =
     lawInfo["lawNumber"] +
     (!lawInfo["lawNumber"].match(/(?<=\d\W)\d{4}/gim)
       ? "(" + yearSign + ")"
       : "");
-  fetch("http://localhost:5000/push", {
+  fetch("http://localhost:9000/push", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -1142,6 +1213,8 @@ function Push() {
     })
     .then((data) => console.log(123));
   console.log(lawNumberForPush);
+  
+
 }
 
 function NaviNext() {
@@ -1167,7 +1240,7 @@ function NaviNext() {
 }
 
 function NaviHome() {
-  window.location.href = "http://localhost:5000";
+  window.location.href = "http://localhost:9000";
 }
 
 async function pasteContent() {
@@ -1181,7 +1254,7 @@ async function pasteContentAll() {
 }
 
 function goToStartInput() {
-  document.querySelector("#content_input").focus();
+  document.querySelector("#lawNumber").focus();
   document.querySelector("#content_input").setSelectionRange(0, 0);
 }
 
@@ -1238,7 +1311,7 @@ if (
               Push();
               NaviNext();
               
-            }, 2000);
+            }, 500);
 
           }
          
@@ -1255,3 +1328,177 @@ if (
     }
     });
 }
+
+
+
+async function findMissingYear(){
+let allLawSearchId = []
+
+  await fetch('../asset/lawSearch.json')
+  .then(response => response.json())  // Chuyển đổi response thành JSON
+  .then(data => {
+        allLawSearchId =   data 
+  })
+  .catch(error => console.log('Error:', error));  
+
+let lawIdSpecified
+
+lawIdSpecified = allLawSearchId.filter( item => item.match(/TT-BQP$/img))
+
+// console.log('lawIdSpecified',lawIdSpecified);
+
+let b = 0
+let lawIdSpecifiedEachYear = []
+let yearStart = 2000
+let yearEnd = 2024
+let missingLaw = []
+for(let a= yearStart;a<=yearEnd;a++){
+
+  lawIdSpecifiedEachYear[b] = lawIdSpecified.filter(item=>item.match( new RegExp(`${a}\/TT\-BQP$`,'img')))
+  let maxIndex = 0
+
+  for(let c = 0;c < lawIdSpecifiedEachYear[b].length;c++){
+   if(maxIndex < parseInt(lawIdSpecifiedEachYear[b][c].match(/^\d+/gim)[0])){
+     maxIndex  = parseInt(lawIdSpecifiedEachYear[b][c].match(/^\d+/gim)[0])
+   }
+  }
+  // console.log('maxIndex',maxIndex);
+
+
+  for(let c = 1;c <= maxIndex;c++){
+  let exist = false
+    for(let d = 0;d < lawIdSpecifiedEachYear[b].length;d++){
+      
+      if(parseInt(lawIdSpecifiedEachYear[b][d].match(/^\d+/img)[0]) == c){
+        exist = true
+        // console.log(exist);
+        
+      }else{
+        // 
+      }
+  }
+
+  if(!exist){
+    missingLaw.push(`${c}/${a}/TT-BQP`)
+  }
+}
+ 
+
+
+
+
+  b++
+}
+
+console.log(missingLaw);
+
+
+}
+
+
+
+/////////////////////////////////////////////// for find different lawID
+
+// let allLawSearchId = []
+// async function getAllLawId(){
+//   await fetch('../asset/LawMachine.LawSearch.json')
+//   .then(response => response.json())  // Chuyển đổi response thành JSON
+//   .then(data => {
+//       for(let a = 0 ; a< data.length;a++){
+//         allLawSearchId[a] =   data[a]['_id'] 
+//   }
+//   })
+//   .catch(error => console.log('Error:', error));  
+
+// console.log(allLawSearchId);
+// }
+
+
+
+
+///////////////////////////////////////////////////////////////// for add full text
+
+// if (
+//   window.location.href.match(/AllConvertfulltext\//g)
+// ) {
+   
+
+//       if(!document.querySelector("#content_input").value.match(/^\s*(Phần|PHẦN|Chương|CHƯƠNG|Điều|Ðiều|Điều)/)){
+//         convertFullText()
+
+//       if (
+//         document.querySelector(".output").value 
+//       ){
+//             setTimeout(() => {
+//               pushFullText();
+//               naviNextConvertFullText();
+              
+//             }, 2000);
+
+          
+         
+//       }else{
+//         console.log('không có data');
+//         beep();
+        
+//       }
+    
+//     }else{
+//       naviNextConvertFullText();
+
+//     }
+
+// }
+
+
+// function convertFullText(){
+
+//   document.querySelector(".output").value = convertPartTwo(convertPartOne())
+
+
+
+// }
+
+// function pushFullText(){
+
+//   console.log(document.querySelector("#id").value);
+  
+
+//   fetch("http://localhost:9000/pushconvertfulltext", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({
+//       fulltext : document.querySelector(".output").value,
+//       id : document.querySelector("#id").value
+//     }),
+//   })
+//     .then((res) => {
+//       console.log("success");
+//     })
+//     .then((data) => console.log(123));
+
+
+//     console.log('success');
+
+// }
+
+
+// function naviNextConvertFullText(){
+
+//   let URI = window.location.href;
+
+//   if (URI.match(/(?<=AllConvertfulltext\/)/g)) {
+//     let currentIndex = parseInt(URI.match(/(?<=AllConvertfulltext\/)\d+/g)[0]);
+//     let nextURI;
+
+//       nextURI = URI.replace(/(?<=AllConvertfulltext\/)\d+/g, `${currentIndex + 1}`);
+
+//       window.location.href = nextURI;
+//   } else {
+//     console.log('none URI "AllURL"');
+//   }
+
+// }
+
+
+// keytool -genkeypair -v -storetype PKCS12 -keystore android.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
