@@ -446,7 +446,6 @@ function convertPartOne(){
   let b8 = b7.replace(/(?<=\w)\n\[\d+\].*$(\n.*)*$/gim, ""); // bỏ mấy cái chỉ mục của VBHN đi
   let b9 = b8.replace(/\n+/gim, "\n"); // biến nhiều xuống dòng thành 1 xuống dòng
 
-<<<<<<< HEAD
   let b10 = b9
   // let b10a = []; // kết nối "Phần thứ với nội dung "phần thứ ...", trường hợp bị tách 2 hàng
 
@@ -486,28 +485,6 @@ function convertPartOne(){
   // b12 = b12a[4];
 
 
-=======
-  let b10;
-  let b10a = []; // kết nối "Phần thứ với nội dung "phần thứ ...", trường hợp bị tách 2 hàng
-
-  for (let c = 0; c < 5; c++) {
-    if (!c) {
-      b10a[c] = b9.replace(
-        /(?<=^(Phần|PHẦN)\s(THỨ|I|l|1).*)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
-        ": "
-      );
-    } else {
-      b10a[c] = b10a[c - 1].replace(
-        /(?<=^(Phần|PHẦN)\s(THỨ|I|l|1).*)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
-        " "
-      );
-    }
-  }
-  b10 = b10a[4];
-
-  let b11 = b10.replace(/(\[|\()\d*(\]|\))/gim, ""); // bỏ chỉ mục số đi
-  let b12 = b11.replace(/(?<=^Chương (V|I|X|\d).*)\n(?!(Điều|Ðiều|Điều) \d.*)/gim,' ')
->>>>>>> cc7a3da27e7ac740337efc29f654887ddb5ccff8
   let b13 = b12.replace(/  +/gim, " "); // bỏ khoảng cách 2 space
 
   return b13
@@ -559,11 +536,7 @@ function convertPartTwo(partOne){
 
     let firstChapter = partOne.match(/^(Chương|CHƯƠNG)\s(I|l|1).{0,10}/im)[0]
 
-<<<<<<< HEAD
     b14 = partOne.replace(new RegExp(`(.*\\n)*(?=${firstChapter}\n)`,'img'),'')
-=======
-    b14 = partOne.replace(new RegExp(`(.*\\n)*(?=${firstChapter})`,'img'),'')
->>>>>>> cc7a3da27e7ac740337efc29f654887ddb5ccff8
     break
   }else if(clause.match(/^(Điều|Ðiều|Điều)\s(I|l|1)/img)){
     
@@ -1358,7 +1331,6 @@ if (
 
 
 
-<<<<<<< HEAD
 async function findMissingYear(){
 let allLawSearchId = []
 
@@ -1440,14 +1412,10 @@ console.log(missingLaw);
 
 // console.log(allLawSearchId);
 // }
-=======
-
->>>>>>> cc7a3da27e7ac740337efc29f654887ddb5ccff8
 
 
 
 
-<<<<<<< HEAD
 ///////////////////////////////////////////////////////////////// for add full text
 
 // if (
@@ -1534,100 +1502,3 @@ console.log(missingLaw);
 
 
 // keytool -genkeypair -v -storetype PKCS12 -keystore android.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
-=======
-
-
-if (
-  window.location.href.match(/AllConvertfulltext\//g)
-  //||window.location.href.match(/URL\?URL/g)
-) {
-   
-
-      if(!document.querySelector("#content_input").value.match(/^\s*(Phần|PHẦN|Chương|CHƯƠNG|Điều|Ðiều|Điều)/)){
-        convertFullText()
-
-      if (
-        document.querySelector(".output").value 
-      ){
-            setTimeout(() => {
-              pushFullText();
-              naviNextConvertFullText();
-              
-            }, 2000);
-
-          
-         
-      }else{
-        console.log('không có data');
-        beep();
-        
-      }
-    
-    }else{
-      naviNextConvertFullText();
-
-    }
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-function convertFullText(){
-
-  document.querySelector(".output").value = convertPartTwo(convertPartOne())
-
-
-
-}
-
-function pushFullText(){
-
-  console.log(document.querySelector("#id").value);
-  
-
-  fetch("http://localhost:5000/pushconvertfulltext", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      fulltext : document.querySelector(".output").value,
-      id : document.querySelector("#id").value
-    }),
-  })
-    .then((res) => {
-      console.log("success");
-    })
-    .then((data) => console.log(123));
-
-
-    console.log('success');
-
-}
-
-
-function naviNextConvertFullText(){
-
-  let URI = window.location.href;
-
-  if (URI.match(/(?<=AllConvertfulltext\/)/g)) {
-    let currentIndex = parseInt(URI.match(/(?<=AllConvertfulltext\/)\d+/g)[0]);
-    let nextURI;
-
-      nextURI = URI.replace(/(?<=AllConvertfulltext\/)\d+/g, `${currentIndex + 1}`);
-
-      window.location.href = nextURI;
-  } else {
-    console.log('none URI "AllURL"');
-  }
-
-}
->>>>>>> cc7a3da27e7ac740337efc29f654887ddb5ccff8
