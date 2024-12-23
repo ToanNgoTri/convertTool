@@ -293,7 +293,7 @@ app.get(`/AllConvertfulltext/:id`, async (req, res) => {
   const database = client.db("LawMachine");
   const LawContent = database.collection("LawSearch");
 
-  LawContent.find({ 
+  LawContent.find({
     _id: /\/(2001|2002|2003|2004|2005|2006|2007|2008|2009)\//,
   })
     .project({ info: 0, fullText: 0 })
@@ -338,7 +338,6 @@ app.post(`/pushconvertfulltext`, async (req, res) => {
     // await client.close();
   }
   console.log(req.body.id);
-  
 });
 
 app.post("/searchlaw", async (req, res) => {
@@ -401,15 +400,16 @@ app.post("/getonelaw", async (req, res) => {
   // res.write(a);
 });
 
-app.post("/stackscreen", async (req, res) => {
-  // dành cho AppNavigator
-
+app.post("/getlastedlaws", async (req, res) => {
+  // dành cho Detail2
   try {
     const database = client.db("LawMachine");
-    const LawSearch = database.collection("LawSearch");
+    const LawContent = database.collection("LawContent");
 
-    LawSearch.find({})
+    LawContent.find()
+      .limit(10)
       .project({ info: 1 })
+      .sort({ "info.lawDaySign": -1 })
       .toArray()
       .then((o) => res.json(o));
   } finally {
@@ -417,6 +417,23 @@ app.post("/stackscreen", async (req, res) => {
     // await client.close();
   }
 });
+
+// app.post("/stackscreen", async (req, res) => {
+//   // dành cho AppNavigator
+
+//   try {
+//     const database = client.db("LawMachine");
+//     const LawSearch = database.collection("LawSearch");
+
+//     LawSearch.find({})
+//       .project({ info: 1 })
+//       .toArray()
+//       .then((o) => res.json(o));
+//   } finally {
+//     // Ensures that the client will close when you finish/error
+//     // await client.close();
+//   }
+// });
 
 app.listen(9000, function () {
   console.log("Server is running on port " + 9000);
