@@ -1,3 +1,5 @@
+// < Nghị định 180/2024/NĐ-CP chưa hoàn thiện xong vb
+
 function beep() {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -163,14 +165,14 @@ function getLawDayActive(text,daySign) {
        
     lawDayActive = addDaysToDate(daySign,0);
   } else if (
-    text.match(/(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|Quy chuẩn kỹ thuật|Định mức)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,19})(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
+    text.match(/(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|Quy chuẩn kỹ thuật|Định mức)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,19})(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
       // /(?<=^(Điều|Ðiều|Điều) \d.{0,15}(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
     )
   ) {
        let lawDayActiveDemo = text.match(
-/(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|Quy chuẩn kỹ thuật|Định mức)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,19})(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/img
+/(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|Quy chuẩn kỹ thuật|Định mức)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,19})(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/img
     )[text.match(
-/(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|Quy chuẩn kỹ thuật|Định mức)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,19})(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/img
+/(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|Quy chuẩn kỹ thuật|Định mức)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,19})(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/img
     ).length-1];
     console.log(2);
     let RemoveDay = lawDayActiveDemo.replace(/(ngày|ngày) */im, "");
@@ -525,6 +527,7 @@ function convertPartTwo(partOne){
 
   if (lawKind ?lawKind.match(/nghị quyết/i) : partOne.match(/^nghị quyết/i)) {// bỏ phần đầu
     b14 = partOne.replace(/^(.*\n)*QUYẾT NGHỊ(:|\.|\s|)\n/i, ""); 
+    
     break
   } else if(clause.match(/^(Phần|PHẦN)\s(THỨ|I|l|1)/img)){
 
@@ -536,7 +539,7 @@ function convertPartTwo(partOne){
 
     let firstChapter = partOne.match(/^(Chương|CHƯƠNG)\s(I|l|1).{0,10}/im)[0]
 
-    b14 = partOne.replace(new RegExp(`(.*\\n)*(?=${firstChapter}\n)`,'img'),'')
+    b14 = partOne.replace(new RegExp(`(.*\\n)*(?=${firstChapter})`,'img'),'')
     break
   }else if(clause.match(/^(Điều|Ðiều|Điều)\s(I|l|1)/img)){
     
@@ -562,24 +565,23 @@ function convertPartTwo(partOne){
       
       b15 = b14.replace(/(?<=.*\.\/\.)(\n.*)*/gim, ""); //  bỏ tất cả sau ./.
     } 
-    // else{
-    //   b15 = b14.replace(/Nơi nhận.{0,5}(\n.*)*/gim, ""); //  bỏ tất cả sau ./.
-    // }
     
     if(b14.match(/^TM\s?\./m)){
       // b15 = b14.match(/(^[^T][^M].*\n)*(?=^(KT|TM|Xác thực|XÁC THỰC|CHỦ NHIỆM|CHỦ TỊCH))/m)[0]; 
-      b15 = b14.replace(/^TM\s?.*(\n.*)*/m,''); 
-    }else if(b14.match(/^KT\s?\./m)){
-      b15 = b14.replace(/^KT\s?.*(\n.*)*/m,''); 
+      b15 = b15.replace(/^TM\s?.*(\n.*)*/m,''); 
+    }else if(b15.match(/^KT\s?\./m)){
+      b15 = b15.replace(/^KT\s?.*(\n.*)*/m,''); 
     } else if(nameSign) {
+
+      
       for(let k = 0;k<nameSign.length;k++){
-        
-        b15 = b14.replace(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n)*)*`,'img'),''); // bỏ 2 hàng cuối
+
+        b15 = b15.replace(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n)*)*`,'img'),''); // bỏ 2 hàng cuối
 
       }
     }
   
-  b15 = b15.replace(/\.+\/+\.*/gim, ""); // bỏ ./. ở sau cùng
+  // b15 = b15.replace(/\.+\/+\.*/gim, ""); // bỏ ./. ở sau cùng
   let b16 = b15.replace(/\n$/gim, ""); // bỏ hàng dư trống ở cuối
 
 return b16
@@ -624,6 +626,7 @@ async function convertBareTextInfo() {
   // let b12 = b11.replace(/(?<=^Chương (V|I|X|\d).*)\n(?!(Điều|Ðiều|Điều) \d.*)/gim,' ')
   // let b13 = b12.replace(/  +/gim, " "); // bỏ khoảng cách 2 space
 
+  nameSign = nameSignArrayDemo
 
   let partOne = convertPartOne()
 
