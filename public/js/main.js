@@ -1236,6 +1236,15 @@ function NaviNext() {
       nextURI = URI.replace(/(?<=\%26page\%3D).*/gim, nextPage);
       nextURI = nextURI.replace(/(?<=AllURL\/).*(?=\?URL)/g, 0);
     }
+
+    // if (currentIndex > 0) {
+    //   nextURI = URI.replace(/(?<=AllURL\/).*(?=\?URL)/g, `${currentIndex - 1}`);
+    // } else {
+    //   let nextPage = parseInt(URI.match(/(?<=\%26page\%3D).*/gim)[0]) - 1;
+    //   nextURI = URI.replace(/(?<=\%26page\%3D).*/gim, nextPage);
+    //   nextURI = nextURI.replace(/(?<=AllURL\/).*(?=\?URL)/g, 19);
+    // }
+
     window.location.href = nextURI;
   } else {
     console.log('none URI "AllURL"');
