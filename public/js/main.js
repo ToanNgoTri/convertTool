@@ -1,4 +1,4 @@
-// < Nghị định 180/2024/NĐ-CP chưa hoàn thiện xong vb
+// < Nghị định 03/2025/NĐ-CP chưa hoàn thiện xong vb
 
 function beep() {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -1229,21 +1229,21 @@ function NaviNext() {
     let currentIndex = parseInt(URI.match(/(?<=AllURL\/).*(?=\?URL)/g)[0]);
     let nextURI;
 
-    if (currentIndex < 19) {
-      nextURI = URI.replace(/(?<=AllURL\/).*(?=\?URL)/g, `${currentIndex + 1}`);
-    } else {
-      let nextPage = parseInt(URI.match(/(?<=\%26page\%3D).*/gim)[0]) + 1;
-      nextURI = URI.replace(/(?<=\%26page\%3D).*/gim, nextPage);
-      nextURI = nextURI.replace(/(?<=AllURL\/).*(?=\?URL)/g, 0);
-    }
-
-    // if (currentIndex > 0) {
-    //   nextURI = URI.replace(/(?<=AllURL\/).*(?=\?URL)/g, `${currentIndex - 1}`);
+    // if (currentIndex < 19) {
+    //   nextURI = URI.replace(/(?<=AllURL\/).*(?=\?URL)/g, `${currentIndex + 1}`);
     // } else {
-    //   let nextPage = parseInt(URI.match(/(?<=\%26page\%3D).*/gim)[0]) - 1;
+    //   let nextPage = parseInt(URI.match(/(?<=\%26page\%3D).*/gim)[0]) + 1;
     //   nextURI = URI.replace(/(?<=\%26page\%3D).*/gim, nextPage);
-    //   nextURI = nextURI.replace(/(?<=AllURL\/).*(?=\?URL)/g, 19);
+    //   nextURI = nextURI.replace(/(?<=AllURL\/).*(?=\?URL)/g, 0);
     // }
+
+    if (currentIndex > 0) {
+      nextURI = URI.replace(/(?<=AllURL\/).*(?=\?URL)/g, `${currentIndex - 1}`);
+    } else {
+      let nextPage = parseInt(URI.match(/(?<=\%26page\%3D).*/gim)[0]) - 1;
+      nextURI = URI.replace(/(?<=\%26page\%3D).*/gim, nextPage);
+      nextURI = nextURI.replace(/(?<=AllURL\/).*(?=\?URL)/g, 19);
+    }
 
     window.location.href = nextURI;
   } else {
@@ -1320,8 +1320,8 @@ if (
         {
           if(lawInfo["roleSign"][0].match(/\s/img).length<=8){
             setTimeout(() => {
-              Push();
-              NaviNext();
+              // Push();
+              // NaviNext();
               
             }, 500);
 
