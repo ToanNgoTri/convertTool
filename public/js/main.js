@@ -1,5 +1,8 @@
 // < Nghị định 03/2025/NĐ-CP chưa hoàn thiện xong vb
 
+// ""
+// ]
+// },
 function beep() {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -468,7 +471,8 @@ function convertPartOne(){
 
   let b11 = b10.replace(/(\[|\()\d*(\]|\))/gim, ""); // bỏ chỉ mục số đi
 
-  let b12 =b11
+  let b12 =b11.replace(/(?<=^Chương (V|I|X|\d)*)\.?\s/gim,': ')
+  b12 = b12.replace(/(?<=^Chương.{0,5})l/gim,'I')
   // let b12a = []
 
   // for (let c = 0; c < 5; c++) {
@@ -537,7 +541,7 @@ function convertPartTwo(partOne){
     break
   }else if(clause.match(/^(Chương|CHƯƠNG)\s(I|l|1)/img)){
 
-    let firstChapter = partOne.match(/^(Chương|CHƯƠNG)\s(I|l|1).{0,10}/im)[0]
+    let firstChapter = partOne.match(/^(Chương|CHƯƠNG)\s(I|l|1).*/im)[0]
 
     b14 = partOne.replace(new RegExp(`(.*\\n)*(?=${firstChapter})`,'img'),'')
     break
@@ -779,9 +783,7 @@ async function convertContent() {
   // let i3 = i2.replace(/^\n+/gm, "");
   // // bỏ khoảng trống giữa các row
 
-  // let i3 = i2.replace(/(?<=^CHƯƠNG.*)\W*$/img, "")
-  let i3 = i2.replace(/(?<=^Chương (V|I|X|\d)*)\s/gim,': ')
-  i3 = i3.replace(/(?<=^Chương.{0,5})l/gim,'I')
+  let i3 = i2
 
   let i4;
   // i6 = i5.replace(/^Chương (.*)\n(.*)/gim, "Chương $1: $2");
@@ -835,7 +837,7 @@ async function convertContent() {
   let i9 = i8.replace(/(?<=^(Phần|PHẦN)\s(THỨ|I|l|\d)+[^\.]*)\./im,'')      // bỏ dấu chấm cuối chữ phần thứ ...
 
   let i10
-  let i10a = []; // kết nối "Phần thứ với nội dung "phần thứ ...", trường hợp bị tách 2 hàng
+  let i10a = []; // kết nối "chương với nội dung "chương ...", trường hợp bị tách 2 hàng
 
   for (let c = 0; c < initial; c++) {
     if (!c) {
@@ -915,17 +917,17 @@ async function convertContent() {
         let TemRexgexArticleA = allArticle[a][b];
 
         TemRexgexArticleA = allArticle[a][b].replace(/\\/gm, "\\\\");
-        TemRexgexArticleA = TemRexgexArticleA.replace(/\(/, "\\(");
-        TemRexgexArticleA = TemRexgexArticleA.replace(/\)/, "\\)");
-        TemRexgexArticleA = TemRexgexArticleA.replace(/\./, "\\.");
+        TemRexgexArticleA = TemRexgexArticleA.replace(/\(/gim, "\\(");
+        TemRexgexArticleA = TemRexgexArticleA.replace(/\)/gim, "\\)");
+        TemRexgexArticleA = TemRexgexArticleA.replace(/\./gim, "\\.");
 
         if (b < countArticle - 1) {
           let TemRexgexArticleB = allArticle[a][b + 1];
 
           TemRexgexArticleB = allArticle[a][b + 1].replace(/\\/gm, "\\\\");
-          TemRexgexArticleB = TemRexgexArticleB.replace(/\(/, "\\(");
-          TemRexgexArticleB = TemRexgexArticleB.replace(/\)/, "\\)");
-          TemRexgexArticleB = TemRexgexArticleB.replace(/\./, "\\.");
+          TemRexgexArticleB = TemRexgexArticleB.replace(/\(/gim, "\\(");
+          TemRexgexArticleB = TemRexgexArticleB.replace(/\)/gim, "\\)");
+          TemRexgexArticleB = TemRexgexArticleB.replace(/\./gim, "\\.");
 
           let replace = `(?<=${TemRexgexArticleA}\n)(.*\n)*(?=${TemRexgexArticleB})`;
           let re = new RegExp(replace, "gim");
@@ -943,9 +945,9 @@ async function convertContent() {
           let TemRexgexArticleB = allArticle[a][b];
 
           TemRexgexArticleB = allArticle[a][b].replace(/\\/gm, "\\\\");
-          TemRexgexArticleB = TemRexgexArticleB.replace(/\(/, "\\(");
-          TemRexgexArticleB = TemRexgexArticleB.replace(/\)/, "\\)");
-          TemRexgexArticleB = TemRexgexArticleB.replace(/\./, "\\.");
+          TemRexgexArticleB = TemRexgexArticleB.replace(/\(/gim, "\\(");
+          TemRexgexArticleB = TemRexgexArticleB.replace(/\)/gim, "\\)");
+          TemRexgexArticleB = TemRexgexArticleB.replace(/\./gim, "\\.");
 
           let replace = `(?<=${TemRexgexArticleB}\n)(.*\n)*.*$`;
           let re = new RegExp(replace, "im");
@@ -1037,27 +1039,27 @@ async function convertContent() {
           for (let c = 0; c < articleArray.length; c++) {
             let TemRexgexArticleA = articleArray[c];
 
-            TemRexgexArticleA = articleArray[c].replace(/\\/gm, "\\\\");
-            TemRexgexArticleA = TemRexgexArticleA.replace(/\(/, "\\(");
-            TemRexgexArticleA = TemRexgexArticleA.replace(/\)/, "\\)");
-            TemRexgexArticleA = TemRexgexArticleA.replace(/\./, "\\.");
+            TemRexgexArticleA = articleArray[c].replace(/\\/gim, "\\\\");
+            TemRexgexArticleA = TemRexgexArticleA.replace(/\(/gim, "\\(");
+            TemRexgexArticleA = TemRexgexArticleA.replace(/\)/gim, "\\)");
+            TemRexgexArticleA = TemRexgexArticleA.replace(/\./gim, "\\.");
             if (c < articleArray.length - 1) {
               let TemRexgexArticleB = articleArray[c + 1];
 
-              TemRexgexArticleB = articleArray[c + 1].replace(/\\/gm, "\\\\");
-              TemRexgexArticleB = TemRexgexArticleB.replace(/\(/, "\\(");
-              TemRexgexArticleB = TemRexgexArticleB.replace(/\)/, "\\)");
-              TemRexgexArticleB = TemRexgexArticleB.replace(/\./, "\\.");
+              TemRexgexArticleB = articleArray[c + 1].replace(/\\/gim, "\\\\");
+              TemRexgexArticleB = TemRexgexArticleB.replace(/\(/gim, "\\(");
+              TemRexgexArticleB = TemRexgexArticleB.replace(/\)/gim, "\\)");
+              TemRexgexArticleB = TemRexgexArticleB.replace(/\./gim, "\\.");
               let replace = `(?<=${TemRexgexArticleA}\n)(.*\n)*(?=${TemRexgexArticleB})`;
               let re = new RegExp(replace, "gim");
               point = ContentInEachChapter[0].match(re);
             } else {
               let TemRexgexArticleB = articleArray[c];
 
-              TemRexgexArticleB = articleArray[c].replace(/\\/gm, "\\\\");
-              TemRexgexArticleB = TemRexgexArticleB.replace(/\(/, "\\(");
-              TemRexgexArticleB = TemRexgexArticleB.replace(/\)/, "\\)");
-              TemRexgexArticleB = TemRexgexArticleB.replace(/\./, "\\.");
+              TemRexgexArticleB = articleArray[c].replace(/\\/gim, "\\\\");
+              TemRexgexArticleB = TemRexgexArticleB.replace(/\(/gim, "\\(");
+              TemRexgexArticleB = TemRexgexArticleB.replace(/\)/gim, "\\)");
+              TemRexgexArticleB = TemRexgexArticleB.replace(/\./gim, "\\.");
               let replace = `((?<=${TemRexgexArticleB}))((\n.*)*)$`;
               let re = new RegExp(replace, "gim");
               point = ContentInEachChapter[0].match(re);
@@ -1092,17 +1094,17 @@ async function convertContent() {
 
           let TemRexgexArticleA = articleArray[b];
 
-          TemRexgexArticleA = articleArray[b].replace(/\\/gm, "\\\\");
-          TemRexgexArticleA = TemRexgexArticleA.replace(/\(/, "\\(");
-          TemRexgexArticleA = TemRexgexArticleA.replace(/\)/, "\\)");
-          TemRexgexArticleA = TemRexgexArticleA.replace(/\./, "\\.");
+          TemRexgexArticleA = articleArray[b].replace(/\\/gim, "\\\\");
+          TemRexgexArticleA = TemRexgexArticleA.replace(/\(/gim, "\\(");
+          TemRexgexArticleA = TemRexgexArticleA.replace(/\)/gim, "\\)");
+          TemRexgexArticleA = TemRexgexArticleA.replace(/\./gim, "\\.");
           if (b < articleArray.length - 1) {
             let TemRexgexArticleB = articleArray[b + 1];
 
-            TemRexgexArticleB = articleArray[b + 1].replace(/\\/gm, "\\\\");
-            TemRexgexArticleB = TemRexgexArticleB.replace(/\(/, "\\(");
-            TemRexgexArticleB = TemRexgexArticleB.replace(/\)/, "\\)");
-            TemRexgexArticleB = TemRexgexArticleB.replace(/\./, "\\.");
+            TemRexgexArticleB = articleArray[b + 1].replace(/\\/gim, "\\\\");
+            TemRexgexArticleB = TemRexgexArticleB.replace(/\(/gim, "\\(");
+            TemRexgexArticleB = TemRexgexArticleB.replace(/\)/gim, "\\)");
+            TemRexgexArticleB = TemRexgexArticleB.replace(/\./gim, "\\.");
 
             let replace = `(?<=${TemRexgexArticleA}\n)(.*\n)*(?=${TemRexgexArticleB})`;
             let re = new RegExp(replace, "gim");
@@ -1110,10 +1112,10 @@ async function convertContent() {
           } else {
             let TemRexgexArticleB = articleArray[b];
             if (articleArray[b].match(/\(/gim)) {
-              TemRexgexArticleB = articleArray[b].replace(/\\/gm, "\\\\");
-              TemRexgexArticleB = TemRexgexArticleB.replace(/\(/, "\\(");
-              TemRexgexArticleB = TemRexgexArticleB.replace(/\)/, "\\)");
-              TemRexgexArticleB = TemRexgexArticleB.replace(/\./, "\\.");
+              TemRexgexArticleB = articleArray[b].replace(/\\/gim, "\\\\");
+              TemRexgexArticleB = TemRexgexArticleB.replace(/\(/gim, "\\(");
+              TemRexgexArticleB = TemRexgexArticleB.replace(/\)/gim, "\\)");
+              TemRexgexArticleB = TemRexgexArticleB.replace(/\./gim, "\\.");
             }
 
             let replace = `(?<=${TemRexgexArticleB}\n)(.*\n)*.*$`;
@@ -1146,18 +1148,18 @@ async function convertContent() {
 
     for (let c = 0; c < articleArray.length; c++) {
       let TemRexgexArticleA = articleArray[c];
-      TemRexgexArticleA = articleArray[c].replace(/\\/gm, "\\\\");
-      TemRexgexArticleA = TemRexgexArticleA.replace(/\(/gm, "\\(");
-      TemRexgexArticleA = TemRexgexArticleA.replace(/\)/gm, "\\)");
-      TemRexgexArticleA = TemRexgexArticleA.replace(/\./, "\\.");
+      TemRexgexArticleA = articleArray[c].replace(/\\/gim, "\\\\");
+      TemRexgexArticleA = TemRexgexArticleA.replace(/\(/gim, "\\(");
+      TemRexgexArticleA = TemRexgexArticleA.replace(/\)/gim, "\\)");
+      TemRexgexArticleA = TemRexgexArticleA.replace(/\./gim, "\\.");
 
       if (c < articleArray.length - 1) {
         let TemRexgexArticleB = articleArray[c + 1];
 
-        TemRexgexArticleB = articleArray[c + 1].replace(/\\/gm, "\\\\");
-        TemRexgexArticleB = TemRexgexArticleB.replace(/\(/gm, "\\(");
-        TemRexgexArticleB = TemRexgexArticleB.replace(/\)/gm, "\\)");
-        TemRexgexArticleB = TemRexgexArticleB.replace(/\./, "\\.");
+        TemRexgexArticleB = articleArray[c + 1].replace(/\\/gim, "\\\\");
+        TemRexgexArticleB = TemRexgexArticleB.replace(/\(/gim, "\\(");
+        TemRexgexArticleB = TemRexgexArticleB.replace(/\)/gim, "\\)");
+        TemRexgexArticleB = TemRexgexArticleB.replace(/\./gim, "\\.");
 
         let replace = `(?<=${TemRexgexArticleA}\n)(.*\n)*(?=${TemRexgexArticleB})`;
         let re = new RegExp(replace, "gim");
@@ -1167,10 +1169,10 @@ async function convertContent() {
 
         if (articleArray[c].match(/\(/gim)) {
           // mới thêm sau này xem có chạy được không
-          TemRexgexArticleB = articleArray[c].replace(/\\/gm, "\\\\");
-          TemRexgexArticleB = TemRexgexArticleB.replace(/\(/, "\\(");
-          TemRexgexArticleB = TemRexgexArticleB.replace(/\)/, "\\)");
-          TemRexgexArticleB = TemRexgexArticleB.replace(/\./, "\\.");
+          TemRexgexArticleB = articleArray[c].replace(/\\/gim, "\\\\");
+          TemRexgexArticleB = TemRexgexArticleB.replace(/\(/gim, "\\(");
+          TemRexgexArticleB = TemRexgexArticleB.replace(/\)/gim, "\\)");
+          TemRexgexArticleB = TemRexgexArticleB.replace(/\./gim, "\\.");
         }
 
         let replace = `(?<=${TemRexgexArticleB}\n)(.*\n)*.*$`;
