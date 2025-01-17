@@ -1,8 +1,7 @@
 // < Nghị định 03/2025/NĐ-CP chưa hoàn thiện xong vb
 
-// ""
-// ]
-// },
+// "Điều.*[^\.]": ""
+//     \},
 function beep() {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
