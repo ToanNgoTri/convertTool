@@ -569,20 +569,52 @@ function convertPartTwo(partOne){
       b15 = b14.replace(/(?<=.*\.\/\.)(\n.*)*/gim, ""); //  bỏ tất cả sau ./.
     } 
     
-    if(b14.match(/^TM\s?\./m)){
-      // b15 = b14.match(/(^[^T][^M].*\n)*(?=^(KT|TM|Xác thực|XÁC THỰC|CHỦ NHIỆM|CHỦ TỊCH))/m)[0]; 
-      b15 = b15.replace(/^TM\s?.*(\n.*)*/m,''); 
-    }else if(b15.match(/^KT\s?\./m)){
-      b15 = b15.replace(/^KT\s?.*(\n.*)*/m,''); 
-    } else if(nameSign) {
+    //   if(b14.match(/^TM\s?\./m)){
+    //   b15 = b15.replace(/^TM\s?.*(\n.*)*/m,''); 
+      
+    // }else if(b15.match(/^KT\s?\./m)){
+
+
+    //   b15 = b15.replace(/^KT\s?.*(\n.*)*/m,''); 
+    // } else if(nameSign) {
+    //   console.log('c');
+
+      
+    //   for(let k = 0;k<nameSign.length;k++){
+
+    //     if(!b15.match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'))[0].match(/(THỨ|PHÓ)/img).length){
+    //       b15 = b15.replace(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'),''); // tất cả hàng cuối
+
+    //     }else{
+    //       b15 = b15.replace(new RegExp(`\n.*\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'),''); // tất cả hàng cuối
+    //     }
+
+    //   }
+    // }
+
+
+    if(nameSign) {
 
       
       for(let k = 0;k<nameSign.length;k++){
+  
+        if(b15.match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'))  &&
+          !b15.match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'))[0].match(/(THỨ|PHÓ)/img)
+        ){
+          b15 = b15.replace(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'),''); // tất cả hàng cuối
 
-        b15 = b15.replace(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n)*)*`,'img'),''); // bỏ 2 hàng cuối
+        }else{
+          b15 = b15.replace(new RegExp(`\n.*\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'),''); // tất cả hàng cuối
+        }
 
       }
     }
+    // if(b14.match(/^TM\s?\./m)){
+    //     b15 = b15.replace(/^TM\s?.*(\n.*)*/m,''); 
+    //   }else if(b15.match(/^KT\s?\./m)){
+    //       b15 = b15.replace(/^KT\s?.*(\n.*)*/m,''); 
+    //   } 
+
   
   // b15 = b15.replace(/\.+\/+\.*/gim, ""); // bỏ ./. ở sau cùng
   let b16 = b15.replace(/\n$/gim, ""); // bỏ hàng dư trống ở cuối
@@ -1230,21 +1262,21 @@ function NaviNext() {
     let currentIndex = parseInt(URI.match(/(?<=AllURL\/).*(?=\?URL)/g)[0]);
     let nextURI;
 
-    // if (currentIndex < 19) {
-    //   nextURI = URI.replace(/(?<=AllURL\/).*(?=\?URL)/g, `${currentIndex + 1}`);
-    // } else {
-    //   let nextPage = parseInt(URI.match(/(?<=\%26page\%3D).*/gim)[0]) + 1;
-    //   nextURI = URI.replace(/(?<=\%26page\%3D).*/gim, nextPage);
-    //   nextURI = nextURI.replace(/(?<=AllURL\/).*(?=\?URL)/g, 0);
-    // }
-
-    if (currentIndex > 0) {
-      nextURI = URI.replace(/(?<=AllURL\/).*(?=\?URL)/g, `${currentIndex - 1}`);
+    if (currentIndex < 19) {
+      nextURI = URI.replace(/(?<=AllURL\/).*(?=\?URL)/g, `${currentIndex + 1}`);
     } else {
-      let nextPage = parseInt(URI.match(/(?<=\%26page\%3D).*/gim)[0]) - 1;
+      let nextPage = parseInt(URI.match(/(?<=\%26page\%3D).*/gim)[0]) + 1;
       nextURI = URI.replace(/(?<=\%26page\%3D).*/gim, nextPage);
-      nextURI = nextURI.replace(/(?<=AllURL\/).*(?=\?URL)/g, 19);
+      nextURI = nextURI.replace(/(?<=AllURL\/).*(?=\?URL)/g, 0);
     }
+
+    // if (currentIndex > 0) {
+    //   nextURI = URI.replace(/(?<=AllURL\/).*(?=\?URL)/g, `${currentIndex - 1}`);
+    // } else {
+    //   let nextPage = parseInt(URI.match(/(?<=\%26page\%3D).*/gim)[0]) - 1;
+    //   nextURI = URI.replace(/(?<=\%26page\%3D).*/gim, nextPage);
+    //   nextURI = nextURI.replace(/(?<=AllURL\/).*(?=\?URL)/g, 19);
+    // }
 
     window.location.href = nextURI;
   } else {
@@ -1410,108 +1442,68 @@ console.log(missingLaw);
 
 
 
-/////////////////////////////////////////////// for find different lawID
+///////////////////////////////////////////// for find different lawID
 
-// let allLawSearchId = []
-// async function getAllLawId(){
-//   await fetch('../asset/LawMachine.LawSearch.json')
-//   .then(response => response.json())  // Chuyển đổi response thành JSON
-//   .then(data => {
-//       for(let a = 0 ; a< data.length;a++){
-//         allLawSearchId[a] =   data[a]['_id'] 
-//   }
-//   })
-//   .catch(error => console.log('Error:', error));  
+let allLawSearchId = []
+async function getAllLawId(){
+  await fetch('../asset/LawMachine.LawContent.json')
+  .then(response => response.json())  // Chuyển đổi response thành JSON
+  .then(data => {
+      for(let a = 0 ; a< data.length;a++){
+        allLawSearchId[a] =   data[a]['_id'] 
+  }
+  })
+  .catch(error => console.log('Error:', error));  
 
-// console.log(allLawSearchId);
-// }
-
-
+console.log(allLawSearchId);
+}
 
 
-///////////////////////////////////////////////////////////////// for add full text
+///////////////////////////////////////////// for Object _id : lawNameDisplay
 
-// if (
-//   window.location.href.match(/AllConvertfulltext\//g)
-// ) {
-   
+let allLawObjectPair = {}
+async function getAllLawObjectPair(){
+  await fetch('../asset/LawMachine.LawContent.json')
+  .then(response => response.json())  // Chuyển đổi response thành JSON
+  .then(data => {
+      for(let a = 0 ; a< data.length;a++){
 
-//       if(!document.querySelector("#content_input").value.match(/^\s*(Phần|PHẦN|Chương|CHƯƠNG|Điều|Ðiều|Điều)/)){
-//         convertFullText()
+        if(data[a].info['lawNameDisplay'].match(/Luật/img)){
+          allLawObjectPair[data[a].info['lawNameDisplay']] =   data[a]._id
+         }else{
+          allLawObjectPair[data[a]._id] =   data[a].info['lawNameDisplay']
 
-//       if (
-//         document.querySelector(".output").value 
-//       ){
-//             setTimeout(() => {
-//               pushFullText();
-//               naviNextConvertFullText();
-              
-//             }, 2000);
+        }
 
-          
-         
-//       }else{
-//         console.log('không có data');
-//         beep();
-        
-//       }
-    
-//     }else{
-//       naviNextConvertFullText();
+        // allLawObjectPair[data[a].info['lawNameDisplay']] =   data[a]._id
+  }
+  })
+  .catch(error => console.log('Error:', error));  
 
-//     }
-
-// }
+console.log(allLawObjectPair);
+}
 
 
-// function convertFullText(){
+let newLawObject = {}
+async function getNewLawObject(){
+  await fetch('../asset/LawMachine.LawContent.json')
+  .then(response => response.json())  // Chuyển đổi response thành JSON
+  .then(data => {
+      for(let a = 0 ; a< data.length;a++){
 
-//   document.querySelector(".output").value = convertPartTwo(convertPartOne())
+        newLawObject[a] = data[a]
+        for(let b = 0 ; b< data[b].info['lawRelated'].length;b++){
 
+          data[a].info['lawRelated'][b] 
 
+        }
 
-// }
+      }
+  })
+  .catch(error => console.log('Error:', error));  
 
-// function pushFullText(){
-
-//   console.log(document.querySelector("#id").value);
-  
-
-//   fetch("http://localhost:9000/pushconvertfulltext", {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify({
-//       fulltext : document.querySelector(".output").value,
-//       id : document.querySelector("#id").value
-//     }),
-//   })
-//     .then((res) => {
-//       console.log("success");
-//     })
-//     .then((data) => console.log(123));
-
-
-//     console.log('success');
-
-// }
-
-
-// function naviNextConvertFullText(){
-
-//   let URI = window.location.href;
-
-//   if (URI.match(/(?<=AllConvertfulltext\/)/g)) {
-//     let currentIndex = parseInt(URI.match(/(?<=AllConvertfulltext\/)\d+/g)[0]);
-//     let nextURI;
-
-//       nextURI = URI.replace(/(?<=AllConvertfulltext\/)\d+/g, `${currentIndex + 1}`);
-
-//       window.location.href = nextURI;
-//   } else {
-//     console.log('none URI "AllURL"');
-//   }
-
-// }
+console.log(newLawObject);
+}
 
 
 // keytool -genkeypair -v -storetype PKCS12 -keystore android.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
