@@ -119,6 +119,8 @@ async function eachRun(url) {
         ".div-table tr:nth-child(1) td:nth-child(2)"
       ).innerText;
       lawNumber = lawNumber.replace(/(^ | $)/gim, "");
+      lawNumber = lawNumber.match(/^\d\//img) ? `0${lawNumber}` :lawNumber ;
+
 
       unitPublish = document.querySelector(
         ".div-table tr:nth-child(2) td:nth-child(4)"
@@ -140,6 +142,8 @@ async function eachRun(url) {
         ".div-table tr:nth-child(2) td:nth-child(2)"
       ).innerText;
       lawNumber = lawNumber.replace(/(^ | $)/gim, "");
+      lawNumber = lawNumber.match(/^\d\//img) ? `0${lawNumber}` :lawNumber ;
+
 
       unitPublish = document.querySelector(
         ".div-table tr:nth-child(1) td:nth-child(2)"
