@@ -1,4 +1,4 @@
-// < Nghị định 03/2025/NĐ-CP chưa hoàn thiện xong vb
+// < Nghị định 05/2025/TT-BGTVT, Nghị định 12/2025/NĐ-CP chưa hoàn thiện xong vb
 
 // "Điều.*[^\.]": ""
 //     \},
@@ -672,54 +672,48 @@ function convertPartTwo(partOne) {
     b15 = b14.replace(/(?<=.*\.\/\.)(\n.*)*/gim, ""); //  bỏ tất cả sau ./.
   }
 
-  //   if(b14.match(/^TM\s?\./m)){
-  //   b15 = b15.replace(/^TM\s?.*(\n.*)*/m,'');
+    if(b14.match(/^TM\s?\./m)){
+    b15 = b15.replace(/^TM\s?.*(\n.*)*/m,'');
 
-  // }else if(b15.match(/^KT\s?\./m)){
+  }else if(b15.match(/^KT\s?\./m)){
 
-  //   b15 = b15.replace(/^KT\s?.*(\n.*)*/m,'');
-  // } else if(nameSign) {
-  //   console.log('c');
+    b15 = b15.replace(/^KT\s?.*(\n.*)*/m,'');
+  } else if(b15.match(new RegExp(nameSign[0]),'img')) {
+    console.log('c');
 
-  //   for(let k = 0;k<nameSign.length;k++){
+    for(let k = 0;k<nameSign.length;k++){
 
-  //     if(!b15.match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'))[0].match(/(THỨ|PHÓ)/img).length){
-  //       b15 = b15.replace(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'),''); // tất cả hàng cuối
+      if(!b15.match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'))[0].match(/(THỨ|PHÓ)/img).length){
+        b15 = b15.replace(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'),''); // tất cả hàng cuối
 
-  //     }else{
-  //       b15 = b15.replace(new RegExp(`\n.*\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'),''); // tất cả hàng cuối
+      }else{
+        b15 = b15.replace(new RegExp(`\n.*\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'),''); // tất cả hàng cuối
+      }
+
+    }
+  }
+
+  // if (nameSign) {
+  //   for (let k = 0; k < nameSign.length; k++) {
+  //     if (
+  //       b15.match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img")) &&
+  //       !b15
+  //         .match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img"))[0]
+  //         .match(/(THỨ|PHÓ)/gim)
+  //     ) {
+  //       b15 = b15.replace(
+  //         new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img"),
+  //         ""
+  //       ); // tất cả hàng cuối
+  //     } else {
+  //       b15 = b15.replace(
+  //         new RegExp(`\n.*\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img"),
+  //         ""
+  //       ); // tất cả hàng cuối
   //     }
-
   //   }
   // }
 
-  if (nameSign) {
-    for (let k = 0; k < nameSign.length; k++) {
-      if (
-        b15.match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img")) &&
-        !b15
-          .match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img"))[0]
-          .match(/(THỨ|PHÓ)/gim)
-      ) {
-        b15 = b15.replace(
-          new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img"),
-          ""
-        ); // tất cả hàng cuối
-      } else {
-        b15 = b15.replace(
-          new RegExp(`\n.*\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img"),
-          ""
-        ); // tất cả hàng cuối
-      }
-    }
-  }
-  // if(b14.match(/^TM\s?\./m)){
-  //     b15 = b15.replace(/^TM\s?.*(\n.*)*/m,'');
-  //   }else if(b15.match(/^KT\s?\./m)){
-  //       b15 = b15.replace(/^KT\s?.*(\n.*)*/m,'');
-  //   }
-
-  // b15 = b15.replace(/\.+\/+\.*/gim, ""); // bỏ ./. ở sau cùng
   let b16 = b15.replace(/\n$/gim, ""); // bỏ hàng dư trống ở cuối
 
   return b16;
@@ -1172,6 +1166,8 @@ async function convertContent() {
             let re = new RegExp(replace, "gim");
             ContentInEachChapter = ContentInEachSection[0].match(re);
           }
+
+
           articleArray = ContentInEachChapter[0].match(
             /^(Điều|Điều) \d+(.*)$/gim
           );
@@ -1179,6 +1175,7 @@ async function convertContent() {
           data[a][sectionArray[a]][b][chapterArray[b]] = [];
 
           articleArray = RemoveNoOrder(articleArray);
+          
           for (let c = 0; c < articleArray.length; c++) {
             let TemRexgexArticleA = articleArray[c];
 
@@ -1592,12 +1589,15 @@ async function getNewLawObject() {
                 //   ObjectLawPair[data[a].info["lawRelated"][b].toLowerCase()];
               } else {
                 // newLawRelated[data[a].info["lawRelated"][b]] = 0;
-
-                if(lawMissing[data[a]._id]){
-                  lawMissing[data[a]._id].push(data[a].info["lawRelated"][b].replace(/( và| của|,|&)/img,''))
-                }else{
-                  lawMissing[data[a]._id] = [data[a].info["lawRelated"][b].replace(/( và| của|,|&)/img,'')]
-                }
+if(data[a].info["lawRelated"][b].match(/20(10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25)/img)
+ && !data[a].info["lawRelated"][b].match(/QĐ/img)
+){
+  if(lawMissing[data[a]._id]){
+    lawMissing[data[a]._id].push(data[a].info["lawRelated"][b].replace(/( và| của|,|&)/img,''))
+  }else{
+    lawMissing[data[a]._id] = [data[a].info["lawRelated"][b].replace(/( và| của|,|&)/img,'')]
+  }
+}
                 
               }
             }
