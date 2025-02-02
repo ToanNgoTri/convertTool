@@ -4,7 +4,6 @@ const puppeteer = require("puppeteer");
 var cors = require("cors");
 const bodyParer = require("body-parser");
 const { MongoClient } = require("mongodb");
-
 app.use(bodyParer.json({ limit: "50mb" }));
 app.use(bodyParer.urlencoded({ limit: "50mb", extended: true }));
 
@@ -18,6 +17,120 @@ app.set("view engine", "ejs");
 const client = new MongoClient(
   "mongodb+srv://gusteixeira25:JPwO1gvfCAjiuXKo@lawdatabase.jnsdwt3.mongodb.net/?retryWrites=true&w=majority&appName=LawDatabase"
 );
+
+var fs = require('fs'); 
+
+app.get("/abc", async (req, res) => {
+
+
+  let newLawObject = [];
+//   fs.readFile('./public/asset/LawMachine.LawContent.json',  'utf8', function (err, data) {
+//     if (err){
+// console.log(err);
+
+//     } ;
+//     console.log('write file successfully');
+//     data1 = data
+//     console.log('data',data);
+    
+//   });
+var data1 = JSON.parse(fs.readFileSync('./public/asset/LawMachine.LawContent.json','utf8'))
+
+  // fs.readFile('./public/asset/ObjectLawPair.json',  function (err, data) {
+  //   if (err) throw err;
+  //   console.log('write file successfully');
+  //   data2 = data
+  // });
+
+  var data2 = JSON.parse(fs.readFileSync('./public/asset/ObjectLawPair.json','utf8'))
+
+console.log('data1',typeof data1);
+
+  for (let a = 0; a < data1.length; a++) {
+    let newLawRelated = {};
+    newLawObject[a] = data1[a];
+
+    for (let b = 0; b < Object.keys(data1[a].info["lawRelated"]).length; b++) {
+      if (data2[Object.keys(data1[a].info["lawRelated"])[b].toLowerCase().replace(/( và| của|,|&)/img,'')]) {
+
+        if(Object.keys(data1[a].info["lawRelated"])[b].match(/\s/)){
+          newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] =
+          data2[Object.keys(data1[a].info["lawRelated"])[b].toLowerCase().replace(/( và| của|,|&)/img,'')];
+          }else{
+            newLawRelated[data2[Object.keys(data1[a].info["lawRelated"])[b].toLowerCase().replace(/( và| của|,|&)/img,'')]] =
+            Object.keys(data1[a].info["lawRelated"])[b]
+            }
+
+            
+      } else {
+        newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = 0;
+
+// if(data[a].info["lawRelated"][b].match(/20(10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25)/img)
+//  && !data[a].info["lawRelated"][b].match(/QĐ/img)
+// ){
+//   if(lawMissing[data[a]._id]){
+//     lawMissing[data[a]._id].push(data[a].info["lawRelated"][b].replace(/( và| của|,|&)/img,''))
+//   }else{
+//     lawMissing[data[a]._id] = [data[a].info["lawRelated"][b].replace(/( và| của|,|&)/img,'')]
+//   }
+// }
+        
+      }
+    }
+    newLawObject[a].info["lawRelated"] = newLawRelated;
+  }
+
+
+//   await fetch("file:////public/asset/LawMachine.LawContent.json")
+//     .then((response) => response.json()) // Chuyển đổi response thành JSON
+//     .then(async (data) => {
+//       await fetch("./public/asset/ObjectLawPair.json")
+//         .then((response) => response.json()) // Chuyển đổi response thành JSON
+//         .then((ObjectLawPair) => {
+//           for (let a = 0; a < data.length; a++) {
+//             let newLawRelated = {};
+//             newLawObject[a] = data[a];
+
+//             for (let b = 0; b < data[a].info["lawRelated"].length; b++) {
+//               if (ObjectLawPair[data[a].info["lawRelated"][b].toLowerCase().replace(/( và| của|,|&)/img,'')]) {
+//                 newLawRelated[data[a].info["lawRelated"][b]] =
+//                   ObjectLawPair[data[a].info["lawRelated"][b].toLowerCase().replace(/( và| của|,|&)/img,'')];
+//               } else {
+//                 newLawRelated[data[a].info["lawRelated"][b]] = 0;
+
+// // if(data[a].info["lawRelated"][b].match(/20(10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25)/img)
+// //  && !data[a].info["lawRelated"][b].match(/QĐ/img)
+// // ){
+// //   if(lawMissing[data[a]._id]){
+// //     lawMissing[data[a]._id].push(data[a].info["lawRelated"][b].replace(/( và| của|,|&)/img,''))
+// //   }else{
+// //     lawMissing[data[a]._id] = [data[a].info["lawRelated"][b].replace(/( và| của|,|&)/img,'')]
+// //   }
+// // }
+                
+//               }
+//             }
+//             newLawObject[a].info["lawRelated"] = newLawRelated;
+//           }
+//         });
+//     });
+  
+  // console.log(newLawObject);
+  // console.log(lawMissing);
+  
+
+
+
+  fs.writeFile('./public/asset/newObjectLaw.json', JSON.stringify(newLawObject),  function (err, data) {
+    if (err) throw err;
+    console.log('write file successfully');
+  });
+  
+
+});
+
+
+
 
 async function pushLawContent(info, content, id) {
   try {
@@ -344,83 +457,83 @@ app.post(`/pushconvertfulltext`, async (req, res) => {
   console.log(req.body.id);
 });
 
-app.post("/searchlaw", async (req, res) => {
-  // dành cho Detail2
-  try {
-    const database = client.db("LawMachine");
-    const LawContent = database.collection("LawContent");
+// app.post("/searchlaw", async (req, res) => {
+//   // dành cho Detail2
+//   try {
+//     const database = client.db("LawMachine");
+//     const LawContent = database.collection("LawContent");
 
-    LawContent.find({
-      $or: [
-        { _id: new RegExp(`${req.body.input}`, "i") },
-        { "info.lawDescription": new RegExp(`${req.body.input}`, "i") },
-        { "info.lawNameDisplay": new RegExp(`${req.body.input}`, "i") },
-      ],
-    })
-      .project({ info: 1 })
-      .sort({ "info.lawDaySign": -1 })
-      .toArray()
-      .then((o) => res.json(o));
-  } finally {
-    // Ensures that the client will close when you finish/error
-    // await client.close();
-  }
-});
+//     LawContent.find({
+//       $or: [
+//         { _id: new RegExp(`${req.body.input}`, "i") },
+//         { "info.lawDescription": new RegExp(`${req.body.input}`, "i") },
+//         { "info.lawNameDisplay": new RegExp(`${req.body.input}`, "i") },
+//       ],
+//     })
+//       .project({ info: 1 })
+//       .sort({ "info.lawDaySign": -1 })
+//       .toArray()
+//       .then((o) => res.json(o));
+//   } finally {
+//     // Ensures that the client will close when you finish/error
+//     // await client.close();
+//   }
+// });
 
-app.post("/searchcontent", async (req, res) => {
-  // dành cho AppNavigator
+// app.post("/searchcontent", async (req, res) => {
+//   // dành cho AppNavigator
 
-  try {
-    const database = client.db("LawMachine");
-    const LawSearch = database.collection("LawSearch");
-    LawSearch.find({ fullText: new RegExp(`${req.body.input}`, "i") })
-      .collation({ locale: "vi" })
-      .project({ info: 1 })
-      .toArray()
-      .then((o) => res.json(o));
-  } finally {
-    // Ensures that the client will close when you finish/error
-    // await client.close();
-  }
-});
+//   try {
+//     const database = client.db("LawMachine");
+//     const LawSearch = database.collection("LawSearch");
+//     LawSearch.find({ fullText: new RegExp(`${req.body.input}`, "i") })
+//       .collation({ locale: "vi" })
+//       .project({ info: 1 })
+//       .toArray()
+//       .then((o) => res.json(o));
+//   } finally {
+//     // Ensures that the client will close when you finish/error
+//     // await client.close();
+//   }
+// });
 
-app.post("/getonelaw", async (req, res) => {
-  // dành cho Detail5
-  let a;
+// app.post("/getonelaw", async (req, res) => {
+//   // dành cho Detail5
+//   let a;
 
-  try {
-    const database = client.db("LawMachine");
-    const LawContent = database.collection("LawContent");
-    // Query for a movie that has the title 'Back to the Future'
+//   try {
+//     const database = client.db("LawMachine");
+//     const LawContent = database.collection("LawContent");
+//     // Query for a movie that has the title 'Back to the Future'
 
-    a = await LawContent.findOne({ _id: req.body.screen });
-  } finally {
-    // Ensures that the client will close when you finish/error
-    // await client.close();
-  }
+//     a = await LawContent.findOne({ _id: req.body.screen });
+//   } finally {
+//     // Ensures that the client will close when you finish/error
+//     // await client.close();
+//   }
 
-  // console.log(a);
-  res.json(a);
-  // res.write(a);
-});
+//   // console.log(a);
+//   res.json(a);
+//   // res.write(a);
+// });
 
-app.post("/getlastedlaws", async (req, res) => {
-  // dành cho Detail2
-  try {
-    const database = client.db("LawMachine");
-    const LawContent = database.collection("LawContent");
+// app.post("/getlastedlaws", async (req, res) => {
+//   // dành cho Detail2
+//   try {
+//     const database = client.db("LawMachine");
+//     const LawContent = database.collection("LawContent");
 
-    LawContent.find()
-      .limit(10)
-      .project({ info: 1 })
-      .sort({ "info.lawDaySign": -1 })
-      .toArray()
-      .then((o) => res.json(o));
-  } finally {
-    // Ensures that the client will close when you finish/error
-    // await client.close();
-  }
-});
+//     LawContent.find()
+//       .limit(10)
+//       .project({ info: 1 })
+//       .sort({ "info.lawDaySign": -1 })
+//       .toArray()
+//       .then((o) => res.json(o));
+//   } finally {
+//     // Ensures that the client will close when you finish/error
+//     // await client.close();
+//   }
+// });
 
 // app.post("/stackscreen", async (req, res) => {
 //   // dành cho AppNavigator

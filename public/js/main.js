@@ -493,7 +493,12 @@ function getLawRelated(text) {
 
   lawRelated = lawRelated.filter((law) => !law.match(/^luật năm/i));
 
-  return lawRelated;
+  let lawRelatedObject = {}
+  lawRelated = lawRelated.map((law)=>{
+    return lawRelatedObject[law]=0
+  })
+
+  return lawRelatedObject;
 }
 
 function RemoveNoOrder(array) {
@@ -1570,9 +1575,9 @@ async function getAllLawObjectPair() {
   console.log(allLawObjectPair);
 }
 
-let newLawObject = [];
+// let newLawObject = [];
 let lawMissing = {}
-async function getNewLawObject() {
+async function getMissingLaw() {
   await fetch("../asset/LawMachine.LawContent.json")
     .then((response) => response.json()) // Chuyển đổi response thành JSON
     .then(async (data) => {
@@ -1580,32 +1585,33 @@ async function getNewLawObject() {
         .then((response) => response.json()) // Chuyển đổi response thành JSON
         .then((ObjectLawPair) => {
           for (let a = 0; a < data.length; a++) {
-            let newLawRelated = {};
-            newLawObject[a] = data[a];
+            // let newLawRelated = {};
+            // newLawObject[a] = data[a];
 
-            for (let b = 0; b < data[a].info["lawRelated"].length; b++) {
-              if (ObjectLawPair[data[a].info["lawRelated"][b].toLowerCase().replace(/( và| của|,|&)/img,'')]) {
-                // newLawRelated[data[a].info["lawRelated"][b]] =
-                //   ObjectLawPair[data[a].info["lawRelated"][b].toLowerCase()];
+            for (let b = 0; b < Object.keys(data[a].info["lawRelated"]).length; b++) {
+              if (ObjectLawPair[Object.keys(data[a].info["lawRelated"])[b].toLowerCase().replace(/( và| của|,|&)/img,'')]) {
+                // newLawRelated[Object.keys(data[a].info["lawRelated"])[b]] =
+                //   ObjectLawPair[Object.keys(data[a].info["lawRelated"])[b].toLowerCase().replace(/( và| của|,|&)/img,'')];
               } else {
-                // newLawRelated[data[a].info["lawRelated"][b]] = 0;
-if(data[a].info["lawRelated"][b].match(/20(10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25)/img)
- && !data[a].info["lawRelated"][b].match(/QĐ/img)
+                // newLawRelated[Object.keys(data[a].info["lawRelated"])[b]] = 0;
+
+if(Object.keys(data[a].info["lawRelated"])[b].match(/20(10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25)/img)
+ && !Object.keys(data[a].info["lawRelated"])[b].match(/QĐ/img)
 ){
   if(lawMissing[data[a]._id]){
-    lawMissing[data[a]._id].push(data[a].info["lawRelated"][b].replace(/( và| của|,|&)/img,''))
+    lawMissing[data[a]._id].push(Object.keys(data[a].info["lawRelated"])[b].replace(/( và| của|,|&)/img,''))
   }else{
-    lawMissing[data[a]._id] = [data[a].info["lawRelated"][b].replace(/( và| của|,|&)/img,'')]
+    lawMissing[data[a]._id] = [Object.keys(data[a].info["lawRelated"])[b].replace(/( và| của|,|&)/img,'')]
   }
 }
                 
               }
             }
-            newLawObject[a].info["lawRelated"] = newLawRelated;
+            // newLawObject[a].info["lawRelated"] = newLawRelated;
           }
         });
     });
-
+  
   // console.log(newLawObject);
   console.log(lawMissing);
   
