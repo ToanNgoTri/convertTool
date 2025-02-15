@@ -684,11 +684,11 @@ function convertPartTwo(partOne) {
 
     b15 = b15.replace(/^KT\s?.*(\n.*)*/m,'');
   } else if(b15.match(new RegExp(nameSign[0]),'img')) {
-    console.log('c');
 
     for(let k = 0;k<nameSign.length;k++){
-
-      if(!b15.match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'))[0].match(/(THỨ|PHÓ)/img).length){
+      
+      if(b15.match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'))[0].match(/(THỨ|PHÓ)/img) &&
+      !b15.match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'))[0].match(/(THỨ|PHÓ)/img).length){
         b15 = b15.replace(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'),''); // tất cả hàng cuối
 
       }else{
