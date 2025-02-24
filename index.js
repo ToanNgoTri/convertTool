@@ -172,128 +172,144 @@ async function eachRun(url) {
   let source = await page.content({ waitUntil: "domcontentloaded" });
 
   const r = await page.evaluate(async () => {
-    let m = [];
 
-    let bg_phantich = document.querySelectorAll(".bg_phantich"); // loại bỏ phần tử khong cần thiết
-    for (let f = 0; f < bg_phantich.length; f++) {
-      bg_phantich[f].remove();
-    }
+    // let bg_phantich = document.querySelectorAll(".bg_phantich"); // loại bỏ phần tử khong cần thiết
+    // for (let f = 0; f < bg_phantich.length; f++) {
+    //   bg_phantich[f].remove();
+    // }
 
-    let elementContent = document.querySelectorAll(
-      ".noidungtracuu >.docitem-1:not(.docitem-9 ~ div), .docitem-2:not(.docitem-9 ~ div), .docitem-5:not(.docitem-9 ~ div), .docitem-11:not(.docitem-9 ~ div), .docitem-12:not(.docitem-9 ~ div)"
-    );
+    // let elementContent = document.querySelectorAll(
+    //   ".noidungtracuu >.docitem-1:not(.docitem-9 ~ div), .docitem-2:not(.docitem-9 ~ div), .docitem-5:not(.docitem-9 ~ div), .docitem-11:not(.docitem-9 ~ div), .docitem-12:not(.docitem-9 ~ div)"
+    // );
 
     let lawRelated = "";
     let roleSign = "";
 
-    if (Object.keys(elementContent).length == 0) {
-      elementContent = document.querySelectorAll(".noidungtracuu");
-      lawRelated = "";
-      roleSign = "";
-    } else {
-      lawRelated = document.querySelector("#chidanthaydoind >.docitem-14")
-        ? document.querySelector("#chidanthaydoind >.docitem-14").innerText
-        : "";
-      lawRelated =
-        lawRelated +
-        "\n" +
-        (document.querySelector("#chidanthaydoind >.docitem-15")
-          ? document.querySelector("#chidanthaydoind >.docitem-15").innerText
-          : "");
-      lawRelated = lawRelated.replace(/\_*/g, "");
-      lawRelated = lawRelated.replace(/\n+/g, "\n");
+    // if (Object.keys(elementContent).length == 0) {
+    //   elementContent = document.querySelectorAll(".noidungtracuu");
+    //   lawRelated = "";
+    //   roleSign = "";
+    // } else {
+    //   lawRelated = document.querySelector("#chidanthaydoind >.docitem-14")
+    //     ? document.querySelector("#chidanthaydoind >.docitem-14").innerText
+    //     : "";
+    //   lawRelated =
+    //     lawRelated +
+    //     "\n" +
+    //     (document.querySelector("#chidanthaydoind >.docitem-15")
+    //       ? document.querySelector("#chidanthaydoind >.docitem-15").innerText
+    //       : "");
+    //   lawRelated = lawRelated.replace(/\_*/g, "");
+    //   lawRelated = lawRelated.replace(/\n+/g, "\n");
 
-      roleSign = document.querySelector("#chidanthaydoind >.docitem-9")
-        ? document.querySelector("#chidanthaydoind >.docitem-9").innerText
-        : "";
-      roleSign = roleSign.replace(/\u00A0/gim, " ");
-    }
+    //   roleSign = document.querySelector("#chidanthaydoind >.docitem-9")
+    //     ? document.querySelector("#chidanthaydoind >.docitem-9").innerText
+    //     : "";
+    //   roleSign = roleSign.replace(/\u00A0/gim, " ");
+    // }
 
     var content = "";
-    for (let a = 0; a < elementContent.length; a++) {
-      content = content + "\n" + elementContent[a].innerText;
-    }
-    content = content.replace(/\n+/g, "\n");
-    content = content.replace(/  /gm, " ");
+    // for (let a = 0; a < elementContent.length; a++) {
+    //   content = content + "\n" + elementContent[a] ?elementContent[a].innerText:"";
+    // }
+    // content = content.replace(/\n+/g, "\n");
+    // content = content.replace(/  /gm, " ");
 
-    let tableInfomation = document.querySelector(".div-table").innerText;
+    // let tableInfomation = document.querySelector(".div-table") ? document.querySelector(".div-table").innerText :"";
 
     let lawNumber;
     let unitPublish;
     let lawKind;
     let nameSign;
     let lawDaySign;
-    let lawDescription = document.querySelector(
-      ".the-document-summary"
-    ).innerText;
-    lawDescription = lawDescription.replace(/^ */, "");
-    if (tableInfomation.match(/VBHN/)) {
-      lawNumber = document.querySelector(
-        ".div-table tr:nth-child(1) td:nth-child(2)"
-      ).innerText;
-      lawNumber = lawNumber.replace(/(^ | $)/gim, "");
-      lawNumber = lawNumber.match(/^\d\//img) ? `0${lawNumber}` :lawNumber ;
+    let lawDescription 
+    // lawDescription = document.querySelector(
+    //   ".the-document-summary"
+    // ) ? document.querySelector(
+    //   ".the-document-summary"
+    // ).innerText :"";
+    // lawDescription = lawDescription.replace(/^ */, "");
+    // if (tableInfomation.match(/VBHN/)) {
+    //   lawNumber = document.querySelector(
+    //     ".div-table tr:nth-child(1) td:nth-child(2)"
+    //   ) ?document.querySelector(
+    //     ".div-table tr:nth-child(1) td:nth-child(2)"
+    //   ).innerText :"";
+    //   lawNumber = lawNumber.replace(/(^ | $)/gim, "");
+    //   lawNumber = lawNumber.match(/^\d\//img) ? `0${lawNumber}` :lawNumber ;
 
 
-      unitPublish = document.querySelector(
-        ".div-table tr:nth-child(2) td:nth-child(4)"
-      ).innerText;
+    //   unitPublish = document.querySelector(
+    //     ".div-table tr:nth-child(2) td:nth-child(4)"
+    //   ) ?document.querySelector(
+    //     ".div-table tr:nth-child(2) td:nth-child(4)"
+    //   ).innerText :'';
 
-      lawKind = document.querySelector(
-        ".div-table tr:nth-child(2) td:nth-child(2)"
-      ).innerText;
+    //   lawKind = document.querySelector(
+    //     ".div-table tr:nth-child(2) td:nth-child(2)"
+    //   ) ?document.querySelector(
+    //     ".div-table tr:nth-child(2) td:nth-child(2)"
+    //   ).innerText:"";
 
-      nameSign = document.querySelector(
-        ".div-table tr:nth-child(3) td:nth-child(4)"
-      ).innerText;
+    //   nameSign = document.querySelector(
+    //     ".div-table tr:nth-child(3) td:nth-child(4)"
+    //   )?document.querySelector(
+    //     ".div-table tr:nth-child(3) td:nth-child(4)"
+    //   ).innerText:"";
 
-      lawDaySign = document.querySelector(
-        ".div-table tr:nth-child(1) td:nth-child(4)"
-      ).innerText;
-    } else {
-      lawNumber = document.querySelector(
-        ".div-table tr:nth-child(2) td:nth-child(2)"
-      ).innerText;
-      lawNumber = lawNumber.replace(/(^ | $)/gim, "");
-      lawNumber = lawNumber.match(/^\d\//img) ? `0${lawNumber}` :lawNumber ;
+    //   lawDaySign = document.querySelector(
+    //     ".div-table tr:nth-child(1) td:nth-child(4)"
+    //   ).innerText;
+    // } else {
+    //   lawNumber = document.querySelector(
+    //     ".div-table tr:nth-child(2) td:nth-child(2)"
+    //   )?document.querySelector(
+    //     ".div-table tr:nth-child(2) td:nth-child(2)"
+    //   ).innerText:"";
+    //   lawNumber = lawNumber.replace(/(^ | $)/gim, "");
+    //   lawNumber = lawNumber.match(/^\d\//img) ? `0${lawNumber}` :lawNumber ;
 
 
-      unitPublish = document.querySelector(
-        ".div-table tr:nth-child(1) td:nth-child(2)"
-      ).innerText;
+    //   unitPublish = document.querySelector(
+    //     ".div-table tr:nth-child(1) td:nth-child(2)"
+    //   )? document.querySelector(
+    //     ".div-table tr:nth-child(1) td:nth-child(2)"
+    //   ).innerText : '';
 
-      lawKind = document.querySelector(
-        ".div-table tr:nth-child(3) td:nth-child(2)"
-      ).innerText;
+    //   lawKind = document.querySelector(
+    //     ".div-table tr:nth-child(3) td:nth-child(2)"
+    //   ) ? document.querySelector(
+    //     ".div-table tr:nth-child(3) td:nth-child(2)"
+    //   ).innerText : '';
 
-      nameSign = document.querySelector(
-        ".div-table tr:nth-child(3) td:nth-child(4)"
-      ).innerText;
+    //   nameSign = document.querySelector(
+    //     ".div-table tr:nth-child(3) td:nth-child(4)"
+    //   ).innerText;
 
-      lawDaySign = document.querySelector(
-        ".div-table tr:nth-child(4) td:nth-child(2)"
-      ).innerText;
-    }
+    //   lawDaySign = document.querySelector(
+    //     ".div-table tr:nth-child(4) td:nth-child(2)"
+    //   )?document.querySelector(
+    //     ".div-table tr:nth-child(4) td:nth-child(2)"
+    //   ).innerText :'';
+    // }
 
-    // roleSign = roleSign.replace(/nơi nhận.*(\s{0,2}\S.*)*/gim, "");
-    roleSign = roleSign.replace(/^\n(\s)*/gim, "");
-    roleSign = roleSign.replace(/\(*đã ký[^\w]+/gim, "");
-    roleSign = roleSign.replace(/\(*đã k(ý|í)\)*/gim, "");
-    roleSign = roleSign.replace(/\n\[daky\]/gim, "");
-    roleSign = roleSign.replace(/\s*$/gim, "");
-    roleSign = roleSign.replace(/^\s*/gim, "");
+    // roleSign = roleSign.replace(/^\n(\s)*/gim, "");
+    // roleSign = roleSign.replace(/\(*đã ký[^\w]+/gim, "");
+    // roleSign = roleSign.replace(/\(*đã k(ý|í)\)*/gim, "");
+    // roleSign = roleSign.replace(/\n\[daky\]/gim, "");
+    // roleSign = roleSign.replace(/\s*$/gim, "");
+    // roleSign = roleSign.replace(/^\s*/gim, "");
 
     return {
-      content,
-      lawNumber,
-      unitPublish,
-      lawKind,
-      nameSign,
-      lawDaySign,
-      lawDescription,
-      lawRelated,
-      roleSign,
-      m,
+      content:"",
+      lawNumber:"",
+      unitPublish:"",
+      lawKind:"",
+      nameSign:"",
+      lawDaySign:"",
+      lawDescription:"",
+      lawRelated:"",
+      roleSign:"",
     };
 
     // return {
@@ -406,29 +422,29 @@ app.get(`/AllURL/:id`, async (req, res) => {
 //   }
 // });
 
-app.get(`/AllConvertfulltext/:id`, async (req, res) => {
-  const database = client.db("LawMachine");
-  const LawContent = database.collection("LawSearch");
+// app.get(`/AllConvertfulltext/:id`, async (req, res) => {
+//   const database = client.db("LawMachine");
+//   const LawContent = database.collection("LawSearch");
 
-  LawContent.find({
-    _id: /\/(2001|2002|2003|2004|2005|2006|2007|2008|2009)\//,
-  })
-    .project({ info: 0, fullText: 0 })
-    .toArray()
-    .then((o) => {
-      LawContent.find({
-        _id: o[req.params.id]._id,
-      })
-        //  .project({ info: 0,fullText:1 })
-        .toArray()
-        .then((o1) => {
-          res.render("cutFullText", {
-            content: o1[0].fullText,
-            id: o1[0]._id,
-          });
-        });
-    });
-});
+//   LawContent.find({
+//     _id: /\/(2001|2002|2003|2004|2005|2006|2007|2008|2009)\//,
+//   })
+//     .project({ info: 0, fullText: 0 })
+//     .toArray()
+//     .then((o) => {
+//       LawContent.find({
+//         _id: o[req.params.id]._id,
+//       })
+//         //  .project({ info: 0,fullText:1 })
+//         .toArray()
+//         .then((o1) => {
+//           res.render("cutFullText", {
+//             content: o1[0].fullText,
+//             id: o1[0]._id,
+//           });
+//         });
+//     });
+// });
 
 app.post("/push", async (req, res) => {
   pushLawContent(req.body.lawInfo, req.body.dataLaw, req.body.lawNumber);

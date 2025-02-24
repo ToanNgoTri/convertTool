@@ -1536,9 +1536,36 @@ async function findMissingYear() {
 
 ///////////////////////////////////////////// for find different lawID
 
+async function compareLaw() {
+  let a = []
+  let b =[]
+  let c = []
+
+  await fetch("../asset/allLawID copy.JSON")
+  .then((response) => response.json()) // Chuyển đổi response thành JSON
+  .then((data) => {
+      a = data
+  })
+  .catch((error) => console.log("Error:", error));
+
+  await fetch("../asset/allLawID.JSON")
+  .then((response) => response.json()) // Chuyển đổi response thành JSON
+  .then((data) => {
+    for (let a = 0; a < data.length; a++) {
+      b = data
+    }
+  })
+  .catch((error) => console.log("Error:", error));
+
+  c = b.filter(item => !a.includes(item));
+
+  console.log(c)  
+}
+
+
 let allLawSearchId = [];
 async function getAllLawId() {
-  await fetch("../asset/LawMachine.LawContent.json")
+  await fetch("../asset/LawMachine.LawSearch.json")
     .then((response) => response.json()) // Chuyển đổi response thành JSON
     .then((data) => {
       for (let a = 0; a < data.length; a++) {
