@@ -163,7 +163,7 @@ async function pushLawSearch(info, id, fullText) {
 }
 
 async function eachRun(url) {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(50000);
 
@@ -173,49 +173,49 @@ async function eachRun(url) {
 
   const r = await page.evaluate(async () => {
 
-    // let bg_phantich = document.querySelectorAll(".bg_phantich"); // loại bỏ phần tử khong cần thiết
-    // for (let f = 0; f < bg_phantich.length; f++) {
-    //   bg_phantich[f].remove();
-    // }
+    let bg_phantich = document.querySelectorAll(".bg_phantich"); // loại bỏ phần tử khong cần thiết
+    for (let f = 0; f < bg_phantich.length; f++) {
+      bg_phantich[f].remove();
+    }
 
-    // let elementContent = document.querySelectorAll(
-    //   ".noidungtracuu >.docitem-1:not(.docitem-9 ~ div), .docitem-2:not(.docitem-9 ~ div), .docitem-5:not(.docitem-9 ~ div), .docitem-11:not(.docitem-9 ~ div), .docitem-12:not(.docitem-9 ~ div)"
-    // );
+    let elementContent = document.querySelectorAll(
+      ".noidungtracuu >.docitem-1:not(.docitem-9 ~ div), .docitem-2:not(.docitem-9 ~ div), .docitem-5:not(.docitem-9 ~ div), .docitem-11:not(.docitem-9 ~ div), .docitem-12:not(.docitem-9 ~ div)"
+    );
 
     let lawRelated = "";
     let roleSign = "";
 
-    // if (Object.keys(elementContent).length == 0) {
-    //   elementContent = document.querySelectorAll(".noidungtracuu");
-    //   lawRelated = "";
-    //   roleSign = "";
-    // } else {
-    //   lawRelated = document.querySelector("#chidanthaydoind >.docitem-14")
-    //     ? document.querySelector("#chidanthaydoind >.docitem-14").innerText
-    //     : "";
-    //   lawRelated =
-    //     lawRelated +
-    //     "\n" +
-    //     (document.querySelector("#chidanthaydoind >.docitem-15")
-    //       ? document.querySelector("#chidanthaydoind >.docitem-15").innerText
-    //       : "");
-    //   lawRelated = lawRelated.replace(/\_*/g, "");
-    //   lawRelated = lawRelated.replace(/\n+/g, "\n");
+    if (Object.keys(elementContent).length == 0) {
+      elementContent = document.querySelectorAll(".noidungtracuu");
+      lawRelated = "";
+      roleSign = "";
+    } else {
+      lawRelated = document.querySelector("#chidanthaydoind >.docitem-14")
+        ? document.querySelector("#chidanthaydoind >.docitem-14").innerText
+        : "";
+      lawRelated =
+        lawRelated +
+        "\n" +
+        (document.querySelector("#chidanthaydoind >.docitem-15")
+          ? document.querySelector("#chidanthaydoind >.docitem-15").innerText
+          : "");
+      lawRelated = lawRelated.replace(/\_*/g, "");
+      lawRelated = lawRelated.replace(/\n+/g, "\n");
 
-    //   roleSign = document.querySelector("#chidanthaydoind >.docitem-9")
-    //     ? document.querySelector("#chidanthaydoind >.docitem-9").innerText
-    //     : "";
-    //   roleSign = roleSign.replace(/\u00A0/gim, " ");
-    // }
+      roleSign = document.querySelector("#chidanthaydoind >.docitem-9")
+        ? document.querySelector("#chidanthaydoind >.docitem-9").innerText
+        : "";
+      roleSign = roleSign.replace(/\u00A0/gim, " ");
+    }
 
     var content = "";
-    // for (let a = 0; a < elementContent.length; a++) {
-    //   content = content + "\n" + elementContent[a] ?elementContent[a].innerText:"";
-    // }
-    // content = content.replace(/\n+/g, "\n");
-    // content = content.replace(/  /gm, " ");
+    for (let a = 0; a < elementContent.length; a++) {
+      content = content + "\n" + elementContent[a] ?elementContent[a].innerText:"";
+    }
+    content = content.replace(/\n+/g, "\n");
+    content = content.replace(/  /gm, " ");
 
-    // let tableInfomation = document.querySelector(".div-table") ? document.querySelector(".div-table").innerText :"";
+    let tableInfomation = document.querySelector(".div-table") ? document.querySelector(".div-table").innerText :"";
 
     let lawNumber;
     let unitPublish;
@@ -223,75 +223,80 @@ async function eachRun(url) {
     let nameSign;
     let lawDaySign;
     let lawDescription 
-    // lawDescription = document.querySelector(
-    //   ".the-document-summary"
-    // ) ? document.querySelector(
-    //   ".the-document-summary"
-    // ).innerText :"";
-    // lawDescription = lawDescription.replace(/^ */, "");
-    // if (tableInfomation.match(/VBHN/)) {
-    //   lawNumber = document.querySelector(
-    //     ".div-table tr:nth-child(1) td:nth-child(2)"
-    //   ) ?document.querySelector(
-    //     ".div-table tr:nth-child(1) td:nth-child(2)"
-    //   ).innerText :"";
-    //   lawNumber = lawNumber.replace(/(^ | $)/gim, "");
-    //   lawNumber = lawNumber.match(/^\d\//img) ? `0${lawNumber}` :lawNumber ;
+    lawDescription = document.querySelector(
+      ".the-document-summary"
+    ) ? document.querySelector(
+      ".the-document-summary"
+    ).innerText :"";
 
+    lawDescription = lawDescription.replace(/^ */, "");
+    if (tableInfomation.match(/VBHN/)) {
+      lawNumber = document.querySelector(
+        ".div-table tr:nth-child(1) td:nth-child(2)"
+      ) ?document.querySelector(
+        ".div-table tr:nth-child(1) td:nth-child(2)"
+      ).innerText :"";
+      lawNumber = lawNumber.replace(/(^ | $)/gim, "");
+      lawNumber = lawNumber.match(/^\d\//img) ? `0${lawNumber}` :lawNumber ;
 
-    //   unitPublish = document.querySelector(
-    //     ".div-table tr:nth-child(2) td:nth-child(4)"
-    //   ) ?document.querySelector(
-    //     ".div-table tr:nth-child(2) td:nth-child(4)"
-    //   ).innerText :'';
+      unitPublish = document.querySelector(
+        ".div-table tr:nth-child(2) td:nth-child(4)"
+      ) ?document.querySelector(
+        ".div-table tr:nth-child(2) td:nth-child(4)"
+      ).innerText :'';
 
-    //   lawKind = document.querySelector(
-    //     ".div-table tr:nth-child(2) td:nth-child(2)"
-    //   ) ?document.querySelector(
-    //     ".div-table tr:nth-child(2) td:nth-child(2)"
-    //   ).innerText:"";
+    
 
-    //   nameSign = document.querySelector(
-    //     ".div-table tr:nth-child(3) td:nth-child(4)"
-    //   )?document.querySelector(
-    //     ".div-table tr:nth-child(3) td:nth-child(4)"
-    //   ).innerText:"";
+      lawKind = document.querySelector(
+        ".div-table tr:nth-child(2) td:nth-child(2)"
+      ) ?document.querySelector(
+        ".div-table tr:nth-child(2) td:nth-child(2)"
+      ).innerText:"";
 
-    //   lawDaySign = document.querySelector(
-    //     ".div-table tr:nth-child(1) td:nth-child(4)"
-    //   ).innerText;
-    // } else {
-    //   lawNumber = document.querySelector(
-    //     ".div-table tr:nth-child(2) td:nth-child(2)"
-    //   )?document.querySelector(
-    //     ".div-table tr:nth-child(2) td:nth-child(2)"
-    //   ).innerText:"";
-    //   lawNumber = lawNumber.replace(/(^ | $)/gim, "");
-    //   lawNumber = lawNumber.match(/^\d\//img) ? `0${lawNumber}` :lawNumber ;
+      nameSign = document.querySelector(
+        ".div-table tr:nth-child(3) td:nth-child(4)"
+      )?document.querySelector(
+        ".div-table tr:nth-child(3) td:nth-child(4)"
+      ).innerText:"";
 
+      lawDaySign = document.querySelector(
+        ".div-table tr:nth-child(1) td:nth-child(4)"
+      ).innerText;
+    } else {
+      lawNumber = document.querySelector(
+        ".div-table tr:nth-child(2) td:nth-child(2)"
+      )?document.querySelector(
+        ".div-table tr:nth-child(2) td:nth-child(2)"
+      ).innerText:"";
+      lawNumber = lawNumber.replace(/(^ | $)/gim, "");
+      lawNumber = lawNumber.match(/^\d\//img) ? `0${lawNumber}` :lawNumber ;
+    
 
-    //   unitPublish = document.querySelector(
-    //     ".div-table tr:nth-child(1) td:nth-child(2)"
-    //   )? document.querySelector(
-    //     ".div-table tr:nth-child(1) td:nth-child(2)"
-    //   ).innerText : '';
+      unitPublish = document.querySelector(
+        ".div-table tr:nth-child(1) td:nth-child(2)"
+      )? document.querySelector(
+        ".div-table tr:nth-child(1) td:nth-child(2)"
+      ).innerText : '';
 
-    //   lawKind = document.querySelector(
-    //     ".div-table tr:nth-child(3) td:nth-child(2)"
-    //   ) ? document.querySelector(
-    //     ".div-table tr:nth-child(3) td:nth-child(2)"
-    //   ).innerText : '';
+      lawKind = document.querySelector(
+        ".div-table tr:nth-child(3) td:nth-child(2)"
+      ) ? document.querySelector(
+        ".div-table tr:nth-child(3) td:nth-child(2)"
+      ).innerText : '';
+    
 
-    //   nameSign = document.querySelector(
-    //     ".div-table tr:nth-child(3) td:nth-child(4)"
-    //   ).innerText;
+      nameSign = document.querySelector(
+        ".div-table tr:nth-child(3) td:nth-child(4)"
+      )?document.querySelector(
+        ".div-table tr:nth-child(3) td:nth-child(4)"
+      ).innerText:'';
 
-    //   lawDaySign = document.querySelector(
-    //     ".div-table tr:nth-child(4) td:nth-child(2)"
-    //   )?document.querySelector(
-    //     ".div-table tr:nth-child(4) td:nth-child(2)"
-    //   ).innerText :'';
-    // }
+      lawDaySign = document.querySelector(
+        ".div-table tr:nth-child(4) td:nth-child(2)"
+      )?document.querySelector(
+        ".div-table tr:nth-child(4) td:nth-child(2)"
+      ).innerText :'';
+    }
 
     // roleSign = roleSign.replace(/^\n(\s)*/gim, "");
     // roleSign = roleSign.replace(/\(*đã ký[^\w]+/gim, "");
@@ -301,15 +306,15 @@ async function eachRun(url) {
     // roleSign = roleSign.replace(/^\s*/gim, "");
 
     return {
-      content:"",
-      lawNumber:"",
-      unitPublish:"",
-      lawKind:"",
-      nameSign:"",
-      lawDaySign:"",
-      lawDescription:"",
-      lawRelated:"",
-      roleSign:"",
+      content,
+      lawNumber,
+      unitPublish,
+      lawKind,
+      nameSign,
+      lawDaySign,
+      lawDescription,
+      lawRelated,
+      roleSign,
     };
 
     // return {
