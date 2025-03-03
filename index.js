@@ -206,8 +206,12 @@ async function eachRun(url) {
         ? document.querySelector("#chidanthaydoind >.docitem-9").innerText
         : "";
       roleSign = roleSign.replace(/\u00A0/gim, " ");
+      roleSign = roleSign.replace(/\n +/g, "\n");
+      roleSign = roleSign.replace(/\n+/g, "\n");
+
     }
 
+    
     var content = "";
     for (let a = 0; a < elementContent.length; a++) {
       content = content + "\n" + elementContent[a] ?elementContent[a].innerText:"";
@@ -336,7 +340,7 @@ async function eachRun(url) {
 }
 
 async function allRun(url) {
-  const browser = await puppeteer.launch();
+  const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
   page.setDefaultNavigationTimeout(70000);
   await page.goto(url);
