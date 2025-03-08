@@ -1,4 +1,4 @@
-// < Nghị định 05/2025/TT-BGTVT, Nghị định 12/2025/NĐ-CP chưa hoàn thiện xong vb
+//Thông tư 05/2025/TT-BGDĐT
 
 // "Điều.*[^\.]": ""
 //     \},
