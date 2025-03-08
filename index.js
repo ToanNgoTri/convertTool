@@ -24,16 +24,6 @@ app.get("/abc", async (req, res) => {
 
 
   let newLawObject = [];
-//   fs.readFile('./public/asset/LawMachine.LawContent.json',  'utf8', function (err, data) {
-//     if (err){
-// console.log(err);
-
-//     } ;
-//     console.log('write file successfully');
-//     data1 = data
-//     console.log('data',data);
-    
-//   });
 var data1 = JSON.parse(fs.readFileSync('./public/asset/LawMachine.LawContent.json','utf8'))
 
   // fs.readFile('./public/asset/ObjectLawPair.json',  function (err, data) {
