@@ -448,7 +448,76 @@ app.get(`/AllURL/:id`, async (req, res) => {
 app.post("/push", async (req, res) => {
   pushLawContent(req.body.lawInfo, req.body.dataLaw, req.body.lawNumber);
   pushLawSearch(req.body.lawInfo, req.body.lawNumber, req.body.contentText);
+
+
+  // var data2 = JSON.parse(fs.readFileSync('./public/asset/allLawID.json','utf8'))
+
+  // data2.push(req.body.lawNumber)
+
+  // fs.writeFile('./public/asset/allLawID.json', JSON.stringify(data2),  function (err, data) {
+  //   if (err) throw err;
+  //   console.log('write file successfully');
+  // });
+
+
+  // var data3 = JSON.parse(fs.readFileSync('./public/asset/ObjectLawPair.json','utf8'))
+
+  // if (req.body.lawInfo['lawNameDisplay'].match(/Luật/gim)) {
+  //   data3[req.body.lawInfo['lawNameDisplay'].toLowerCase().replace(/( và| của|,|&)/img,'')] = req.body.lawNumber;
+  //   data3[req.body.lawNumber.toLowerCase()] = req.body.lawInfo['lawNameDisplay']
+
+  //   console.log(1);
+    
+  // } else {
+  //   data3[req.body.lawNumber.toLowerCase()] = req.body.lawNumber;
+  //   console.log(2);
+
+  // }
+
+
+  // fs.writeFile('./public/asset/ObjectLawPair.json', JSON.stringify(data3),  function (err, data) {
+  //   if (err) throw err;
+  //   console.log('write file successfully');
+  // });
+
+
 });
+
+
+app.post("/addedjsonfile", async (req, res) => {
+  var data2 = JSON.parse(fs.readFileSync('./public/asset/allLawID.json','utf8'))
+
+  data2.push(req.body.lawNumber)
+
+  fs.writeFile('./public/asset/allLawID.json', JSON.stringify(data2),  function (err, data) {
+    if (err) throw err;
+    console.log('write file successfully');
+  });
+
+
+  var data3 = JSON.parse(fs.readFileSync('./public/asset/ObjectLawPair.json','utf8'))
+
+  if (req.body.lawInfo['lawNameDisplay'].match(/Luật/gim)) {
+    data3[req.body.lawInfo['lawNameDisplay'].toLowerCase().replace(/( và| của|,|&)/img,'')] = req.body.lawNumber;
+    data3[req.body.lawNumber.toLowerCase()] = req.body.lawInfo['lawNameDisplay']
+
+    console.log(1);
+    
+  } else {
+    data3[req.body.lawNumber.toLowerCase()] = req.body.lawNumber;
+    console.log(2);
+
+  }
+
+
+  fs.writeFile('./public/asset/ObjectLawPair.json', JSON.stringify(data3),  function (err, data) {
+    if (err) throw err;
+    console.log('write file successfully');
+  });
+
+
+})
+
 
 app.post(`/pushconvertfulltext`, async (req, res) => {
   try {
