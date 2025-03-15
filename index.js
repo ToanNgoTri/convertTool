@@ -487,7 +487,9 @@ app.post("/push", async (req, res) => {
 app.post("/addedjsonfile", async (req, res) => {
   var data2 = JSON.parse(fs.readFileSync('./public/asset/allLawID.json','utf8'))
 
-  data2.push(req.body.lawNumber)
+  if(!data2.includes(req.body.lawNumber)){
+    data2.push(req.body.lawNumber)
+  }
 
   fs.writeFile('./public/asset/allLawID.json', JSON.stringify(data2),  function (err, data) {
     if (err) throw err;
