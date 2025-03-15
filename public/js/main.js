@@ -225,7 +225,7 @@ function getLawDayActive(text, daySign) {
   return lawDayActive;
 }
 
-function getLawRelated(text) {
+async function getLawRelated(text) {
   function uniqueArray(orinalArray) {
     let noDuplicate = orinalArray.filter((elem, position, arr) => {
       return arr.indexOf(elem) == position && elem != lawNumber;
@@ -411,59 +411,6 @@ function getLawRelated(text) {
     }
   }
 
-  //   if (text.match(/(?<=(căn cứ |; ))Pháp lệnh[^(;|\n)]+năm \d+/gi)) {
-
-  // for (
-  // let y = 0;
-  // y <
-  // text.match(/(?<=(căn cứ |; ))Pháp lệnh[^(;|\n)]+năm \d+/gi).length;
-  // y++
-  // ) {
-  // if (
-  //   !text
-  //     .match(/(?<=(căn cứ |; ))Pháp lệnh[^(;|\n)]+năm \d+/gi)
-  //     [y].match(/(?<=năm \d+) và (?=luật sửa)/gi)
-  // ) {
-  //   let lawRelatedString = text
-  //     .match(/(?<=(căn cứ |; ))Pháp lệnh[^(;|\n)]+năm \d+/gi)
-  //     [y].replace(/ số \d+[^( |,)]+/gim, "");
-  //   lawRelatedString = lawRelatedString.replace(
-  //     / ngày \d+\/\d+\/\d+/gim,
-  //     ""
-  //   );
-  //   lawRelatedString = lawRelatedString.replace(
-  //     / ngày \d+ *\d+ *\d+/gim,
-  //     ""
-  //   );
-  //   lawRelatedString = lawRelatedString.replace(
-  //     / (ngày|ngày) *\d+ *(tháng|tháng) *\d+/gim,
-  //     ""
-  //   );
-
-  //   lawRelatedDemo2 = [...lawRelatedDemo2, lawRelatedString];
-  // } else {
-  //   let lawRelatedString = text
-  //     .match(/(?<=(căn cứ |; ))Pháp lệnh[^(;|\n)]+năm \d+/gi)
-  //     [y].replace(/ số \d+[^( |,)]+/gim, "");
-  //   lawRelatedString = lawRelatedString.replace(
-  //     / ngày \d+\/\d+\/\d+/gim,
-  //     ""
-  //   );
-  //   lawRelatedString = lawRelatedString.replace(
-  //     / ngày \d+ *\d+ *\d+/gim,
-  //     ""
-  //   );
-  //   lawRelatedString = lawRelatedString.replace(
-  //     / (ngày|ngày) *\d+ *(tháng|tháng) *\d+/gim,
-  //     ""
-  //   );
-  //   lawRelatedDemo2 = [
-  //     ...lawRelatedDemo2,
-  //     ...lawRelatedString.split(/(?<=năm \d+) và (?=luật sửa)/gi),
-  //   ];
-  // }
-  // }
-  // }
 
   if (text.match(/(?<=(căn cứ |; |vào ))(hiến pháp)[^(;|\n)]+/gi)) {
     // let lawRelatedString = lawRelatedString.match(/(?<=(căn cứ |; |vào ))(hiến pháp)[^;]+/gi).replace(/ số \d+[^( |,)]+/igm,'')
@@ -495,6 +442,46 @@ function getLawRelated(text) {
   lawRelated = lawRelated.map((law)=>{
     return lawRelatedObject[law]=0
   })
+
+  let lawPairObject = {}
+  await fetch("../asset/ObjectLawPair.json")
+    .then((response) => response.json()) // Chuyển đổi response thành JSON
+    .then((data) => {
+      lawPairObject = (data)
+    })
+    .catch((error) => console.log("Error:", error));
+
+    // console.log('lawRelatedObject1',lawRelatedObject);
+    
+    for(let a = 0 ; a<Object.keys(lawRelatedObject).length;a++){
+// console.log('Object.keys(lawRelatedObject)[a]',Object.keys(lawRelatedObject)[a]);
+
+      if(lawPairObject[Object.keys(lawRelatedObject)[a].toLowerCase().replace(/( và| của|,|&)/img,'')]){
+// console.log(1);
+
+        // console.log(lawPairObject[Object.keys(lawRelatedObject)[a].toLowerCase().replace(/( và| của|,|&)/img,'')]);
+        
+        if(lawPairObject[Object.keys(lawRelatedObject)[a].toLowerCase().replace(/( và| của|,|&)/img,'')].match(/\s/)  ){
+          lawRelatedObject[Object.keys(lawRelatedObject)[a]] =
+          lawPairObject[Object.keys(lawRelatedObject)[a].toLowerCase().replace(/( và| của|,|&)/img,'')];
+          // console.log(2);
+        }else{
+            // newLawRelated[data2[Object.keys(data1[a].info["lawRelated"])[b].toLowerCase().replace(/( và| của|,|&)/img,'')]] =
+            // Object.keys(data1[a].info["lawRelated"])[b]
+            // console.log(3);
+
+            lawRelatedObject[Object.keys(lawRelatedObject)[a]] =
+            lawPairObject[Object.keys(lawRelatedObject)[a].toLowerCase().replace(/( và| của|,|&)/img,'')];
+              }
+
+
+        // lawRelatedObject[Object.keys(lawRelatedObject)[a].toLowerCase().replace(/( và| của|,|&)/img,'')] = lawPairObject[Object.keys(lawRelatedObject)[a]]
+      }else{
+        // console.log(5);
+        lawRelatedObject[Object.keys(lawRelatedObject)[a]] = 0
+      }
+    }
+
 
   return lawRelatedObject;
 }
@@ -786,9 +773,9 @@ async function convertBareTextInfo() {
   lawDayActive = getLawDayActive(partOne, lawDaySign);
 
   if (document.querySelector("#lawRelated").value) {
-    lawRelated = getLawRelated(document.querySelector("#lawRelated").value);
+    lawRelated = await getLawRelated(document.querySelector("#lawRelated").value);
   } else {
-    lawRelated = getLawRelated(partOne);
+    lawRelated = await getLawRelated(partOne);
   }
 
   // document.querySelector(".output").value = b13;
@@ -863,7 +850,7 @@ async function getNormalTextInfo() {
   lawDayActive = getLawDayActive(contentText, lawDaySign);
 
   let introduceString = document.querySelector("#lawRelated").value;
-  lawRelated = getLawRelated(introduceString);
+  lawRelated = await getLawRelated(introduceString);
 
   document.querySelector(".output").value = contentText;
 
@@ -1344,6 +1331,7 @@ function Push() {
     (!lawInfo["lawNumber"].match(/(?<=\d\W)\d{4}/gim)
       ? "(" + yearSign + ")"
       : "");
+      
   fetch("http://localhost:9000/push", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -1352,6 +1340,9 @@ function Push() {
       lawInfo: lawInfo,
       lawNumber: lawNumberForPush,
       contentText,
+      // lawID: lawNumberForPush,
+      // lawNameDisplay: lawNameDisplay,
+
     }),
   })
     .then((res) => {
@@ -1360,7 +1351,51 @@ function Push() {
     })
     .then((data) => console.log(123));
   console.log(lawNumberForPush);
+
+
+  // fetch("http://localhost:9000/addNewInfoToAsset", {
+  //   method: "POST",
+  //   headers: { "Content-Type": "application/json" },
+  //   body: JSON.stringify({
+  //     lawID: lawNumberForPush,
+  //     lawNameDisplay: lawNameDisplay,
+  //   }),
+  // })
+  //   .then((res) => {
+  //     res.text();
+  //     console.log("success");
+  //   })
+  //   .then((data) => console.log(123));
+
+
 }
+
+function addJSONFile() {
+  let yearSign = parseInt(lawInfo["lawDaySign"].getYear()) + 1900;
+  let lawNumberForPush =
+    lawInfo["lawNumber"] +
+    (!lawInfo["lawNumber"].match(/(?<=\d\W)\d{4}/gim)
+      ? "(" + yearSign + ")"
+      : "");
+
+
+  fetch("http://localhost:9000/addedjsonfile", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      lawInfo: lawInfo,
+      lawNumber: lawNumberForPush,
+
+    }),
+  })
+    .then((res) => {
+      res.text();
+      console.log("success");
+    })
+    .then((data) => console.log(123));
+
+}
+
 
 function NaviNext() {
   let URI = window.location.href;
