@@ -170,7 +170,9 @@ async function eachRun(url) {
 
     let elementContent = document.querySelectorAll(
       ".noidungtracuu >.docitem-1:not(.docitem-9 ~ div), .docitem-2:not(.docitem-9 ~ div), .docitem-5:not(.docitem-9 ~ div), .docitem-11:not(.docitem-9 ~ div), .docitem-12:not(.docitem-9 ~ div)"
-    );
+      // ".noidungtracuu .docitem-5"
+    )
+console.log('elementContent',elementContent);
 
     let lawRelated = "";
     let roleSign = "";
@@ -201,10 +203,13 @@ async function eachRun(url) {
 
     }
 
+    console.log(elementContent[1]);
     
     var content = "";
     for (let a = 0; a < elementContent.length; a++) {
-      content = content + "\n" + elementContent[a] ?elementContent[a].innerText:"";
+      // content = content + "\n" + elementContent[a] ?elementContent[a].innerText:"";
+      content = content + "\n" +elementContent[a].innerText;
+   
     }
     content = content.replace(/\n+/g, "\n");
     content = content.replace(/  /gm, " ");
