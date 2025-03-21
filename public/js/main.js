@@ -1478,7 +1478,7 @@ if (
 ) {
   getInfo()
     .then((t) => {
-      goToEndInput(), goToEndOutput(), convertContent(false);
+      goToEndInput(), goToEndOutput(), convertContent(false); addJSONFile()
     })
     .then((r) => {
       // console.log('lawInfo["unitPublish"].indexOf(undefined)',lawInfo["unitPublish"].indexOf(undefined));
