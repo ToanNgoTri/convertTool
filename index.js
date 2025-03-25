@@ -120,6 +120,44 @@ console.log('data1',typeof data1);
 });
 
 
+app.get("/cde", async (req, res) => {
+
+
+  let newLawObject = [];
+var LawContent = JSON.parse(fs.readFileSync('./public/asset/LawMachine.LawContent.json','utf8'))
+
+  // fs.readFile('./public/asset/ObjectLawPair.json',  function (err, data) {
+  //   if (err) throw err;
+  //   console.log('write file successfully');
+  //   data2 = data
+  // });
+
+  var LawSearch = JSON.parse(fs.readFileSync('./public/asset/LawMachine.LawSearch.json','utf8'))
+
+          for (let a = 0; a < LawContent.length; a++) {
+
+
+
+            for (let b = 0; b < LawSearch.length; b++) {
+            
+            
+            if(LawContent[a]['_id'] == LawSearch[b]['_id']){
+
+              LawSearch[b]['info'].lawDaySign = LawContent[a]['info']['lawDaySign']
+            }
+            }
+
+          }
+
+
+
+  fs.writeFile('./public/asset/s.json', JSON.stringify(LawSearch),  function (err, data) {
+    if (err) throw err;
+    console.log('write file successfully');
+  });
+  
+
+});
 
 
 async function pushLawContent(info, content, id) {

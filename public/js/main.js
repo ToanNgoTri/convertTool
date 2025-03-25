@@ -1676,4 +1676,38 @@ if(Object.keys(data[a].info["lawRelated"])[b].match(/20(10|11|12|13|14|15|16|17|
   
 }
 
+
+async function addInfo(){
+
+  await fetch("../asset/LawMachine.LawContent.json")
+    .then((response) => response.json()) // Chuyển đổi response thành JSON
+    .then(async (LawContent) => {
+      await fetch("../asset/LawMachine.LawSearch.json")
+        .then((response) => response.json()) // Chuyển đổi response thành JSON
+        .then((LawSearch) => {
+
+          // console.log('LawContent',LawContent);
+          
+          for (let a = 0; a < LawContent.length; a++) {
+
+
+
+            for (let b = 0; b < LawSearch.length; b++) {
+            
+            
+            if(LawContent[a]['_id'] == LawSearch[b]['_id']){
+
+              LawSearch[b]['info'].lawNumber = LawContent[a]['info']['lawDaySign']
+            }
+            }
+
+          }
+
+
+          console.log('LawSearch',LawSearch);
+        })})
+
+        
+
+}
 // keytool -genkeypair -v -storetype PKCS12 -keystore android.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
