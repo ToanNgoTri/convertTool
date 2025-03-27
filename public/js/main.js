@@ -1409,8 +1409,8 @@ function NaviNext() {
     if (currentIndex < 19) {
       nextURI = URI.replace(/(?<=AllURL\/).*(?=\?URL)/g, `${currentIndex + 1}`);
     } else {
-      let nextPage = parseInt(URI.match(/(?<=\%26page\%3D).*/gim)[0]) + 1;
-      nextURI = URI.replace(/(?<=\%26page\%3D).*/gim, nextPage);
+      let nextPage = parseInt(URI.match(/(?<=\%26PageIndex\%3D).*/gim)[0]) + 1;
+      nextURI = URI.replace(/(?<=\%26PageIndex\%3D).*/gim, nextPage);
       nextURI = nextURI.replace(/(?<=AllURL\/).*(?=\?URL)/g, 0);
     }
 
@@ -1478,7 +1478,7 @@ if (
 ) {
   getInfo()
     .then((t) => {
-      goToEndInput(), goToEndOutput(), convertContent(false); addJSONFile()
+      goToEndInput(), goToEndOutput(), convertContent(false); // addJSONFile()
     })
     .then((r) => {
       // console.log('lawInfo["unitPublish"].indexOf(undefined)',lawInfo["unitPublish"].indexOf(undefined));
@@ -1494,8 +1494,8 @@ if (
         if (lawInfo["lawDayActive"] >= lawInfo["lawDaySign"]) {
           if (lawInfo["roleSign"][0].match(/\s/gim).length <= 8) {
             setTimeout(() => {
-              // Push();
-              // NaviNext();
+              Push();
+              NaviNext();
             }, 500);
           }
         } else {
