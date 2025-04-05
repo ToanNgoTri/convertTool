@@ -1340,9 +1340,6 @@ function Push() {
       lawInfo: lawInfo,
       lawNumber: lawNumberForPush,
       contentText,
-      // lawID: lawNumberForPush,
-      // lawNameDisplay: lawNameDisplay,
-
     }),
   })
     .then((res) => {
@@ -1494,8 +1491,8 @@ if (
         if (lawInfo["lawDayActive"] >= lawInfo["lawDaySign"]) {
           if (lawInfo["roleSign"][0].match(/\s/gim).length <= 8) {
             setTimeout(() => {
-              Push();
-              NaviNext();
+              // Push();
+              // NaviNext();
             }, 500);
           }
         } else {
