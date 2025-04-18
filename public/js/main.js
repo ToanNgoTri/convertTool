@@ -1,5 +1,4 @@
-// "Điều.*[^\.]": ""
-//     \},
+
 function beep() {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -1475,7 +1474,7 @@ if (
 ) {
   getInfo()
     .then((t) => {
-      goToEndInput(), goToEndOutput(), convertContent(false); // addJSONFile()
+      goToEndInput(), goToEndOutput(), convertContent(false); addJSONFile()
     })
     .then((r) => {
       // console.log('lawInfo["unitPublish"].indexOf(undefined)',lawInfo["unitPublish"].indexOf(undefined));

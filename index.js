@@ -18,13 +18,13 @@ const client = new MongoClient(
   "mongodb+srv://gusteixeira25:JPwO1gvfCAjiuXKo@lawdatabase.jnsdwt3.mongodb.net/?retryWrites=true&w=majority&appName=LawDatabase"
 );
 
-var fs = require('fs'); 
+var fs = require("fs");
 
 app.get("/abc", async (req, res) => {
-
-
   let newLawObject = [];
-var data1 = JSON.parse(fs.readFileSync('./public/asset/LawMachine.LawContent.json','utf8'))
+  var data1 = JSON.parse(
+    fs.readFileSync("./public/asset/LawMachine.LawContent.json", "utf8")
+  );
 
   // fs.readFile('./public/asset/ObjectLawPair.json',  function (err, data) {
   //   if (err) throw err;
@@ -32,96 +32,74 @@ var data1 = JSON.parse(fs.readFileSync('./public/asset/LawMachine.LawContent.jso
   //   data2 = data
   // });
 
-  var data2 = JSON.parse(fs.readFileSync('./public/asset/ObjectLawPair.json','utf8'))
+  var data2 = JSON.parse(
+    fs.readFileSync("./public/asset/ObjectLawPair.json", "utf8")
+  );
 
-console.log('data1',typeof data1);
+  console.log("data1", typeof data1);
 
   for (let a = 0; a < data1.length; a++) {
     let newLawRelated = {};
     newLawObject[a] = data1[a];
 
     for (let b = 0; b < Object.keys(data1[a].info["lawRelated"]).length; b++) {
-      if (data2[Object.keys(data1[a].info["lawRelated"])[b].toLowerCase().replace(/( và| của|,|&)/img,'')]) {
-
-        if(Object.keys(data1[a].info["lawRelated"])[b].match(/\s/)){
+      if (
+        data2[
+          Object.keys(data1[a].info["lawRelated"])
+            [b].toLowerCase()
+            .replace(/( và| của|,|&)/gim, "")
+        ]
+      ) {
+        if (Object.keys(data1[a].info["lawRelated"])[b].match(/\s/)) {
           newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] =
-          data2[Object.keys(data1[a].info["lawRelated"])[b].toLowerCase().replace(/( và| của|,|&)/img,'')];
-          }else{
-            newLawRelated[data2[Object.keys(data1[a].info["lawRelated"])[b].toLowerCase().replace(/( và| của|,|&)/img,'')]] =
-            Object.keys(data1[a].info["lawRelated"])[b]
-            }
+            data2[
+              Object.keys(data1[a].info["lawRelated"])
+                [b].toLowerCase()
+                .replace(/( và| của|,|&)/gim, "")
+            ];
+        } else {
+          newLawRelated[
+            data2[
+              Object.keys(data1[a].info["lawRelated"])
+                [b].toLowerCase()
+                .replace(/( và| của|,|&)/gim, "")
+            ]
+          ] = Object.keys(data1[a].info["lawRelated"])[b];
+        }
+      } else if (Object.keys(data1[a].info["lawRelated"])[b].match(/Hiến pháp nước/gim)) {
+        const date = new Date(data1[a].info["lawDayActive"]);
 
-            
-      } else {
+        if(date > new Date('2014-01-01')){
+
+          newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = '0001/HP'
+        }else if(date > new Date('2014-01-07')){
+          newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = '0002/HP(2001)';
+          
+        }else if(date > new Date('1992-04-15')){
+          newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = '68-LCT/HĐNN8(1992)';
+
+        }else{
         newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = 0;
 
-// if(data[a].info["lawRelated"][b].match(/20(10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25)/img)
-//  && !data[a].info["lawRelated"][b].match(/QĐ/img)
-// ){
-//   if(lawMissing[data[a]._id]){
-//     lawMissing[data[a]._id].push(data[a].info["lawRelated"][b].replace(/( và| của|,|&)/img,''))
-//   }else{
-//     lawMissing[data[a]._id] = [data[a].info["lawRelated"][b].replace(/( và| của|,|&)/img,'')]
-//   }
-// }
-        
+        }
+      } else {
+        newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = 0;
       }
     }
     newLawObject[a].info["lawRelated"] = newLawRelated;
   }
 
-
-//   await fetch("file:////public/asset/LawMachine.LawContent.json")
-//     .then((response) => response.json()) // Chuyển đổi response thành JSON
-//     .then(async (data) => {
-//       await fetch("./public/asset/ObjectLawPair.json")
-//         .then((response) => response.json()) // Chuyển đổi response thành JSON
-//         .then((ObjectLawPair) => {
-//           for (let a = 0; a < data.length; a++) {
-//             let newLawRelated = {};
-//             newLawObject[a] = data[a];
-
-//             for (let b = 0; b < data[a].info["lawRelated"].length; b++) {
-//               if (ObjectLawPair[data[a].info["lawRelated"][b].toLowerCase().replace(/( và| của|,|&)/img,'')]) {
-//                 newLawRelated[data[a].info["lawRelated"][b]] =
-//                   ObjectLawPair[data[a].info["lawRelated"][b].toLowerCase().replace(/( và| của|,|&)/img,'')];
-//               } else {
-//                 newLawRelated[data[a].info["lawRelated"][b]] = 0;
-
-// // if(data[a].info["lawRelated"][b].match(/20(10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25)/img)
-// //  && !data[a].info["lawRelated"][b].match(/QĐ/img)
-// // ){
-// //   if(lawMissing[data[a]._id]){
-// //     lawMissing[data[a]._id].push(data[a].info["lawRelated"][b].replace(/( và| của|,|&)/img,''))
-// //   }else{
-// //     lawMissing[data[a]._id] = [data[a].info["lawRelated"][b].replace(/( và| của|,|&)/img,'')]
-// //   }
-// // }
-                
-//               }
-//             }
-//             newLawObject[a].info["lawRelated"] = newLawRelated;
-//           }
-//         });
-//     });
-  
-  // console.log(newLawObject);
-  // console.log(lawMissing);
-  
-
-
-
-  fs.writeFile('./public/asset/newObjectLaw.json', JSON.stringify(newLawObject),  function (err, data) {
-    if (err) throw err;
-    console.log('write file successfully');
-  });
-  
-
+  fs.writeFile(
+    "./public/asset/newObjectLaw.json",
+    JSON.stringify(newLawObject),
+    function (err, data) {
+      if (err) throw err;
+      console.log("write file successfully");
+    }
+  );
 });
 
-
 // app.get("/cde", async (req, res) => {
-
 
 //   let newLawObject = [];
 // var LawContent = JSON.parse(fs.readFileSync('./public/asset/LawMachine.LawContent.json','utf8'))
@@ -136,11 +114,8 @@ console.log('data1',typeof data1);
 
 //           for (let a = 0; a < LawContent.length; a++) {
 
-
-
 //             for (let b = 0; b < LawSearch.length; b++) {
-            
-            
+
 //             if(LawContent[a]['_id'] == LawSearch[b]['_id']){
 
 //               LawSearch[b]['info'].lawDaySign = LawContent[a]['info']['lawDaySign']
@@ -149,16 +124,12 @@ console.log('data1',typeof data1);
 
 //           }
 
-
-
 //   fs.writeFile('./public/asset/s.json', JSON.stringify(LawSearch),  function (err, data) {
 //     if (err) throw err;
 //     console.log('write file successfully');
 //   });
-  
 
 // });
-
 
 async function pushLawContent(info, content, id) {
   try {
@@ -201,7 +172,6 @@ async function eachRun(url) {
   let source = await page.content({ waitUntil: "domcontentloaded" });
 
   const r = await page.evaluate(async () => {
-
     let bg_phantich = document.querySelectorAll(".bg_phantich"); // loại bỏ phần tử khong cần thiết
     for (let f = 0; f < bg_phantich.length; f++) {
       bg_phantich[f].remove();
@@ -210,8 +180,8 @@ async function eachRun(url) {
     let elementContent = document.querySelectorAll(
       ".noidungtracuu >.docitem-1:not(.docitem-9 ~ div), .docitem-2:not(.docitem-9 ~ div), .docitem-5:not(.docitem-9 ~ div), .docitem-11:not(.docitem-9 ~ div), .docitem-12:not(.docitem-9 ~ div)"
       // ".noidungtracuu .docitem-5"
-    )
-console.log('elementContent',elementContent);
+    );
+    console.log("elementContent", elementContent);
 
     let lawRelated = "";
     let roleSign = "";
@@ -239,63 +209,63 @@ console.log('elementContent',elementContent);
       roleSign = roleSign.replace(/\u00A0/gim, " ");
       roleSign = roleSign.replace(/\n +/g, "\n");
       roleSign = roleSign.replace(/\n+/g, "\n");
-
     }
 
     console.log(elementContent[1]);
-    
+
     var content = "";
     for (let a = 0; a < elementContent.length; a++) {
       // content = content + "\n" + elementContent[a] ?elementContent[a].innerText:"";
-      content = content + "\n" +elementContent[a].innerText;
-   
+      content = content + "\n" + elementContent[a].innerText;
     }
     content = content.replace(/\n+/g, "\n");
     content = content.replace(/  /gm, " ");
 
-    let tableInfomation = document.querySelector(".div-table") ? document.querySelector(".div-table").innerText :"";
+    let tableInfomation = document.querySelector(".div-table")
+      ? document.querySelector(".div-table").innerText
+      : "";
 
     let lawNumber;
     let unitPublish;
     let lawKind;
     let nameSign;
     let lawDaySign;
-    let lawDescription 
-    lawDescription = document.querySelector(
-      ".the-document-summary"
-    ) ? document.querySelector(
-      ".the-document-summary"
-    ).innerText :"";
+    let lawDescription;
+    lawDescription = document.querySelector(".the-document-summary")
+      ? document.querySelector(".the-document-summary").innerText
+      : "";
 
     lawDescription = lawDescription.replace(/^ */, "");
     if (tableInfomation.match(/VBHN/)) {
       lawNumber = document.querySelector(
         ".div-table tr:nth-child(1) td:nth-child(2)"
-      ) ?document.querySelector(
-        ".div-table tr:nth-child(1) td:nth-child(2)"
-      ).innerText :"";
+      )
+        ? document.querySelector(".div-table tr:nth-child(1) td:nth-child(2)")
+            .innerText
+        : "";
       lawNumber = lawNumber.replace(/(^ | $)/gim, "");
-      lawNumber = lawNumber.match(/^\d\//img) ? `0${lawNumber}` :lawNumber ;
+      lawNumber = lawNumber.match(/^\d\//gim) ? `0${lawNumber}` : lawNumber;
 
       unitPublish = document.querySelector(
         ".div-table tr:nth-child(2) td:nth-child(4)"
-      ) ?document.querySelector(
-        ".div-table tr:nth-child(2) td:nth-child(4)"
-      ).innerText :'';
-
-    
+      )
+        ? document.querySelector(".div-table tr:nth-child(2) td:nth-child(4)")
+            .innerText
+        : "";
 
       lawKind = document.querySelector(
         ".div-table tr:nth-child(2) td:nth-child(2)"
-      ) ?document.querySelector(
-        ".div-table tr:nth-child(2) td:nth-child(2)"
-      ).innerText:"";
+      )
+        ? document.querySelector(".div-table tr:nth-child(2) td:nth-child(2)")
+            .innerText
+        : "";
 
       nameSign = document.querySelector(
         ".div-table tr:nth-child(3) td:nth-child(4)"
-      )?document.querySelector(
-        ".div-table tr:nth-child(3) td:nth-child(4)"
-      ).innerText:"";
+      )
+        ? document.querySelector(".div-table tr:nth-child(3) td:nth-child(4)")
+            .innerText
+        : "";
 
       lawDaySign = document.querySelector(
         ".div-table tr:nth-child(1) td:nth-child(4)"
@@ -303,37 +273,40 @@ console.log('elementContent',elementContent);
     } else {
       lawNumber = document.querySelector(
         ".div-table tr:nth-child(2) td:nth-child(2)"
-      )?document.querySelector(
-        ".div-table tr:nth-child(2) td:nth-child(2)"
-      ).innerText:"";
+      )
+        ? document.querySelector(".div-table tr:nth-child(2) td:nth-child(2)")
+            .innerText
+        : "";
       lawNumber = lawNumber.replace(/(^ | $)/gim, "");
-      lawNumber = lawNumber.match(/^\d\//img) ? `0${lawNumber}` :lawNumber ;
-    
+      lawNumber = lawNumber.match(/^\d\//gim) ? `0${lawNumber}` : lawNumber;
 
       unitPublish = document.querySelector(
         ".div-table tr:nth-child(1) td:nth-child(2)"
-      )? document.querySelector(
-        ".div-table tr:nth-child(1) td:nth-child(2)"
-      ).innerText : '';
+      )
+        ? document.querySelector(".div-table tr:nth-child(1) td:nth-child(2)")
+            .innerText
+        : "";
 
       lawKind = document.querySelector(
         ".div-table tr:nth-child(3) td:nth-child(2)"
-      ) ? document.querySelector(
-        ".div-table tr:nth-child(3) td:nth-child(2)"
-      ).innerText : '';
-    
+      )
+        ? document.querySelector(".div-table tr:nth-child(3) td:nth-child(2)")
+            .innerText
+        : "";
 
       nameSign = document.querySelector(
         ".div-table tr:nth-child(3) td:nth-child(4)"
-      )?document.querySelector(
-        ".div-table tr:nth-child(3) td:nth-child(4)"
-      ).innerText:'';
+      )
+        ? document.querySelector(".div-table tr:nth-child(3) td:nth-child(4)")
+            .innerText
+        : "";
 
       lawDaySign = document.querySelector(
         ".div-table tr:nth-child(4) td:nth-child(2)"
-      )?document.querySelector(
-        ".div-table tr:nth-child(4) td:nth-child(2)"
-      ).innerText :'';
+      )
+        ? document.querySelector(".div-table tr:nth-child(4) td:nth-child(2)")
+            .innerText
+        : "";
     }
 
     // roleSign = roleSign.replace(/^\n(\s)*/gim, "");
@@ -493,7 +466,6 @@ app.post("/push", async (req, res) => {
   pushLawContent(req.body.lawInfo, req.body.dataLaw, req.body.lawNumber);
   pushLawSearch(req.body.lawInfo, req.body.lawNumber, req.body.contentText);
 
-
   // var data2 = JSON.parse(fs.readFileSync('./public/asset/allLawID.json','utf8'))
 
   // data2.push(req.body.lawNumber)
@@ -503,7 +475,6 @@ app.post("/push", async (req, res) => {
   //   console.log('write file successfully');
   // });
 
-
   // var data3 = JSON.parse(fs.readFileSync('./public/asset/ObjectLawPair.json','utf8'))
 
   // if (req.body.lawInfo['lawNameDisplay'].match(/Luật/gim)) {
@@ -511,59 +482,65 @@ app.post("/push", async (req, res) => {
   //   data3[req.body.lawNumber.toLowerCase()] = req.body.lawInfo['lawNameDisplay']
 
   //   console.log(1);
-    
+
   // } else {
   //   data3[req.body.lawNumber.toLowerCase()] = req.body.lawNumber;
   //   console.log(2);
 
   // }
 
-
   // fs.writeFile('./public/asset/ObjectLawPair.json', JSON.stringify(data3),  function (err, data) {
   //   if (err) throw err;
   //   console.log('write file successfully');
   // });
-
-
 });
 
-
 app.post("/addedjsonfile", async (req, res) => {
-  var data2 = JSON.parse(fs.readFileSync('./public/asset/allLawID.json','utf8'))
+  var data2 = JSON.parse(
+    fs.readFileSync("./public/asset/allLawID.json", "utf8")
+  );
 
-  if(!data2.includes(req.body.lawNumber)){
-    data2.push(req.body.lawNumber)
+  if (!data2.includes(req.body.lawNumber)) {
+    data2.push(req.body.lawNumber);
   }
 
-  fs.writeFile('./public/asset/allLawID.json', JSON.stringify(data2),  function (err, data) {
-    if (err) throw err;
-    console.log('write file successfully');
-  });
+  fs.writeFile(
+    "./public/asset/allLawID.json",
+    JSON.stringify(data2),
+    function (err, data) {
+      if (err) throw err;
+      console.log("write file successfully");
+    }
+  );
 
+  var data3 = JSON.parse(
+    fs.readFileSync("./public/asset/ObjectLawPair.json", "utf8")
+  );
 
-  var data3 = JSON.parse(fs.readFileSync('./public/asset/ObjectLawPair.json','utf8'))
-
-  if (req.body.lawInfo['lawNameDisplay'].match(/Luật/gim)) {
-    data3[req.body.lawInfo['lawNameDisplay'].toLowerCase().replace(/( và| của|,|&)/img,'')] = req.body.lawNumber;
-    data3[req.body.lawNumber.toLowerCase()] = req.body.lawInfo['lawNameDisplay']
+  if (req.body.lawInfo["lawNameDisplay"].match(/Luật/gim)) {
+    data3[
+      req.body.lawInfo["lawNameDisplay"]
+        .toLowerCase()
+        .replace(/( và| của|,|&)/gim, "")
+    ] = req.body.lawNumber;
+    data3[req.body.lawNumber.toLowerCase()] =
+      req.body.lawInfo["lawNameDisplay"];
 
     console.log(1);
-    
   } else {
     data3[req.body.lawNumber.toLowerCase()] = req.body.lawNumber;
     console.log(2);
-
   }
 
-
-  fs.writeFile('./public/asset/ObjectLawPair.json', JSON.stringify(data3),  function (err, data) {
-    if (err) throw err;
-    console.log('write file successfully');
-  });
-
-
-})
-
+  fs.writeFile(
+    "./public/asset/ObjectLawPair.json",
+    JSON.stringify(data3),
+    function (err, data) {
+      if (err) throw err;
+      console.log("write file successfully");
+    }
+  );
+});
 
 app.post(`/pushconvertfulltext`, async (req, res) => {
   try {
