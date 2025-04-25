@@ -1349,6 +1349,7 @@ function Push() {
   console.log(lawNumberForPush);
 
 
+  addJSONFile()
   // fetch("http://localhost:9000/addNewInfoToAsset", {
   //   method: "POST",
   //   headers: { "Content-Type": "application/json" },
