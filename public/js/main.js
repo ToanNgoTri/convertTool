@@ -1674,7 +1674,7 @@ if(Object.keys(data[a].info["lawRelated"])[b].match(/20(10|11|12|13|14|15|16|17|
 }
 
 
-async function addInfo(){
+async function addInfo(){   // thêm Info cho LawMachine.LawSearch.json
 
   await fetch("../asset/LawMachine.LawContent.json")
     .then((response) => response.json()) // Chuyển đổi response thành JSON
@@ -1707,4 +1707,33 @@ async function addInfo(){
         
 
 }
+
+
+async function createLawSearchDescrpition(){   // thêm Info cho LawMachine.LawSearch.json
+
+  let newLawSearchDescrpition = []
+  await fetch("../asset/LawMachine.LawSearch.json")
+    .then((response) => response.json()) // Chuyển đổi response thành JSON
+    .then(async (LawContent) => {
+
+
+      for(let a = 0 ; a<LawContent.length;a++){
+        // newLawSearchDescrpition[a] = {'info':{'lawDescription':'abc','lawNameDisplay':'abc'}}
+
+        newLawSearchDescrpition[a]={_id:'abc',info:{}}
+        newLawSearchDescrpition[a]._id =   LawContent[a]["_id"]
+
+
+        newLawSearchDescrpition[a]['info']['lawDescription'] =   LawContent[a]['info']['lawDescription']
+        newLawSearchDescrpition[a]['info']['lawNameDisplay'] =   LawContent[a]['info']['lawNameDisplay']
+        newLawSearchDescrpition[a]['info']['lawDaySign'] =   LawContent[a]['info']['lawDaySign']
+        newLawSearchDescrpition[a]['fullText'] =   LawContent[a]['fullText']
+      }
+    })
+
+        
+console.log('newLawSearchDescrpition',newLawSearchDescrpition);
+
+}
+
 // keytool -genkeypair -v -storetype PKCS12 -keystore android.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
