@@ -162,6 +162,25 @@ async function pushLawSearch(info, id, fullText) {
   }
 }
 
+async function pushLawSearchDescription(info, id) {
+  try {
+    const database = client.db("LawMachine");
+    const LawContent = database.collection("LawDescription");
+    await LawContent.insertOne({
+      _id: id,
+      info: {
+        lawDescription: info["lawDescription"],
+        lawNameDisplay: info["lawNameDisplay"],
+        lawDaySign: info["lawDaySign"],
+      },
+    });
+  } finally {
+    // Ensures that the client will close when you finish/error
+    // await client.close();
+  }
+}
+
+
 async function eachRun(url) {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
@@ -465,6 +484,8 @@ app.get(`/AllURL/:id`, async (req, res) => {
 app.post("/push", async (req, res) => {
   pushLawContent(req.body.lawInfo, req.body.dataLaw, req.body.lawNumber);
   pushLawSearch(req.body.lawInfo, req.body.lawNumber, req.body.contentText);
+  pushLawSearchDescription(req.body.lawInfo, req.body.lawNumber);
+  
 
   // var data2 = JSON.parse(fs.readFileSync('./public/asset/allLawID.json','utf8'))
 
