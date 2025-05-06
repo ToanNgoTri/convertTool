@@ -436,50 +436,6 @@ app.get(`/AllURL/:id`, async (req, res) => {
   });
 });
 
-// app.get(`/convertfulltext`, async (req, res) => {
-//   try {
-//     const database = client.db("LawMachine");
-//     const LawContent = database.collection("LawSearch");
-
-//     LawContent.find({
-//       _id: new RegExp(`71/2024/TT-BCA`, "i"),
-//     })
-//       // .project({ info: 0,fullText:1 })
-//       .toArray()
-//       .then((o) =>
-//         res.render("cutFullText", {
-//           content: o[0].fullText,
-//         })
-//       );
-//   } finally {
-//     // Ensures that the client will close when you finish/error
-//     // await client.close();
-//   }
-// });
-
-// app.get(`/AllConvertfulltext/:id`, async (req, res) => {
-//   const database = client.db("LawMachine");
-//   const LawContent = database.collection("LawSearch");
-
-//   LawContent.find({
-//     _id: /\/(2001|2002|2003|2004|2005|2006|2007|2008|2009)\//,
-//   })
-//     .project({ info: 0, fullText: 0 })
-//     .toArray()
-//     .then((o) => {
-//       LawContent.find({
-//         _id: o[req.params.id]._id,
-//       })
-//         //  .project({ info: 0,fullText:1 })
-//         .toArray()
-//         .then((o1) => {
-//           res.render("cutFullText", {
-//             content: o1[0].fullText,
-//             id: o1[0]._id,
-//           });
-//         });
-//     });
-// });
 
 app.post("/push", async (req, res) => {
   pushLawContent(req.body.lawInfo, req.body.dataLaw, req.body.lawNumber);
@@ -487,52 +443,25 @@ app.post("/push", async (req, res) => {
   pushLawSearchDescription(req.body.lawInfo, req.body.lawNumber);
   
 
-  // var data2 = JSON.parse(fs.readFileSync('./public/asset/allLawID.json','utf8'))
-
-  // data2.push(req.body.lawNumber)
-
-  // fs.writeFile('./public/asset/allLawID.json', JSON.stringify(data2),  function (err, data) {
-  //   if (err) throw err;
-  //   console.log('write file successfully');
-  // });
-
-  // var data3 = JSON.parse(fs.readFileSync('./public/asset/ObjectLawPair.json','utf8'))
-
-  // if (req.body.lawInfo['lawNameDisplay'].match(/Luật/gim)) {
-  //   data3[req.body.lawInfo['lawNameDisplay'].toLowerCase().replace(/( và| của|,|&)/img,'')] = req.body.lawNumber;
-  //   data3[req.body.lawNumber.toLowerCase()] = req.body.lawInfo['lawNameDisplay']
-
-  //   console.log(1);
-
-  // } else {
-  //   data3[req.body.lawNumber.toLowerCase()] = req.body.lawNumber;
-  //   console.log(2);
-
-  // }
-
-  // fs.writeFile('./public/asset/ObjectLawPair.json', JSON.stringify(data3),  function (err, data) {
-  //   if (err) throw err;
-  //   console.log('write file successfully');
-  // });
 });
 
 app.post("/addedjsonfile", async (req, res) => {
-  var data2 = JSON.parse(
-    fs.readFileSync("./public/asset/allLawID.json", "utf8")
-  );
+  // var data2 = JSON.parse(
+  //   fs.readFileSync("./public/asset/allLawID.json", "utf8")
+  // );
 
-  if (!data2.includes(req.body.lawNumber)) {
-    data2.push(req.body.lawNumber);
-  }
+  // if (!data2.includes(req.body.lawNumber)) {
+  //   data2.push(req.body.lawNumber);
+  // }
 
-  fs.writeFile(
-    "./public/asset/allLawID.json",
-    JSON.stringify(data2),
-    function (err, data) {
-      if (err) throw err;
-      console.log("write file successfully");
-    }
-  );
+  // fs.writeFile(
+  //   "./public/asset/allLawID.json",
+  //   JSON.stringify(data2),
+  //   function (err, data) {
+  //     if (err) throw err;
+  //     console.log("write file successfully");
+  //   }
+  // );
 
   var data3 = JSON.parse(
     fs.readFileSync("./public/asset/ObjectLawPair.json", "utf8")

@@ -1331,6 +1331,9 @@ function Push() {
       ? "(" + yearSign + ")"
       : "");
       
+
+
+      // CHANGE JSON FILE
   fetch("http://localhost:9000/push", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -1344,12 +1347,13 @@ function Push() {
     .then((res) => {
       res.text();
       console.log("success");
+      // addJSONFile()
+
     })
-    .then((data) => console.log(123));
+    // .then((data) => addJSONFile())
   console.log(lawNumberForPush);
-
-
-  // addJSONFile()
+  
+    
 
   
   // fetch("http://localhost:9000/addNewInfoToAsset", {
@@ -1369,31 +1373,31 @@ function Push() {
 
 }
 
-function addJSONFile() {
-  let yearSign = parseInt(lawInfo["lawDaySign"].getYear()) + 1900;
-  let lawNumberForPush =
-    lawInfo["lawNumber"] +
-    (!lawInfo["lawNumber"].match(/(?<=\d\W)\d{4}/gim)
-      ? "(" + yearSign + ")"
-      : "");
+// function addJSONFile() {
+//   let yearSign = parseInt(lawInfo["lawDaySign"].getYear()) + 1900;
+//   let lawNumberForPush =
+//     lawInfo["lawNumber"] +
+//     (!lawInfo["lawNumber"].match(/(?<=\d\W)\d{4}/gim)
+//       ? "(" + yearSign + ")"
+//       : "");
 
 
-  fetch("http://localhost:9000/addedjsonfile", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      lawInfo: lawInfo,
-      lawNumber: lawNumberForPush,
+//   fetch("http://localhost:9000/addedjsonfile", {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     body: JSON.stringify({
+//       lawInfo: lawInfo,
+//       lawNumber: lawNumberForPush,
 
-    }),
-  })
-    .then((res) => {
-      res.text();
-      console.log("success");
-    })
-    .then((data) => console.log(123));
+//     }),
+//   })
+//     .then((res) => {
+//       res.text();
+//       console.log("success");
+//     })
+//     .then((data) => console.log(123));
 
-}
+// }
 
 
 function NaviNext() {
