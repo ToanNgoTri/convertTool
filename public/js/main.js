@@ -518,6 +518,8 @@ async function getInfo() {
     } else {
       result = await convertBareTextInfo();
     }
+
+    addJSONFile()
     return result;
   } catch (e) {
     beep();
@@ -1347,10 +1349,8 @@ function Push() {
     .then((res) => {
       res.text();
       console.log("success");
-      // addJSONFile()
 
     })
-    // .then((data) => addJSONFile())
   console.log(lawNumberForPush);
   
     
@@ -1373,31 +1373,31 @@ function Push() {
 
 }
 
-// function addJSONFile() {
-//   let yearSign = parseInt(lawInfo["lawDaySign"].getYear()) + 1900;
-//   let lawNumberForPush =
-//     lawInfo["lawNumber"] +
-//     (!lawInfo["lawNumber"].match(/(?<=\d\W)\d{4}/gim)
-//       ? "(" + yearSign + ")"
-//       : "");
+function addJSONFile() {
+  let yearSign = parseInt(lawInfo["lawDaySign"].getYear()) + 1900;
+  let lawNumberForPush =
+    lawInfo["lawNumber"] +
+    (!lawInfo["lawNumber"].match(/(?<=\d\W)\d{4}/gim)
+      ? "(" + yearSign + ")"
+      : "");
 
 
-//   fetch("http://localhost:9000/addedjsonfile", {
-//     method: "POST",
-//     headers: { "Content-Type": "application/json" },
-//     body: JSON.stringify({
-//       lawInfo: lawInfo,
-//       lawNumber: lawNumberForPush,
+  fetch("http://localhost:9000/addedjsonfile", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      lawInfo: lawInfo,
+      lawNumber: lawNumberForPush,
 
-//     }),
-//   })
-//     .then((res) => {
-//       res.text();
-//       console.log("success");
-//     })
-//     .then((data) => console.log(123));
+    }),
+  })
+    .then((res) => {
+      res.text();
+      console.log("success");
+    })
+    .then((data) => console.log(123));
 
-// }
+}
 
 
 function NaviNext() {
@@ -1481,7 +1481,7 @@ if (
 ) {
   getInfo()
     .then((t) => {
-      goToEndInput(), goToEndOutput(), convertContent(false); addJSONFile()
+      goToEndInput(), goToEndOutput(), convertContent(false); 
     })
     .then((r) => {
       // console.log('lawInfo["unitPublish"].indexOf(undefined)',lawInfo["unitPublish"].indexOf(undefined));
@@ -1622,8 +1622,7 @@ async function getAllLawObjectPair() {
       for (let a = 0; a < data.length; a++) {
         if (data[a].info["lawNameDisplay"].match(/Luật/gim)) {
           allLawObjectPair[data[a].info["lawNameDisplay"].toLowerCase().replace(/( và| của|,|&)/img,'')] = data[a]._id;
-          allLawObjectPair[data[a]._id.toLowerCase()] = data[a].info["lawNameDisplay"]
-          // allLawObjectPair[data[a]._id] = data[a].info["lawNameDisplay"]
+          allLawObjectPair[data[a]._id.toLowerCase()] = data[a]._id
 
         } else {
           allLawObjectPair[data[a]._id.toLowerCase()] = data[a]._id;

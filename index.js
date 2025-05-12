@@ -474,7 +474,7 @@ app.post("/addedjsonfile", async (req, res) => {
         .replace(/( và| của|,|&)/gim, "")
     ] = req.body.lawNumber;
     data3[req.body.lawNumber.toLowerCase()] =
-      req.body.lawInfo["lawNameDisplay"];
+    req.body.lawNumber
 
     console.log(1);
   } else {
