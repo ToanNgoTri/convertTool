@@ -72,11 +72,11 @@ app.get("/abc", async (req, res) => {
         if(date > new Date('2014-01-01')){
 
           newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = '0001/HP'
-        }else if(date > new Date('2014-01-07')){
-          newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = '0002/HP(2001)';
+        }else if(date > new Date('2002-01-07')){
+          newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = '0003/HP(2001)';
           
         }else if(date > new Date('1992-04-15')){
-          newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = '68-LCT/HĐNN8(1992)';
+          newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = '0002/HP(1992)';
 
         }else{
         newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = 0;

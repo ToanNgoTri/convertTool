@@ -1,4 +1,3 @@
-
 function beep() {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -59,8 +58,13 @@ function getValueinArea() {
     lawNameDisplay = lawDescription.replace(/,* của Quốc hội.*số.*/i, "");
     // lawNameDisplay = lawNameDisplay.replace(/,* số \d.*của Quốc hội.*/i, "");
     lawNameDisplay = lawNameDisplay.replace(/,* số \d.*(của Quốc hội)*.*/i, "");
-    
+
     lawNameDisplay = lawNameDisplay + " năm " + lawDaySign.match(/\d+$/i)[0];
+  } else if (lawKind.match(/hợp nhất$/gim) && lawNameDisplay.match(/(Bộ )*Luật.*/gim)) {
+    lawNameDisplay =
+      lawNameDisplay.match(/(Bộ )*Luật.*/gim)[0] +
+      " hợp nhất năm " +
+      lawDaySign.match(/\d+$/i)[0];
   } else {
     lawNameDisplay = lawKind + " số " + lawNumber;
   }
@@ -224,7 +228,7 @@ function getLawDayActive(text, daySign) {
   return lawDayActive;
 }
 
-async function getLawRelated(text) {
+async function getLawRelated(text, dayActive) {
   function uniqueArray(orinalArray) {
     let noDuplicate = orinalArray.filter((elem, position, arr) => {
       return arr.indexOf(elem) == position && elem != lawNumber;
@@ -250,7 +254,7 @@ async function getLawRelated(text) {
     : [];
 
   // if (b13.match(/(?<=(căn cứ |; |và ))(luật|bộ luật)[^ số][^;]+năm \d+ (?=((và luật sửa đổi)|;))/gi)) {
-   if (
+  if (
     text.match(
       /(?<=(căn cứ |; ))(luật|Luật|bộ luật|pháp lệnh)[^(;|\n)]+năm \d+/gi
     )
@@ -270,22 +274,20 @@ async function getLawRelated(text) {
           )
           [y].match(/(?<=năm \d+) và (?=luật sửa)/gi)
       ) {
-
-        if( !text.match(
-          /(?<=(căn cứ |; ))(luật|Luật|bộ luật|pháp lệnh)[^(;|\n)]+năm \d+/gi
-        )
-        [y].match(
-          /(luật|Luật|bộ luật|pháp lệnh) số \d/gi
-        )){
-
-          if(
-            text
+        if (
+          !text
             .match(
               /(?<=(căn cứ |; ))(luật|Luật|bộ luật|pháp lệnh)[^(;|\n)]+năm \d+/gi
             )
-            [y].match(/(?<=năm \d+) và (?=(NGHỊ ĐỊNH|Nghị định|THÔNG TƯ))/gi)
-          ){
-          
+            [y].match(/(luật|Luật|bộ luật|pháp lệnh) số \d/gi)
+        ) {
+          if (
+            text
+              .match(
+                /(?<=(căn cứ |; ))(luật|Luật|bộ luật|pháp lệnh)[^(;|\n)]+năm \d+/gi
+              )
+              [y].match(/(?<=năm \d+) và (?=(NGHỊ ĐỊNH|Nghị định|THÔNG TƯ))/gi)
+          ) {
             let lawRelatedString = text
               .match(
                 /(?<=(căn cứ |; ))(luật|Luật|bộ luật|pháp lệnh)[^(;|\n)]+năm \d+(?= và (NGHỊ ĐỊNH|Nghị định|THÔNG TƯ))/gi
@@ -303,39 +305,29 @@ async function getLawRelated(text) {
               / (ngày|ngày) *\d+ *(tháng|tháng) *\d+/gim,
               ""
             );
-    
             lawRelatedDemo2 = [...lawRelatedDemo2, lawRelatedString];
-          
-          }else{
-  
+          } else {
             let lawRelatedString = text
-            .match(
-              /(?<=(căn cứ |; ))(luật|Luật|bộ luật|pháp lệnh)[^(;|\n)]+năm \d+/gi
-            )
-            [y].replace(/ số \d+[^( |,)]+/gim, "");
-          lawRelatedString = lawRelatedString.replace(
-            / ngày \d+\/\d+\/\d+/gim,
-            ""
-          );
-          lawRelatedString = lawRelatedString.replace(
-            / ngày \d+ *\d+ *\d+/gim,
-            ""
-          );
-          lawRelatedString = lawRelatedString.replace(
-            / (ngày|ngày) *\d+ *(tháng|tháng) *\d+/gim,
-            ""
-          );
-  
-          lawRelatedDemo2 = [...lawRelatedDemo2, lawRelatedString];
-  
+              .match(
+                /(?<=(căn cứ |; ))(luật|Luật|bộ luật|pháp lệnh)[^(;|\n)]+năm \d+/gi
+              )
+              [y].replace(/ số \d+[^( |,)]+/gim, "");
+            lawRelatedString = lawRelatedString.replace(
+              / ngày \d+\/\d+\/\d+/gim,
+              ""
+            );
+            lawRelatedString = lawRelatedString.replace(
+              / ngày \d+ *\d+ *\d+/gim,
+              ""
+            );
+            lawRelatedString = lawRelatedString.replace(
+              / (ngày|ngày) *\d+ *(tháng|tháng) *\d+/gim,
+              ""
+            );
+            lawRelatedDemo2 = [...lawRelatedDemo2, lawRelatedString];
           }
-
-          
         }
-
-
-      } else{
-
+      } else {
         let lawRelatedString = text
           .match(
             /(?<=(căn cứ |; ))(luật|Luật|bộ luật|pháp lệnh)[^(;|\n)]+năm \d+/gi
@@ -410,7 +402,6 @@ async function getLawRelated(text) {
     }
   }
 
-
   if (text.match(/(?<=(căn cứ |; |vào ))(hiến pháp)[^(;|\n)]+/gi)) {
     // let lawRelatedString = lawRelatedString.match(/(?<=(căn cứ |; |vào ))(hiến pháp)[^;]+/gi).replace(/ số \d+[^( |,)]+/igm,'')
     // lawRelatedString = lawRelatedString.replace(/ ngày \d+\/\d+\/\d+/igm,'')
@@ -429,58 +420,82 @@ async function getLawRelated(text) {
   });
 
   lawRelatedDemo2 = lawRelatedDemo2.map((item) => {
-    return item.replace(/\s+/gim, " ").replace(/^\s+/gim, "").replace(/\s+$/gim, "")
+    return item
+      .replace(/\s+/gim, " ")
+      .replace(/^\s+/gim, "")
+      .replace(/\s+$/gim, "");
   });
-
 
   let lawRelated = uniqueArray(lawRelatedDemo2);
 
-  lawRelated = lawRelated.filter((law) => !law.match(/^luật năm/i));
+  lawRelated = lawRelated.filter(
+    (law) => !law.match(/^luật năm/i) && !law.match(/^51\/2001\/QH10/i)
+  );
 
-  let lawRelatedObject = {}
-  lawRelated = lawRelated.map((law)=>{
-    return lawRelatedObject[law]=0
-  })
+  let lawRelatedObject = {};
+  lawRelated = lawRelated.map((law) => {
+    return (lawRelatedObject[law] = 0);
+  });
 
-  let lawPairObject = {}
+  let lawPairObject = {};
   await fetch("../asset/ObjectLawPair.json")
     .then((response) => response.json()) // Chuyển đổi response thành JSON
     .then((data) => {
-      lawPairObject = (data)
+      lawPairObject = data;
     })
     .catch((error) => console.log("Error:", error));
 
-    // console.log('lawRelatedObject1',lawRelatedObject);
-    
-    for(let a = 0 ; a<Object.keys(lawRelatedObject).length;a++){
-// console.log('Object.keys(lawRelatedObject)[a]',Object.keys(lawRelatedObject)[a]);
+  // console.log('lawRelatedObject1',lawRelatedObject);
 
-      if(lawPairObject[Object.keys(lawRelatedObject)[a].toLowerCase().replace(/( và| của|,|&)/img,'')]){
-// console.log(1);
-
-        // console.log(lawPairObject[Object.keys(lawRelatedObject)[a].toLowerCase().replace(/( và| của|,|&)/img,'')]);
-        
-        if(lawPairObject[Object.keys(lawRelatedObject)[a].toLowerCase().replace(/( và| của|,|&)/img,'')].match(/\s/)  ){
-          lawRelatedObject[Object.keys(lawRelatedObject)[a]] =
-          lawPairObject[Object.keys(lawRelatedObject)[a].toLowerCase().replace(/( và| của|,|&)/img,'')];
-          // console.log(2);
-        }else{
-            // newLawRelated[data2[Object.keys(data1[a].info["lawRelated"])[b].toLowerCase().replace(/( và| của|,|&)/img,'')]] =
-            // Object.keys(data1[a].info["lawRelated"])[b]
-            // console.log(3);
-
-            lawRelatedObject[Object.keys(lawRelatedObject)[a]] =
-            lawPairObject[Object.keys(lawRelatedObject)[a].toLowerCase().replace(/( và| của|,|&)/img,'')];
-              }
-
-
-        // lawRelatedObject[Object.keys(lawRelatedObject)[a].toLowerCase().replace(/( và| của|,|&)/img,'')] = lawPairObject[Object.keys(lawRelatedObject)[a]]
-      }else{
-        // console.log(5);
-        lawRelatedObject[Object.keys(lawRelatedObject)[a]] = 0
+  for (let a = 0; a < Object.keys(lawRelatedObject).length; a++) {
+    if (
+      lawPairObject[
+        Object.keys(lawRelatedObject)
+          [a].toLowerCase()
+          .replace(/( và| của|,|&)/gim, "")
+      ]
+    ) {
+      if (
+        lawPairObject[
+          Object.keys(lawRelatedObject)
+            [a].toLowerCase()
+            .replace(/( và| của|,|&)/gim, "")
+        ].match(/\s/)
+      ) {
+        lawRelatedObject[Object.keys(lawRelatedObject)[a]] =
+          lawPairObject[
+            Object.keys(lawRelatedObject)
+              [a].toLowerCase()
+              .replace(/( và| của|,|&)/gim, "")
+          ];
+        // console.log(2);
+      } else {
+        lawRelatedObject[Object.keys(lawRelatedObject)[a]] =
+          lawPairObject[
+            Object.keys(lawRelatedObject)
+              [a].toLowerCase()
+              .replace(/( và| của|,|&)/gim, "")
+          ];
       }
-    }
+    } else if (Object.keys(lawRelatedObject)[a].match(/Hiến pháp/gim)) {
+      console.log("dayActive", dayActive);
 
+      const date = new Date(dayActive);
+
+      console.log("date", date);
+      if (date > new Date("2014-01-01")) {
+        lawRelatedObject[Object.keys(lawRelatedObject)[a]] = "0001/HP";
+      } else if (date > new Date("2002-01-07")) {
+        lawRelatedObject[Object.keys(lawRelatedObject)[a]] = "0003/HP(2001)";
+      } else if (date > new Date("1992-04-15")) {
+        lawRelatedObject[Object.keys(lawRelatedObject)[a]] = "0002/HP(1992)";
+      } else {
+        lawRelatedObject[Object.keys(lawRelatedObject)[a]] = 0;
+      }
+    } else {
+      lawRelatedObject[Object.keys(lawRelatedObject)[a]] = 0;
+    }
+  }
 
   return lawRelatedObject;
 }
@@ -519,7 +534,7 @@ async function getInfo() {
       result = await convertBareTextInfo();
     }
 
-    addJSONFile()
+    addJSONFile();
     return result;
   } catch (e) {
     beep();
@@ -563,23 +578,6 @@ function convertPartOne() {
   let b12 = b11.replace(/(?<=^Chương (V|I|X|\d)*)\.?\s/gim, ": ");
   // b12 = b12.replace(/(?<=^Chương (V|I|X|\d)*) /gim, ":");
   b12 = b12.replace(/(?<=^Chương.{0,5})l/gim, "I");
-  // let b12a = []
-
-  // for (let c = 0; c < 5; c++) {
-  //   if (!c) {
-  //     b12a[c] = b11.replace(
-  //       /(?<=^Chương (V|I|X|\d).*)\n(?!(Điều|Ðiều|Điều) \d.*)/gim,
-  //       ": "
-  //     );
-  //   } else {
-  //     b12a[c] = b12a[c - 1].replace(
-  //       /(?<=^Chương (V|I|X|\d).*)\n(?!(Điều|Ðiều|Điều) \d.*)/gim,
-  //       " "
-  //     );
-  //   }
-  // }
-  // b12 = b12a[4];
-
   let b13 = b12.replace(/  +/gim, " "); // bỏ khoảng cách 2 space
 
   return b13;
@@ -590,31 +588,6 @@ function convertPartTwo(partOne) {
   for (let t = 0; t <= 30; t++) {
     let clause;
     clause = partOne.match(`(?<=(\n.*){${t}}).*`, "im")[[0]];
-    // console.log('clause',clause);
-
-    // if(clause){
-    //   clause = clause[0]
-    // } else{
-
-    //   if(partOne.match(/PHẦN\sTHỨ\s/img)){
-    //     b14 = partOne.replace(
-    //       /^(.*\n)*.+(?=(PHẦN\sTHỨ\s)(:|\.|\s))/i,
-    //       ""
-    //     );
-    //   }else if(partOne.match(/Chương (I|l|1)[^I]/img)){
-    //     b14 = partOne.replace(
-    //       /^(.*\n)*.+(?=(Chương (I|l|1))[^I])/i,
-    //       ""
-    //     );
-    //   }else if(partOne.match(/(Điều 1|Điều 1)/img)){
-    //     b14 = partOne.replace(
-    //       /^(.*\n)*.+(?=(Điều 1|Điều 1)(:|\.))/i,
-    //       ""
-    //     );
-    //   }
-
-    // break
-    // }
 
     if (
       lawKind ? lawKind.match(/nghị quyết/i) : partOne.match(/^nghị quyết/i)
@@ -651,101 +624,46 @@ function convertPartTwo(partOne) {
     }
   }
 
-  // if(!b14){
-  //     b14 = partOne.replace(
-  //       /^(.*\n)*.+(ban hành|ban hành|quy định|hướng dẫn|công bố)[^\n]+\n(?=(Chương (I|l|1)|phần thứ|Điều 1|Điều 1)(:|\.|\s))/i,
-  //       ""
-  //     );
-  //   }
-
   let b15 = b14;
   if (b14.match(/(?<=.*\.\/\.)(\n.*)*/gim)) {
     b15 = b14.replace(/(?<=.*\.\/\.)(\n.*)*/gim, ""); //  bỏ tất cả sau ./.
   }
 
-    if(b14.match(/^TM\s?\./m)){
-    b15 = b15.replace(/^TM\s?.*(\n.*)*/m,'');
-
-  }else if(b15.match(/^KT\s?\./m)){
-
-    b15 = b15.replace(/^KT\s?.*(\n.*)*/m,'');
-  } else if(b15.match(new RegExp(nameSign[0]),'img')) {
-
-    for(let k = 0;k<nameSign.length;k++){
-      
-      if(b15.match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'))[0].match(/(THỨ|PHÓ)/img) &&
-      !b15.match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'))[0].match(/(THỨ|PHÓ)/img).length){
-        b15 = b15.replace(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'),''); // tất cả hàng cuối
-
-      }else{
-        b15 = b15.replace(new RegExp(`\n.*\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`,'img'),''); // tất cả hàng cuối
+  if (b14.match(/^TM\s?\./m)) {
+    b15 = b15.replace(/^TM\s?.*(\n.*)*/m, "");
+  } else if (b15.match(/^KT\s?\./m)) {
+    b15 = b15.replace(/^KT\s?.*(\n.*)*/m, "");
+  } else if (b15.match(new RegExp(nameSign[0]), "img")) {
+    for (let k = 0; k < nameSign.length; k++) {
+      if (
+        b15
+          .match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img"))[0]
+          .match(/(THỨ|PHÓ)/gim) &&
+        !b15
+          .match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img"))[0]
+          .match(/(THỨ|PHÓ)/gim).length
+      ) {
+        b15 = b15.replace(
+          new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img"),
+          ""
+        ); // tất cả hàng cuối
+      } else {
+        b15 = b15.replace(
+          new RegExp(`\n.*\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img"),
+          ""
+        ); // tất cả hàng cuối
       }
-
     }
   }
 
-  // if (nameSign) {
-  //   for (let k = 0; k < nameSign.length; k++) {
-  //     if (
-  //       b15.match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img")) &&
-  //       !b15
-  //         .match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img"))[0]
-  //         .match(/(THỨ|PHÓ)/gim)
-  //     ) {
-  //       b15 = b15.replace(
-  //         new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img"),
-  //         ""
-  //       ); // tất cả hàng cuối
-  //     } else {
-  //       b15 = b15.replace(
-  //         new RegExp(`\n.*\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img"),
-  //         ""
-  //       ); // tất cả hàng cuối
-  //     }
-  //   }
-  // }
-
   let b16 = b15.replace(/\n$/gim, ""); // bỏ hàng dư trống ở cuối
+  let b17 = b16.replace(/\n*VĂN PHÒNG QUỐC HỘI(\n.*)*/gim, ""); // bỏ hàng dư trống ở cuối
 
-  return b16;
+  return b17;
 }
 
 async function convertBareTextInfo() {
   console.log("convertBareTextInfo");
-
-  // let b = document.querySelector("#content_input").value;
-  // let b1 = b.replace(/^ */gim, ""); // bỏ các space ở đầu mỗi dòng
-  // let b2 = b1.replace(/\(*đã k(ý|í)\)*/gim, "");
-  // b2 = b2.replace(/\[daky\]/gim, "");
-  // let b3 = b2.replace(/^\s*nơi nhận.*\n([^\s].*\n)*/img,'')
-  // let b4 = b3.replace(/\n+\s+$/gim, "");
-  // let b5 = b4.replace(/\n*$/gim, ""); //bỏ xuống dòng ở cuối
-  // let b6 = b5.replace(/^\s*/gim, ""); // bỏ space, xuống dòng ở đầu
-  // let b7 = b6.replace(/\s*$/gim, ""); // bỏ space, xuống dòng ở cuối
-  // let b8 = b7.replace(/(?<=\w)\n\[\d+\].*$(\n.*)*$/gim, ""); // bỏ mấy cái chỉ mục của VBHN đi
-  // let b9 = b8.replace(/\n+/gim, "\n"); // biến nhiều xuống dòng thành 1 xuống dòng
-
-  // let b10;
-  // let b10a = []; // kết nối "Phần thứ với nội dung "phần thứ ...", trường hợp bị tách 2 hàng
-
-  // for (let c = 0; c < 5; c++) {
-  //   if (!c) {
-  //     b10a[c] = b9.replace(
-  //       /(?<=^(Phần|PHẦN)\s(THỨ|I|l|1).*)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
-  //       ": "
-  //     );
-  //   } else {
-  //     b10a[c] = b10a[c - 1].replace(
-  //       /(?<=^(Phần|PHẦN)\s(THỨ|I|l|1).*)\n(?!(((Điều|Ðiều|Điều) \d.*)|(chương (V|I|X|\d).*$.*)))/gim,
-  //       " "
-  //     );
-  //   }
-  // }
-  // b10 = b10a[4];
-
-  // let b11 = b10.replace(/(\[|\()\d*(\]|\))/gim, ""); // bỏ chỉ mục số đi
-  // let b12 = b11.replace(/(?<=^Chương (V|I|X|\d).*)\n(?!(Điều|Ðiều|Điều) \d.*)/gim,' ')
-  // let b13 = b12.replace(/  +/gim, " "); // bỏ khoảng cách 2 space
 
   nameSign = nameSignArrayDemo;
 
@@ -774,12 +692,13 @@ async function convertBareTextInfo() {
   lawDayActive = getLawDayActive(partOne, lawDaySign);
 
   if (document.querySelector("#lawRelated").value) {
-    lawRelated = await getLawRelated(document.querySelector("#lawRelated").value);
+    lawRelated = await getLawRelated(
+      document.querySelector("#lawRelated").value,
+      lawDayActive
+    );
   } else {
-    lawRelated = await getLawRelated(partOne);
+    lawRelated = await getLawRelated(partOne, lawDayActive);
   }
-
-  // document.querySelector(".output").value = b13;
 
   lawDaySign = addDaysToDate(lawDaySign, 0);
 
@@ -794,21 +713,6 @@ async function convertBareTextInfo() {
   lawInfo["nameSign"] = nameSign;
   lawInfo["roleSign"] = roleSign;
 
-  // if (roleSign.match(/phó thủ tướng/gim)) {
-  //   lawInfo["roleSign"] = ["Phó Thủ Tướng"];
-  // } else if (
-  //   roleSign.match(/quyền thủ tướng/gim) ||
-  //   roleSign.match(/q.* thủ tướng/gim)
-  // ) {
-  //   lawInfo["roleSign"] = ["Quyền Thủ Tướng"];
-  // } else if (roleSign.match(/thủ tướng|thủ tướng|thủ tướng|thủ tưởng/gim)) {
-  //   lawInfo["roleSign"] = ["Thủ Tướng"];
-  // } else if (roleSign.match(/Thứ trưởng/gim)) {
-  //   lawInfo["roleSign"] = ["Thứ trưởng"];
-  // } else {
-  //   lawInfo["roleSign"] = [roleSign];
-  // }
-
   console.log("lawDescription", lawInfo["lawDescription"]);
   console.log("lawNumber", lawInfo["lawNumber"]);
   console.log("lawKind", lawInfo["lawKind"]);
@@ -819,9 +723,6 @@ async function convertBareTextInfo() {
   console.log("unitPublish", lawInfo["unitPublish"]);
   console.log("nameSign", lawInfo["nameSign"]);
   console.log("roleSign", lawInfo["roleSign"]);
-  // console.log("year", parseInt(lawInfo["lawDaySign"].getYear())+1900);
-
-  // console.log('lawInfo',lawInfo);
 
   document.querySelector(".output").value = partTwo;
   return { lawInfo };
@@ -851,7 +752,7 @@ async function getNormalTextInfo() {
   lawDayActive = getLawDayActive(contentText, lawDaySign);
 
   let introduceString = document.querySelector("#lawRelated").value;
-  lawRelated = await getLawRelated(introduceString);
+  lawRelated = await getLawRelated(introduceString, lawDayActive);
 
   document.querySelector(".output").value = contentText;
 
@@ -1158,7 +1059,6 @@ async function convertContent() {
             ContentInEachChapter = ContentInEachSection[0].match(re);
           }
 
-
           articleArray = ContentInEachChapter[0].match(
             /^(Điều|Điều) \d+(.*)$/gim
           );
@@ -1166,7 +1066,7 @@ async function convertContent() {
           data[a][sectionArray[a]][b][chapterArray[b]] = [];
 
           articleArray = RemoveNoOrder(articleArray);
-          
+
           for (let c = 0; c < articleArray.length; c++) {
             let TemRexgexArticleA = articleArray[c];
 
@@ -1332,10 +1232,8 @@ function Push() {
     (!lawInfo["lawNumber"].match(/(?<=\d\W)\d{4}/gim)
       ? "(" + yearSign + ")"
       : "");
-      
 
-
-      // CHANGE JSON FILE
+  // CHANGE JSON FILE
   fetch("http://localhost:9000/push", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -1345,17 +1243,12 @@ function Push() {
       lawNumber: lawNumberForPush,
       contentText,
     }),
-  })
-    .then((res) => {
-      res.text();
-      console.log("success");
-
-    })
+  }).then((res) => {
+    res.text();
+    console.log("success");
+  });
   console.log(lawNumberForPush);
-  
-    
 
-  
   // fetch("http://localhost:9000/addNewInfoToAsset", {
   //   method: "POST",
   //   headers: { "Content-Type": "application/json" },
@@ -1369,8 +1262,6 @@ function Push() {
   //     console.log("success");
   //   })
   //   .then((data) => console.log(123));
-
-
 }
 
 function addJSONFile() {
@@ -1381,14 +1272,12 @@ function addJSONFile() {
       ? "(" + yearSign + ")"
       : "");
 
-
   fetch("http://localhost:9000/addedjsonfile", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       lawInfo: lawInfo,
       lawNumber: lawNumberForPush,
-
     }),
   })
     .then((res) => {
@@ -1396,9 +1285,7 @@ function addJSONFile() {
       console.log("success");
     })
     .then((data) => console.log(123));
-
 }
-
 
 function NaviNext() {
   let URI = window.location.href;
@@ -1417,13 +1304,25 @@ function NaviNext() {
       nextURI = nextURI.replace(/(?<=AllURL\/).*(?=\?URL)/g, 0);
     }
 
-    // if (currentIndex > 0) {
-    //   nextURI = URI.replace(/(?<=AllURL\/).*(?=\?URL)/g, `${currentIndex - 1}`);
-    // } else {
-    //   let nextPage = parseInt(URI.match(/(?<=\%26page\%3D).*/gim)[0]) - 1;
-    //   nextURI = URI.replace(/(?<=\%26page\%3D).*/gim, nextPage);
-    //   nextURI = nextURI.replace(/(?<=AllURL\/).*(?=\?URL)/g, 19);
-    // }
+    if (!URI.match(/%26page%3D/)) {
+      URI = URI + "%26page%3D1";
+    }
+    if (URI.match(/(?<=AllURL\/).*(?=\?URL)/g)) {
+      let currentIndex = parseInt(URI.match(/(?<=AllURL\/).*(?=\?URL)/g)[0]);
+      let nextURI;
+
+      if (currentIndex < 19) {
+        nextURI = URI.replace(
+          /(?<=AllURL\/).*(?=\?URL)/g,
+          `${currentIndex + 1}`
+        );
+      } else {
+        let nextPage =
+          parseInt(URI.match(/(?<=\%26PageIndex\%3D).*/gim)[0]) + 1;
+        nextURI = URI.replace(/(?<=\%26PageIndex\%3D).*/gim, nextPage);
+        nextURI = nextURI.replace(/(?<=AllURL\/).*(?=\?URL)/g, 0);
+      }
+    }
 
     window.location.href = nextURI;
   } else {
@@ -1481,7 +1380,14 @@ if (
 ) {
   getInfo()
     .then((t) => {
-      goToEndInput(), goToEndOutput(), convertContent(false); 
+          if ( lawInfo["lawKind"].match(/hợp nhất/img) &&
+            !lawInfo["lawDescription"].match(/nghị quyết/gim) ||
+            !lawInfo["lawDescription"].match(/thông tư/gim) ||
+            !lawInfo["lawDescription"].match(/nghị định/gim)
+          ) {
+            goToEndInput(), goToEndOutput(), convertContent(false);
+          }
+
     })
     .then((r) => {
       // console.log('lawInfo["unitPublish"].indexOf(undefined)',lawInfo["unitPublish"].indexOf(undefined));
@@ -1494,12 +1400,21 @@ if (
         lawInfo["roleSign"][0] &&
         lawInfo["unitPublish"].indexOf(undefined) < 0
       ) {
-        if (lawInfo["lawDayActive"] >= lawInfo["lawDaySign"]) {
+        if (
+          lawInfo["lawDayActive"] >= lawInfo["lawDaySign"] ||
+          lawKind.match(/hợp nhất$/gim)
+        ) {
           if (lawInfo["roleSign"][0].match(/\s/gim).length <= 8) {
             setTimeout(() => {
-              // Push();
-              // NaviNext();
-            }, 500);
+              if (lawInfo["lawKind"].match(/hợp nhất/img) &&
+                !lawInfo["lawDescription"].match(/nghị quyết/gim) ||
+                !lawInfo["lawDescription"].match(/thông tư/gim) ||
+                !lawInfo["lawDescription"].match(/nghị định/gim)
+              ) {
+                Push();
+              }
+              NaviNext();
+            }, 3000);
           }
         } else {
           console.log("ngày lớn hơn");
@@ -1573,29 +1488,29 @@ async function findMissingYear() {
 ///////////////////////////////////////////// for find different lawID
 
 async function compareLaw() {
-  let a = []
-  let b =[]
-  let c = []
+  let a = [];
+  let b = [];
+  let c = [];
 
   await fetch("../asset/allLawID copy.JSON")
-  .then((response) => response.json()) // Chuyển đổi response thành JSON
-  .then((data) => {
-      a = data
-  })
-  .catch((error) => console.log("Error:", error));
+    .then((response) => response.json()) // Chuyển đổi response thành JSON
+    .then((data) => {
+      a = data;
+    })
+    .catch((error) => console.log("Error:", error));
 
   await fetch("../asset/allLawID.JSON")
-  .then((response) => response.json()) // Chuyển đổi response thành JSON
-  .then((data) => {
-    for (let a = 0; a < data.length; a++) {
-      b = data
-    }
-  })
-  .catch((error) => console.log("Error:", error));
+    .then((response) => response.json()) // Chuyển đổi response thành JSON
+    .then((data) => {
+      for (let a = 0; a < data.length; a++) {
+        b = data;
+      }
+    })
+    .catch((error) => console.log("Error:", error));
 
-  c = b.filter(item => !a.includes(item));
+  c = b.filter((item) => !a.includes(item));
 
-  console.log(c)  
+  console.log(c);
 }
 
 let allLawSearchId = [];
@@ -1621,9 +1536,12 @@ async function getAllLawObjectPair() {
     .then((data) => {
       for (let a = 0; a < data.length; a++) {
         if (data[a].info["lawNameDisplay"].match(/Luật/gim)) {
-          allLawObjectPair[data[a].info["lawNameDisplay"].toLowerCase().replace(/( và| của|,|&)/img,'')] = data[a]._id;
-          allLawObjectPair[data[a]._id.toLowerCase()] = data[a]._id
-
+          allLawObjectPair[
+            data[a].info["lawNameDisplay"]
+              .toLowerCase()
+              .replace(/( và| của|,|&)/gim, "")
+          ] = data[a]._id;
+          allLawObjectPair[data[a]._id.toLowerCase()] = data[a]._id;
         } else {
           allLawObjectPair[data[a]._id.toLowerCase()] = data[a]._id;
         }
@@ -1637,7 +1555,7 @@ async function getAllLawObjectPair() {
 }
 
 // let newLawObject = [];
-let lawMissing = {}
+let lawMissing = {};
 async function getMissingLaw() {
   await fetch("../asset/LawMachine.LawContent.json")
     .then((response) => response.json()) // Chuyển đổi response thành JSON
@@ -1649,37 +1567,58 @@ async function getMissingLaw() {
             // let newLawRelated = {};
             // newLawObject[a] = data[a];
 
-            for (let b = 0; b < Object.keys(data[a].info["lawRelated"]).length; b++) {
-              if (ObjectLawPair[Object.keys(data[a].info["lawRelated"])[b].toLowerCase().replace(/( và| của|,|&)/img,'')]) {
+            for (
+              let b = 0;
+              b < Object.keys(data[a].info["lawRelated"]).length;
+              b++
+            ) {
+              if (
+                ObjectLawPair[
+                  Object.keys(data[a].info["lawRelated"])
+                    [b].toLowerCase()
+                    .replace(/( và| của|,|&)/gim, "")
+                ]
+              ) {
                 // newLawRelated[Object.keys(data[a].info["lawRelated"])[b]] =
                 //   ObjectLawPair[Object.keys(data[a].info["lawRelated"])[b].toLowerCase().replace(/( và| của|,|&)/img,'')];
               } else {
                 // newLawRelated[Object.keys(data[a].info["lawRelated"])[b]] = 0;
 
-if(Object.keys(data[a].info["lawRelated"])[b].match(/20(10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25)/img)
- && !Object.keys(data[a].info["lawRelated"])[b].match(/QĐ/img)
-){
-  if(lawMissing[data[a]._id]){
-    lawMissing[data[a]._id].push(Object.keys(data[a].info["lawRelated"])[b].replace(/( và| của|,|&)/img,''))
-  }else{
-    lawMissing[data[a]._id] = [Object.keys(data[a].info["lawRelated"])[b].replace(/( và| của|,|&)/img,'')]
-  }
-}
-                
+                if (
+                  Object.keys(data[a].info["lawRelated"])[b].match(
+                    /20(10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25)/gim
+                  ) &&
+                  !Object.keys(data[a].info["lawRelated"])[b].match(/QĐ/gim)
+                ) {
+                  if (lawMissing[data[a]._id]) {
+                    lawMissing[data[a]._id].push(
+                      Object.keys(data[a].info["lawRelated"])[b].replace(
+                        /( và| của|,|&)/gim,
+                        ""
+                      )
+                    );
+                  } else {
+                    lawMissing[data[a]._id] = [
+                      Object.keys(data[a].info["lawRelated"])[b].replace(
+                        /( và| của|,|&)/gim,
+                        ""
+                      ),
+                    ];
+                  }
+                }
               }
             }
             // newLawObject[a].info["lawRelated"] = newLawRelated;
           }
         });
     });
-  
+
   // console.log(newLawObject);
   console.log(lawMissing);
-  
 }
 
-
-async function addInfo(){   // thêm Info cho LawMachine.LawSearch.json
+async function addInfo() {
+  // thêm Info cho LawMachine.LawSearch.json
 
   await fetch("../asset/LawMachine.LawContent.json")
     .then((response) => response.json()) // Chuyển đổi response thành JSON
@@ -1687,58 +1626,46 @@ async function addInfo(){   // thêm Info cho LawMachine.LawSearch.json
       await fetch("../asset/LawMachine.LawSearch.json")
         .then((response) => response.json()) // Chuyển đổi response thành JSON
         .then((LawSearch) => {
-
           // console.log('LawContent',LawContent);
-          
+
           for (let a = 0; a < LawContent.length; a++) {
-
-
-
             for (let b = 0; b < LawSearch.length; b++) {
-            
-            
-            if(LawContent[a]['_id'] == LawSearch[b]['_id']){
-
-              LawSearch[b]['info'].lawNumber = LawContent[a]['info']['lawDaySign']
+              if (LawContent[a]["_id"] == LawSearch[b]["_id"]) {
+                LawSearch[b]["info"].lawNumber =
+                  LawContent[a]["info"]["lawDaySign"];
+              }
             }
-            }
-
           }
 
-
-          console.log('LawSearch',LawSearch);
-        })})
-
-        
-
+          console.log("LawSearch", LawSearch);
+        });
+    });
 }
 
+async function createLawSearchDescrpition() {
+  // thêm Info cho LawMachine.LawSearch.json
 
-async function createLawSearchDescrpition(){   // thêm Info cho LawMachine.LawSearch.json
-
-  let newLawSearchDescrpition = []
+  let newLawSearchDescrpition = [];
   await fetch("../asset/LawMachine.LawSearch.json")
     .then((response) => response.json()) // Chuyển đổi response thành JSON
     .then(async (LawContent) => {
-
-
-      for(let a = 0 ; a<LawContent.length;a++){
+      for (let a = 0; a < LawContent.length; a++) {
         // newLawSearchDescrpition[a] = {'info':{'lawDescription':'abc','lawNameDisplay':'abc'}}
 
-        newLawSearchDescrpition[a]={_id:'abc',info:{}}
-        newLawSearchDescrpition[a]._id =   LawContent[a]["_id"]
+        newLawSearchDescrpition[a] = { _id: "abc", info: {} };
+        newLawSearchDescrpition[a]._id = LawContent[a]["_id"];
 
-
-        newLawSearchDescrpition[a]['info']['lawDescription'] =   LawContent[a]['info']['lawDescription']
-        newLawSearchDescrpition[a]['info']['lawNameDisplay'] =   LawContent[a]['info']['lawNameDisplay']
-        newLawSearchDescrpition[a]['info']['lawDaySign'] =   LawContent[a]['info']['lawDaySign']
-        newLawSearchDescrpition[a]['fullText'] =   LawContent[a]['fullText']
+        newLawSearchDescrpition[a]["info"]["lawDescription"] =
+          LawContent[a]["info"]["lawDescription"];
+        newLawSearchDescrpition[a]["info"]["lawNameDisplay"] =
+          LawContent[a]["info"]["lawNameDisplay"];
+        newLawSearchDescrpition[a]["info"]["lawDaySign"] =
+          LawContent[a]["info"]["lawDaySign"];
+        newLawSearchDescrpition[a]["fullText"] = LawContent[a]["fullText"];
       }
-    })
+    });
 
-        
-console.log('newLawSearchDescrpition',newLawSearchDescrpition);
-
+  console.log("newLawSearchDescrpition", newLawSearchDescrpition);
 }
 
 // keytool -genkeypair -v -storetype PKCS12 -keystore android.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
