@@ -1307,22 +1307,20 @@ function NaviNext() {
     if (!URI.match(/%26page%3D/)) {
       URI = URI + "%26page%3D1";
     }
-    if (URI.match(/(?<=AllURL\/).*(?=\?URL)/g)) {
-      let currentIndex = parseInt(URI.match(/(?<=AllURL\/).*(?=\?URL)/g)[0]);
-      let nextURI;
 
-      if (currentIndex < 19) {
-        nextURI = URI.replace(
-          /(?<=AllURL\/).*(?=\?URL)/g,
-          `${currentIndex + 1}`
-        );
-      } else {
-        let nextPage =
-          parseInt(URI.match(/(?<=\%26PageIndex\%3D).*/gim)[0]) + 1;
-        nextURI = URI.replace(/(?<=\%26PageIndex\%3D).*/gim, nextPage);
-        nextURI = nextURI.replace(/(?<=AllURL\/).*(?=\?URL)/g, 0);
-      }
-    }
+
+
+      // if (currentIndex < 19) {
+      //   nextURI = URI.replace(
+      //     /(?<=AllURL\/).*(?=\?URL)/g,
+      //     `${currentIndex + 1}`
+      //   );
+      // } else {
+      //   let nextPage =
+      //     parseInt(URI.match(/(?<=\%26PageIndex\%3D).*/gim)[0]) + 1;
+      //   nextURI = URI.replace(/(?<=\%26PageIndex\%3D).*/gim, nextPage);
+      //   nextURI = nextURI.replace(/(?<=AllURL\/).*(?=\?URL)/g, 0);
+      // }
 
     window.location.href = nextURI;
   } else {
@@ -1380,13 +1378,13 @@ if (
 ) {
   getInfo()
     .then((t) => {
-          if ( lawInfo["lawKind"].match(/hợp nhất/img) &&
-            !lawInfo["lawDescription"].match(/nghị quyết/gim) ||
-            !lawInfo["lawDescription"].match(/thông tư/gim) ||
-            !lawInfo["lawDescription"].match(/nghị định/gim)
-          ) {
+          // if ( lawInfo["lawKind"].match(/hợp nhất/img) &&
+          //   !lawInfo["lawDescription"].match(/nghị quyết/gim) ||
+          //   !lawInfo["lawDescription"].match(/thông tư/gim) ||
+          //   !lawInfo["lawDescription"].match(/nghị định/gim)
+          // ) {
             goToEndInput(), goToEndOutput(), convertContent(false);
-          }
+          // }
 
     })
     .then((r) => {
@@ -1406,13 +1404,13 @@ if (
         ) {
           if (lawInfo["roleSign"][0].match(/\s/gim).length <= 8) {
             setTimeout(() => {
-              if (lawInfo["lawKind"].match(/hợp nhất/img) &&
-                !lawInfo["lawDescription"].match(/nghị quyết/gim) ||
-                !lawInfo["lawDescription"].match(/thông tư/gim) ||
-                !lawInfo["lawDescription"].match(/nghị định/gim)
-              ) {
+              // if (lawInfo["lawKind"].match(/hợp nhất/img) &&
+              //   !lawInfo["lawDescription"].match(/nghị quyết/gim) ||
+              //   !lawInfo["lawDescription"].match(/thông tư/gim) ||
+              //   !lawInfo["lawDescription"].match(/nghị định/gim)
+              // ) {
                 Push();
-              }
+              // }
               NaviNext();
             }, 3000);
           }
