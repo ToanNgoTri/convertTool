@@ -43,47 +43,57 @@ app.get("/abc", async (req, res) => {
     newLawObject[a] = data1[a];
 
     for (let b = 0; b < Object.keys(data1[a].info["lawRelated"]).length; b++) {
-      if (
-        data2[
-          Object.keys(data1[a].info["lawRelated"])
-            [b].toLowerCase()
-            .replace(/( và| của|,|&)/gim, "")
-        ]
-      ) {
-        if (Object.keys(data1[a].info["lawRelated"])[b].match(/\s/)) {
-          newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] =
-            data2[
-              Object.keys(data1[a].info["lawRelated"])
-                [b].toLowerCase()
-                .replace(/( và| của|,|&)/gim, "")
-            ];
+
+      if(
+        data1[a].info["lawRelated"][Object.keys(data1[a].info["lawRelated"])[b]]
+      )
+        {
+
+
+        if (
+          data2[
+            Object.keys(data1[a].info["lawRelated"])
+              [b].toLowerCase()
+              .replace(/( và| của|,|&)/gim, "")
+          ]
+        ) {
+          if (Object.keys(data1[a].info["lawRelated"])[b].match(/\s/)) {
+            newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] =
+              data2[
+                Object.keys(data1[a].info["lawRelated"])
+                  [b].toLowerCase()
+                  .replace(/( và| của|,|&)/gim, "")
+              ];
+          } else {
+            newLawRelated[
+              data2[
+                Object.keys(data1[a].info["lawRelated"])
+                  [b].toLowerCase()
+                  .replace(/( và| của|,|&)/gim, "")
+              ]
+            ] = Object.keys(data1[a].info["lawRelated"])[b];
+          }
+        } else if (Object.keys(data1[a].info["lawRelated"])[b].match(/Hiến pháp nước/gim)) {
+          const date = new Date(data1[a].info["lawDayActive"]);
+  
+          if(date > new Date('2014-01-01')){
+  
+            newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = '0001/HP'
+          }else if(date > new Date('2002-01-07')){
+            newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = '0003/HP(2001)';
+            
+          }else if(date > new Date('1992-04-15')){
+            newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = '0002/HP(1992)';
+  
+          }else{
+          newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = 0;
+  
+          }
         } else {
-          newLawRelated[
-            data2[
-              Object.keys(data1[a].info["lawRelated"])
-                [b].toLowerCase()
-                .replace(/( và| của|,|&)/gim, "")
-            ]
-          ] = Object.keys(data1[a].info["lawRelated"])[b];
+          newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = 0;
         }
-      } else if (Object.keys(data1[a].info["lawRelated"])[b].match(/Hiến pháp nước/gim)) {
-        const date = new Date(data1[a].info["lawDayActive"]);
 
-        if(date > new Date('2014-01-01')){
-
-          newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = '0001/HP'
-        }else if(date > new Date('2002-01-07')){
-          newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = '0003/HP(2001)';
-          
-        }else if(date > new Date('1992-04-15')){
-          newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = '0002/HP(1992)';
-
-        }else{
-        newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = 0;
-
-        }
-      } else {
-        newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = 0;
+        
       }
     }
     newLawObject[a].info["lawRelated"] = newLawRelated;

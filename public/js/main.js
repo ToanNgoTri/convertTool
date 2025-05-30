@@ -245,7 +245,7 @@ async function getLawRelated(text, dayActive) {
   // console.log('text',text);
 
   let lawRelatedDemo = text.match(
-    /(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/\D[^(\s|,|.| |\:|\"|\'|\;|\{|\}|”)]+/gi
+    /(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/\D+\-[^(\s|,|.| |\:|\"|\'|\;|\{|\}|”)]+/gi
   );
   let lawRelatedDemo2 = lawRelatedDemo
     ? lawRelatedDemo.map(function (item) {
@@ -1409,9 +1409,9 @@ if (
               //   !lawInfo["lawDescription"].match(/thông tư/gim) ||
               //   !lawInfo["lawDescription"].match(/nghị định/gim)
               // ) {
-                Push();
+                // Push();
               // }
-              NaviNext();
+              // NaviNext();
             }, 3000);
           }
         } else {
