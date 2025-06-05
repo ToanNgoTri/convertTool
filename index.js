@@ -45,7 +45,7 @@ app.get("/abc", async (req, res) => {
     for (let b = 0; b < Object.keys(data1[a].info["lawRelated"]).length; b++) {
 
       if(
-        data1[a].info["lawRelated"][Object.keys(data1[a].info["lawRelated"])[b]]
+        !data1[a].info["lawRelated"][Object.keys(data1[a].info["lawRelated"])[b]]
       )
         {
 
@@ -94,6 +94,8 @@ app.get("/abc", async (req, res) => {
         }
 
         
+      }else{
+        newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = data1[a].info["lawRelated"][Object.keys(data1[a].info["lawRelated"])[b]]
       }
     }
     newLawObject[a].info["lawRelated"] = newLawRelated;
