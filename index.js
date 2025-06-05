@@ -54,7 +54,7 @@ app.get("/abc", async (req, res) => {
           data2[
             Object.keys(data1[a].info["lawRelated"])
               [b].toLowerCase()
-              .replace(/( và| của|,|&)/gim, "")
+              .replace(/( và| của|,|&| một số điều)/gim, "")
           ]
         ) {
           if (Object.keys(data1[a].info["lawRelated"])[b].match(/\s/)) {
@@ -62,14 +62,14 @@ app.get("/abc", async (req, res) => {
               data2[
                 Object.keys(data1[a].info["lawRelated"])
                   [b].toLowerCase()
-                  .replace(/( và| của|,|&)/gim, "")
+                  .replace(/( và| của|,|&| một số điều)/gim, "")
               ];
           } else {
             newLawRelated[
               data2[
                 Object.keys(data1[a].info["lawRelated"])
                   [b].toLowerCase()
-                  .replace(/( và| của|,|&)/gim, "")
+                  .replace(/( và| của|,|&| một số điều)/gim, "")
               ]
             ] = Object.keys(data1[a].info["lawRelated"])[b];
           }
