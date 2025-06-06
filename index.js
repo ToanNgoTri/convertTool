@@ -15,7 +15,7 @@ const ejs = require("ejs");
 app.set("view engine", "ejs");
 
 const client = new MongoClient(
-  "mongodb+srv://gusteixeira25:JPwO1gvfCAjiuXKo@lawdatabase.jnsdwt3.mongodb.net/?retryWrites=true&w=majority&appName=LawDatabase"
+  "mongodb://thuvienphapluat:ZvQn9683p8NnPXFMdR1VX53HTK3Da1WqyXJpvtgMMASTRdDkyu87lFAL7aR5DiiN@188.245.52.121:6980/?directConnection=true"
 );
 
 var fs = require("fs");
@@ -146,7 +146,7 @@ app.get("/abc", async (req, res) => {
 async function pushLawContent(info, content, id) {
   try {
     const database = client.db("LawMachine");
-    const LawContent = database.collection("LawContent");
+    const LawContent = database.collection("LawCollection");
     await LawContent.insertOne({ _id: id, info, content });
   } finally {
     // Ensures that the client will close when you finish/error
@@ -157,7 +157,7 @@ async function pushLawContent(info, content, id) {
 async function pushLawSearch(info, id, fullText) {
   try {
     const database = client.db("LawMachine");
-    const LawContent = database.collection("LawSearch");
+    const LawContent = database.collection("LawSearchContent");
     await LawContent.insertOne({
       _id: id,
       info: {
@@ -177,7 +177,7 @@ async function pushLawSearch(info, id, fullText) {
 async function pushLawSearchDescription(info, id) {
   try {
     const database = client.db("LawMachine");
-    const LawContent = database.collection("LawDescription");
+    const LawContent = database.collection("LawSearchDescription");
     await LawContent.insertOne({
       _id: id,
       info: {
@@ -504,121 +504,26 @@ app.post("/addedjsonfile", async (req, res) => {
   );
 });
 
-app.post(`/pushconvertfulltext`, async (req, res) => {
-  try {
-    const database = client.db("LawMachine");
-    const LawContent = database.collection("LawSearch");
-
-    LawContent.updateOne(
-      {
-        _id: req.body.id,
-      },
-      {
-        $set: {
-          fullText: req.body.fulltext,
-        },
-      }
-    );
-  } finally {
-    // Ensures that the client will close when you finish/error
-    // await client.close();
-  }
-  console.log(req.body.id);
-});
-
-// app.post("/searchlaw", async (req, res) => {
-//   // dành cho Detail2
+// app.post(`/pushconvertfulltext`, async (req, res) => {
 //   try {
 //     const database = client.db("LawMachine");
-//     const LawContent = database.collection("LawContent");
+//     const LawContent = database.collection("LawSearchContent");
 
-//     LawContent.find({
-//       $or: [
-//         { _id: new RegExp(`${req.body.input}`, "i") },
-//         { "info.lawDescription": new RegExp(`${req.body.input}`, "i") },
-//         { "info.lawNameDisplay": new RegExp(`${req.body.input}`, "i") },
-//       ],
-//     })
-//       .project({ info: 1 })
-//       .sort({ "info.lawDaySign": -1 })
-//       .toArray()
-//       .then((o) => res.json(o));
+//     LawContent.updateOne(
+//       {
+//         _id: req.body.id,
+//       },
+//       {
+//         $set: {
+//           fullText: req.body.fulltext,
+//         },
+//       }
+//     );
 //   } finally {
 //     // Ensures that the client will close when you finish/error
 //     // await client.close();
 //   }
-// });
-
-// app.post("/searchcontent", async (req, res) => {
-//   // dành cho AppNavigator
-
-//   try {
-//     const database = client.db("LawMachine");
-//     const LawSearch = database.collection("LawSearch");
-//     LawSearch.find({ fullText: new RegExp(`${req.body.input}`, "i") })
-//       .collation({ locale: "vi" })
-//       .project({ info: 1 })
-//       .toArray()
-//       .then((o) => res.json(o));
-//   } finally {
-//     // Ensures that the client will close when you finish/error
-//     // await client.close();
-//   }
-// });
-
-// app.post("/getonelaw", async (req, res) => {
-//   // dành cho Detail5
-//   let a;
-
-//   try {
-//     const database = client.db("LawMachine");
-//     const LawContent = database.collection("LawContent");
-//     // Query for a movie that has the title 'Back to the Future'
-
-//     a = await LawContent.findOne({ _id: req.body.screen });
-//   } finally {
-//     // Ensures that the client will close when you finish/error
-//     // await client.close();
-//   }
-
-//   // console.log(a);
-//   res.json(a);
-//   // res.write(a);
-// });
-
-// app.post("/getlastedlaws", async (req, res) => {
-//   // dành cho Detail2
-//   try {
-//     const database = client.db("LawMachine");
-//     const LawContent = database.collection("LawContent");
-
-//     LawContent.find()
-//       .limit(10)
-//       .project({ info: 1 })
-//       .sort({ "info.lawDaySign": -1 })
-//       .toArray()
-//       .then((o) => res.json(o));
-//   } finally {
-//     // Ensures that the client will close when you finish/error
-//     // await client.close();
-//   }
-// });
-
-// app.post("/stackscreen", async (req, res) => {
-//   // dành cho AppNavigator
-
-//   try {
-//     const database = client.db("LawMachine");
-//     const LawSearch = database.collection("LawSearch");
-
-//     LawSearch.find({})
-//       .project({ info: 1 })
-//       .toArray()
-//       .then((o) => res.json(o));
-//   } finally {
-//     // Ensures that the client will close when you finish/error
-//     // await client.close();
-//   }
+//   console.log(req.body.id);
 // });
 
 app.listen(9000, function () {
