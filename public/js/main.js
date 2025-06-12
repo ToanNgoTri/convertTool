@@ -1,3 +1,5 @@
+// Thông tư 39/2025/TT-BQP
+
 function beep() {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -172,7 +174,6 @@ function getLawDayActive(text, daySign) {
   let lawDayActive;
   if (
     text.match(
-      // /(?<=^(Điều|Ðiều|Điều) \d.*\n.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \d* ngày/im
       /(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^;]+)sau \d* ngày/im
     )
   ) {
