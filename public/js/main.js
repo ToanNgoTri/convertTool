@@ -1,4 +1,4 @@
-// 10/2025/TT-BNV  , 16/2025/TT-BNNMT
+//  07/2025/TT-BKHCN  ,08/2025/TT-BNV
 // luật tổ chức ....
 // hiến pháp
 
