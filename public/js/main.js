@@ -1,6 +1,5 @@
-//  10/2025/TT-NHNN, 09/2025/TT-NHNN,	01/2025/TT-BDTTG, 02/2025/TT-BDTTG, 29/2025/TT-BNNMT , 11/2025/TT-BNNMT
-// 09/2025/TT-BKHCN, 07/2025/TT-BKHCN  , 157/2025/NĐ-CP , 41/2025/TT-BCT, 08/2025/TT-BNV, 09/2025/TT-BGDĐT 
-//  Luật sửa đổi, bổ sung một số điều của Luật Chất lượng sản phẩm, hàng hóa năm 2025
+//  	01/2025/TT-BDTTG, 02/2025/TT-BDTTG, 29/2025/TT-BNNMT , 57/2025/TT-BTC
+// 09/2025/TT-BKHCN ,  52/2025/TT-BTC , 65/2025/TT-BTC , 64/2025/TT-BTC
 // hiến pháp
 
 function beep() {
