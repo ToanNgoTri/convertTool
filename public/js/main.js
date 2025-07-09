@@ -1,9 +1,8 @@
-//   74/2025/TT-BTC, 23/2025/TT-BYT
-//  03/2025/TT-TANDTC, 04/2025/TT-TANDTC
+//   43/2025/TT-BCT, 23/2025/TT-BYT, 14/2025/TT-BXD
+//  03/2025/TT-TANDTC, 04/2025/TT-TANDTC, 02/2025/TT-VKSTC, 06/2025/TT-BDTTG
 
 // hiến pháp
-// 75-2025-qh15
-//194/2025/NĐ-CP
+
 
 function beep() {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -235,7 +234,7 @@ function getLawDayActive(text, daySign) {
   return lawDayActive;
 }
 
-async function getLawRelated(text, dayActive) {
+async function getLawRelated(text, dayActive) {  
   function uniqueArray(orinalArray) {
     let noDuplicate = orinalArray.filter((elem, position, arr) => {
       return arr.indexOf(elem) == position && elem != lawNumber;
@@ -249,7 +248,6 @@ async function getLawRelated(text, dayActive) {
   }
 
   text = text.replace(/\s/gim, " ");
-  // console.log('text',text);
 
   let lawRelatedDemo = text.match(
     /(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/\D+\-[^(\s|,|.| |\:|\"|\'|\;|\{|\}|”)]+/gi
@@ -260,7 +258,6 @@ async function getLawRelated(text, dayActive) {
       })
     : [];
 
-  // if (b13.match(/(?<=(căn cứ |; |và ))(luật|bộ luật)[^ số][^;]+năm \d+ (?=((và luật sửa đổi)|;))/gi)) {
   if (
     text.match(
       /(?<=(căn cứ |; ))(luật|Luật|bộ luật|pháp lệnh)[^(;|\n)]+năm \d+/gi
@@ -410,8 +407,6 @@ async function getLawRelated(text, dayActive) {
   }
 
   if (text.match(/(?<=(căn cứ |; |vào ))(hiến pháp)[^(;|\n)]+/gi)) {
-    // let lawRelatedString = lawRelatedString.match(/(?<=(căn cứ |; |vào ))(hiến pháp)[^;]+/gi).replace(/ số \d+[^( |,)]+/igm,'')
-    // lawRelatedString = lawRelatedString.replace(/ ngày \d+\/\d+\/\d+/igm,'')
 
     lawRelatedDemo2 = [
       ...lawRelatedDemo2,
@@ -438,7 +433,7 @@ async function getLawRelated(text, dayActive) {
   lawRelated = lawRelated.filter(
     (law) => !law.match(/^luật năm/i) && !law.match(/^51\/2001\/QH10/i)
   );
-
+  
   let lawRelatedObject = {};
   lawRelated = lawRelated.map((law) => {
     return (lawRelatedObject[law] = 0);
@@ -451,8 +446,6 @@ async function getLawRelated(text, dayActive) {
       lawPairObject = data;
     })
     .catch((error) => console.log("Error:", error));
-
-  // console.log('lawRelatedObject1',lawRelatedObject);
 
   for (let a = 0; a < Object.keys(lawRelatedObject).length; a++) {
     if (
@@ -503,7 +496,6 @@ async function getLawRelated(text, dayActive) {
       lawRelatedObject[Object.keys(lawRelatedObject)[a]] = 0;
     }
   }
-
   return lawRelatedObject;
 }
 
@@ -1497,30 +1489,31 @@ async function compareLaw() {
   let b = [];
   let c = [];
 
-  await fetch("../asset/allLawID copy.JSON")
+  await fetch("../asset/allLawID copy.json")
     .then((response) => response.json()) // Chuyển đổi response thành JSON
     .then((data) => {
       a = data;
     })
     .catch((error) => console.log("Error:", error));
 
-  await fetch("../asset/allLawID.JSON")
+  await fetch("../asset/allLawID.json")
     .then((response) => response.json()) // Chuyển đổi response thành JSON
     .then((data) => {
-      for (let a = 0; a < data.length; a++) {
+      // for (let a = 0; a < data.length; a++) {
         b = data;
-      }
-    })
+      // }
+      
+    })    
     .catch((error) => console.log("Error:", error));
 
-  c = b.filter((item) => !a.includes(item));
+  c = a.filter((item) => !b.includes(item));
 
   console.log(c);
 }
 
 let allLawSearchId = [];
 async function getAllLawId() {
-  await fetch("../asset/LawMachine.LawContent.json")
+  await fetch("../asset/LawMachine.LawSearchDescription.json")
     .then((response) => response.json()) // Chuyển đổi response thành JSON
     .then((data) => {
       for (let a = 0; a < data.length; a++) {
