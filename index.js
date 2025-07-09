@@ -26,12 +26,6 @@ app.get("/abc", async (req, res) => {
     fs.readFileSync("./public/asset/LawMachine.LawContent.json", "utf8")
   );
 
-  // fs.readFile('./public/asset/ObjectLawPair.json',  function (err, data) {
-  //   if (err) throw err;
-  //   console.log('write file successfully');
-  //   data2 = data
-  // });
-
   var data2 = JSON.parse(
     fs.readFileSync("./public/asset/ObjectLawPair.json", "utf8")
   );
