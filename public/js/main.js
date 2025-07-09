@@ -1,6 +1,9 @@
-//  	01/2025/TT-BDTTG, 02/2025/TT-BDTTG, 29/2025/TT-BNNMT , 57/2025/TT-BTC
-// 09/2025/TT-BKHCN ,  52/2025/TT-BTC , 65/2025/TT-BTC , 64/2025/TT-BTC
+//   74/2025/TT-BTC, 23/2025/TT-BYT
+//  03/2025/TT-TANDTC, 04/2025/TT-TANDTC
+
 // hiến pháp
+// 75-2025-qh15
+//194/2025/NĐ-CP
 
 function beep() {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
