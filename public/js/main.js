@@ -1,8 +1,7 @@
-//   23/2025/TT-BYT, 
+//   23/2025/TT-BYT,
 //   06/2025/TT-BDTTG
 
 // hiến pháp
-
 
 function beep() {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -66,7 +65,10 @@ function getValueinArea() {
     lawNameDisplay = lawNameDisplay.replace(/,* số \d.*(của Quốc hội)*.*/i, "");
 
     lawNameDisplay = lawNameDisplay + " năm " + lawDaySign.match(/\d+$/i)[0];
-  } else if (lawKind.match(/hợp nhất$/gim) && lawNameDisplay.match(/(Bộ )*Luật.*/gim)) {
+  } else if (
+    lawKind.match(/hợp nhất$/gim) &&
+    lawNameDisplay.match(/(Bộ )*Luật.*/gim)
+  ) {
     lawNameDisplay =
       lawNameDisplay.match(/(Bộ )*Luật.*/gim)[0] +
       " hợp nhất năm " +
@@ -196,13 +198,12 @@ function getLawDayActive(text, daySign) {
     console.log(1);
 
     lawDayActive = addDaysToDate(daySign, 0);
-  } else if (   
+  } else if (
     text.match(
       /(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|Quy chuẩn kỹ thuật|Định mức)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,19})(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
       // /(?<=^(Điều|Ðiều|Điều) \d.{0,15}(Hiệu lực|thi hành|thực hiện).*(\n.*)*.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]+)(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/im
     )
   ) {
-
     let lawDayActiveDemo = text.match(
       /(?<=(LUẬT|BỘ LUẬT|NGHỊ ĐỊNH|Nghị định|THÔNG TƯ|NGHỊ QUYẾT|THÔNG TƯ LIÊN TỊCH|QUYẾT ĐỊNH|PHÁP LỆNH|CHỈ THỊ|BÁO CÁO|HƯỚNG DẪN|HIẾN PHÁP|Quy chuẩn kỹ thuật|Định mức)(\s(này|này))?.*(có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực|có hiệu lực)[^\d]{0,19})(ngày|ngày)\s*\d*\s*(tháng|tháng)\s*\d*\s*năm\s*\d*/gim
     )[
@@ -234,7 +235,7 @@ function getLawDayActive(text, daySign) {
   return lawDayActive;
 }
 
-async function getLawRelated(text, dayActive) {  
+async function getLawRelated(text, dayActive) {
   function uniqueArray(orinalArray) {
     let noDuplicate = orinalArray.filter((elem, position, arr) => {
       return arr.indexOf(elem) == position && elem != lawNumber;
@@ -252,15 +253,15 @@ async function getLawRelated(text, dayActive) {
   let lawRelatedDemo = text.match(
     /(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/\D+\-[^(\s|,|.| |\:|\"|\'|\;|\{|\}|”)]+/gi
   );
-  lawRelatedDemo = lawRelatedDemo ? [...lawRelatedDemo,text.match(
-    /(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/QH\d{1,2}/gi
-  )] : text.match(
-    /(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/QH\d{1,2}/gi
-  )
-  
+  lawRelatedDemo = lawRelatedDemo
+    ? [
+        ...lawRelatedDemo,
+        text.match(/(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/QH\d{1,2}/gi),
+      ]
+    : text.match(/(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/QH\d{1,2}/gi);
+
   let lawRelatedDemo2 = lawRelatedDemo
     ? lawRelatedDemo.map(function (item) {
-     
         return item.replace(/ */g, "");
       })
     : [];
@@ -414,7 +415,6 @@ async function getLawRelated(text, dayActive) {
   }
 
   if (text.match(/(?<=(căn cứ |; |vào ))(hiến pháp)[^(;|\n)]+/gi)) {
-
     lawRelatedDemo2 = [
       ...lawRelatedDemo2,
       ...text.match(/(?<=(căn cứ |; |vào ))(hiến pháp)[^(;|\n)]+/gi),
@@ -440,7 +440,7 @@ async function getLawRelated(text, dayActive) {
   lawRelated = lawRelated.filter(
     (law) => !law.match(/^luật năm/i) && !law.match(/^51\/2001\/QH10/i)
   );
-  
+
   let lawRelatedObject = {};
   lawRelated = lawRelated.map((law) => {
     return (lawRelatedObject[law] = 0);
@@ -1314,19 +1314,17 @@ function NaviNext() {
       URI = URI + "%26page%3D1";
     }
 
-
-
-      // if (currentIndex < 19) {
-      //   nextURI = URI.replace(
-      //     /(?<=AllURL\/).*(?=\?URL)/g,
-      //     `${currentIndex + 1}`
-      //   );
-      // } else {
-      //   let nextPage =
-      //     parseInt(URI.match(/(?<=\%26PageIndex\%3D).*/gim)[0]) + 1;
-      //   nextURI = URI.replace(/(?<=\%26PageIndex\%3D).*/gim, nextPage);
-      //   nextURI = nextURI.replace(/(?<=AllURL\/).*(?=\?URL)/g, 0);
-      // }
+    // if (currentIndex < 19) {
+    //   nextURI = URI.replace(
+    //     /(?<=AllURL\/).*(?=\?URL)/g,
+    //     `${currentIndex + 1}`
+    //   );
+    // } else {
+    //   let nextPage =
+    //     parseInt(URI.match(/(?<=\%26PageIndex\%3D).*/gim)[0]) + 1;
+    //   nextURI = URI.replace(/(?<=\%26PageIndex\%3D).*/gim, nextPage);
+    //   nextURI = nextURI.replace(/(?<=AllURL\/).*(?=\?URL)/g, 0);
+    // }
 
     window.location.href = nextURI;
   } else {
@@ -1346,6 +1344,11 @@ async function pasteContent() {
 async function pasteContentAll() {
   const text = await navigator.clipboard.readText();
   document.querySelector("#all").value = text;
+}
+
+async function pasteContentAll() {
+  const text = await navigator.clipboard.readText();
+  document.querySelector("#check").value = text;
 }
 
 function goToStartInput() {
@@ -1384,14 +1387,13 @@ if (
 ) {
   getInfo()
     .then((t) => {
-          // if ( lawInfo["lawKind"].match(/hợp nhất/img) &&
-          //   !lawInfo["lawDescription"].match(/nghị quyết/gim) ||
-          //   !lawInfo["lawDescription"].match(/thông tư/gim) ||
-          //   !lawInfo["lawDescription"].match(/nghị định/gim)
-          // ) {
-            goToEndInput(), goToEndOutput(), convertContent(false);
-          // }
-
+      // if ( lawInfo["lawKind"].match(/hợp nhất/img) &&
+      //   !lawInfo["lawDescription"].match(/nghị quyết/gim) ||
+      //   !lawInfo["lawDescription"].match(/thông tư/gim) ||
+      //   !lawInfo["lawDescription"].match(/nghị định/gim)
+      // ) {
+      goToEndInput(), goToEndOutput(), convertContent(false);
+      // }
     })
     .then((r) => {
       // console.log('lawInfo["unitPublish"].indexOf(undefined)',lawInfo["unitPublish"].indexOf(undefined));
@@ -1415,7 +1417,7 @@ if (
               //   !lawInfo["lawDescription"].match(/thông tư/gim) ||
               //   !lawInfo["lawDescription"].match(/nghị định/gim)
               // ) {
-                // Push();
+              // Push();
               // }
               // NaviNext();
             }, 3000);
@@ -1507,10 +1509,9 @@ async function compareLaw() {
     .then((response) => response.json()) // Chuyển đổi response thành JSON
     .then((data) => {
       // for (let a = 0; a < data.length; a++) {
-        b = data;
+      b = data;
       // }
-      
-    })    
+    })
     .catch((error) => console.log("Error:", error));
 
   c = a.filter((item) => !b.includes(item));

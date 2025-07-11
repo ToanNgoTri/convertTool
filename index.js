@@ -6,7 +6,6 @@ const bodyParer = require("body-parser");
 const { MongoClient } = require("mongodb");
 app.use(bodyParer.json({ limit: "50mb" }));
 app.use(bodyParer.urlencoded({ limit: "50mb", extended: true }));
-
 app.use(cors());
 
 app.use(express.static("./public"));
@@ -371,6 +370,40 @@ async function eachRun(url) {
   return r;
 }
 
+async function checkNonExistLaw(url) {
+  const browser = await puppeteer.launch({ headless: false });
+  const page = await browser.newPage();
+  page.setDefaultNavigationTimeout(50000);
+
+  await page.goto(url, { waitUntil: "load" });
+
+  let source = await page.content({ waitUntil: "domcontentloaded" });
+
+
+
+
+  const r = await page.evaluate(async () => {
+    let doc_title = document.querySelectorAll(".doc-title a");
+  let content = {};
+  doc_title.forEach( (item)=>{
+
+    // if(!lawPairObject[item.innerText.match(/((\d+\/?\d*\/\D+\-[^(\s|,|.| |\:|\"|\'|\;|\{|\}|”)]+)(?= )|\d+\/?\d*\/QH\d{1,2})/)[0]]){
+
+      content[item.innerText.match(/((\d+\/?\d*\/\D+\-[^(\s|,|.| |\:|\"|\'|\;|\{|\}|”)]+)(?= )|\d+\/?\d*\/QH\d{1,2})/)[0]] = item.href
+    // }
+  }) ;
+    
+  
+    return {
+      content
+    };
+  });
+
+  await browser.close();
+  return r;
+}
+
+
 async function allRun(url) {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
@@ -442,6 +475,28 @@ app.get(`/AllURL/:id`, async (req, res) => {
   });
 });
 
+app.get(`/check`, async (req, res) => {
+  let ObjectLaw = await checkNonExistLaw(req.query.URL);
+
+  let content = {};
+
+    let lawPairObject = await JSON.parse(
+    fs.readFileSync("./public/asset/ObjectLawPair.json", "utf8")
+  );
+
+  for(let a = 0  ; a < Object.keys(ObjectLaw['content']).length; a++){
+    
+  if(!lawPairObject[ Object.keys(ObjectLaw['content'])[a].toLowerCase() ]){
+    content[Object.keys(ObjectLaw['content'])[a]] = ObjectLaw['content'][Object.keys(ObjectLaw['content'])[a]]  
+  }
+  }
+
+  res.render("lawNonExistView", {
+    content: content,
+  });
+});
+
+
 
 app.post("/push", async (req, res) => {
   pushLawContent(req.body.lawInfo, req.body.dataLaw, req.body.lawNumber);
@@ -452,23 +507,6 @@ app.post("/push", async (req, res) => {
 });
 
 app.post("/addedjsonfile", async (req, res) => {
-  // var data2 = JSON.parse(
-  //   fs.readFileSync("./public/asset/allLawID.json", "utf8")
-  // );
-
-  // if (!data2.includes(req.body.lawNumber)) {
-  //   data2.push(req.body.lawNumber);
-  // }
-
-  // fs.writeFile(
-  //   "./public/asset/allLawID.json",
-  //   JSON.stringify(data2),
-  //   function (err, data) {
-  //     if (err) throw err;
-  //     console.log("write file successfully");
-  //   }
-  // );
-
   var data3 = JSON.parse(
     fs.readFileSync("./public/asset/ObjectLawPair.json", "utf8")
   );

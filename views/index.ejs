@@ -51,24 +51,71 @@
           id="all"
           name="URL"
         />
-        <button style="width: 30%" type="submit">Click</button>
+        <button style="width: 20%" type="submit">Click</button>
+      </form>
+      <form class="input_part__container" action="/check" method="get">
+        <div
+          style="
+            padding: 15px;
+            border: 1px solid black;
+            text-align: center;
+            justify-self: center;
+            cursor: pointer;
+          "
+          onclick="pasteContentAll()"
+        >
+          All
+        </div>
+        <input
+          type="text"
+          placeholder="User Name"
+          class="input_part__container_input"
+          id="check"
+          name="URL"
+        />
+        <button style="width: 20%" type="submit">Check</button>
       </form>
       <div>
-        <button type='button' class="navi_btb" onclick="compareLaw()">Compare law Array</button>
-        <button type='button' class="navi_btb" onclick="getAllLawId()">Get all law ID</button>
-        <button type='button' class="navi_btb" onclick="getAllLawObjectPair()">Get all ObjectPair</button>
-        <button type='button' class="navi_btb" onclick="getMissingLaw()">Get Missing Law</button>
-        <button type='button' class="navi_btb" onclick="addInfo()">add Info</button>
-        <button type='button' class="navi_btb" onclick="createLawSearchDescrpition()">create LawSearchDescrpition</button>
+        <button type="button" class="navi_btb" onclick="compareLaw()">
+          Compare law Array
+        </button>
+        <button type="button" class="navi_btb" onclick="getAllLawId()">
+          Get all law ID
+        </button>
+        <button type="button" class="navi_btb" onclick="getAllLawObjectPair()">
+          Get all ObjectPair
+        </button>
+        <button type="button" class="navi_btb" onclick="getMissingLaw()">
+          Get Missing Law
+        </button>
+        <button type="button" class="navi_btb" onclick="addInfo()">
+          add Info
+        </button>
+        <button
+          type="button"
+          class="navi_btb"
+          onclick="createLawSearchDescrpition()"
+        >
+          create LawSearchDescrpition
+        </button>
       </div>
 
-
       <form class="input_part__container" action="/abc" method="get">
-        <button style="width: 100%;height:100px;cursor: pointer;background-color: #42423b87;
-        border-radius: 68px;
-        color: white;
-        font-weight: 900;
-        cursor: pointer" type="submit">Get new law Object</button>
+        <button
+          style="
+            width: 100%;
+            height: 100px;
+            cursor: pointer;
+            background-color: #42423b87;
+            border-radius: 68px;
+            color: white;
+            font-weight: 900;
+            cursor: pointer;
+          "
+          type="submit"
+        >
+          Get new law Object
+        </button>
       </form>
 
       <!-- <form class="input_part__container" action="/cde" method="get">
@@ -78,7 +125,6 @@
         font-weight: 900;
         cursor: pointer" type="submit">cde</button>
       </form> -->
-
     </div>
   </body>
   <script type="text/javascript" src="./js/main.js"></script>
