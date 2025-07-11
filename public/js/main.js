@@ -1,5 +1,5 @@
-//   43/2025/TT-BCT, 23/2025/TT-BYT, 14/2025/TT-BXD
-//  03/2025/TT-TANDTC, 04/2025/TT-TANDTC, 02/2025/TT-VKSTC, 06/2025/TT-BDTTG
+//   23/2025/TT-BYT, 
+//   06/2025/TT-BDTTG
 
 // hiến pháp
 
@@ -252,8 +252,15 @@ async function getLawRelated(text, dayActive) {
   let lawRelatedDemo = text.match(
     /(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/\D+\-[^(\s|,|.| |\:|\"|\'|\;|\{|\}|”)]+/gi
   );
+  lawRelatedDemo = lawRelatedDemo ? [...lawRelatedDemo,text.match(
+    /(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/QH\d{1,2}/gi
+  )] : text.match(
+    /(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/QH\d{1,2}/gi
+  )
+  
   let lawRelatedDemo2 = lawRelatedDemo
     ? lawRelatedDemo.map(function (item) {
+     
         return item.replace(/ */g, "");
       })
     : [];
