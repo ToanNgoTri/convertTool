@@ -1563,7 +1563,7 @@ async function getAllLawObjectPair() {
 // let newLawObject = [];
 let lawMissing = {};
 async function getMissingLaw() {
-  await fetch("../asset/LawMachine.LawContent.json")
+  await fetch("../asset/LawMachine.LawCollection.json")
     .then((response) => response.json()) // Chuyển đổi response thành JSON
     .then(async (data) => {
       await fetch("../asset/ObjectLawPair.json")
