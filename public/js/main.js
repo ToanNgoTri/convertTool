@@ -253,13 +253,13 @@ async function getLawRelated(text, dayActive) {
   let lawRelatedDemo = text.match(
     /(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/\D+\-[^(\s|,|.| |\:|\"|\'|\;|\{|\}|”)]+/gi
   );
-  lawRelatedDemo = lawRelatedDemo
+  lawRelatedDemo = lawRelatedDemo &&  text.match(/(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/QH\d{1,2}/gi)
     ? [
         ...lawRelatedDemo,
         text.match(/(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/QH\d{1,2}/gi),
       ]
-    : text.match(/(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/QH\d{1,2}/gi);
-
+    : !lawRelatedDemo? text.match(/(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/QH\d{1,2}/gi):lawRelatedDemo;
+    
   let lawRelatedDemo2 = lawRelatedDemo
     ? lawRelatedDemo.map(function (item) {
         return item.replace(/ */g, "");
@@ -1551,8 +1551,6 @@ async function getAllLawObjectPair() {
         } else {
           allLawObjectPair[data[a]._id.toLowerCase()] = data[a]._id;
         }
-
-        // allLawObjectPair[data[a].info['lawNameDisplay']] =   data[a]._id
       }
     })
     .catch((error) => console.log("Error:", error));
