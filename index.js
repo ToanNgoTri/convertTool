@@ -444,7 +444,7 @@ app.get("/URL", async (req, res) => {
   //  res.render('get',{content:content['content'],UnitPublish:content['UnitPublish']})
   res.render("get", {
     content: content["content"],
-    lawNumber: content["lawNumber"],
+    lawNumber: content["lawNumber"],  
     unitPublish: content["unitPublish"],
     lawKind: content["lawKind"],
     nameSign: content["nameSign"],

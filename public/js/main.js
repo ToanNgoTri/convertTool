@@ -256,7 +256,7 @@ async function getLawRelated(text, dayActive) {
   lawRelatedDemo = lawRelatedDemo &&  text.match(/(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/QH\d{1,2}/gi)
     ? [
         ...lawRelatedDemo,
-        text.match(/(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/QH\d{1,2}/gi),
+        ...text.match(/(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/QH\d{1,2}/gi),
       ]
     : !lawRelatedDemo? text.match(/(?<!(mẫu( số)?|ví dụ.*)) \d+\/?\d*\/QH\d{1,2}/gi):lawRelatedDemo;
     
@@ -1346,7 +1346,7 @@ async function pasteContentAll() {
   document.querySelector("#all").value = text;
 }
 
-async function pasteContentAll() {
+async function pasteContentCheck() {
   const text = await navigator.clipboard.readText();
   document.querySelector("#check").value = text;
 }
