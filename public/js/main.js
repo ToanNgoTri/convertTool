@@ -490,7 +490,9 @@ async function getLawRelated(text, dayActive) {
       const date = new Date(dayActive);
 
       console.log("date", date);
-      if (date > new Date("2014-01-01")) {
+      if (date > new Date("2015-06-16")) {
+        lawRelatedObject[Object.keys(lawRelatedObject)[a]] = "52/VBHN-VPQH(2025)";
+      } else if (date > new Date("2014-01-01")) {
         lawRelatedObject[Object.keys(lawRelatedObject)[a]] = "0001/HP";
       } else if (date > new Date("2002-01-07")) {
         lawRelatedObject[Object.keys(lawRelatedObject)[a]] = "0003/HP(2001)";
