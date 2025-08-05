@@ -1,7 +1,3 @@
-//   23/2025/TT-BYT,
-//   06/2025/TT-BDTTG
-
-// hiến pháp
 
 function beep() {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -645,19 +641,19 @@ function convertPartTwo(partOne) {
     for (let k = 0; k < nameSign.length; k++) {
       if (
         b15
-          .match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img"))[0]
+          .match(new RegExp(`\n.*\n(Thiếu|trung|thượng|đại) ?(Tá|Tướng) ?${nameSign[k]}(\n(.*\n.*)*)*`, "img"))[0]
           .match(/(THỨ|PHÓ)/gim) &&
         !b15
-          .match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img"))[0]
+          .match(new RegExp(`\n.*\n(Thiếu|trung|thượng|đại) ?(Tá|Tướng) ?${nameSign[k]}(\n(.*\n.*)*)*`, "img"))[0]
           .match(/(THỨ|PHÓ)/gim).length
       ) {
         b15 = b15.replace(
-          new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img"),
+          new RegExp(`\n.*\n(Thiếu|trung|thượng|đại) ?(Tá|Tướng) ?${nameSign[k]}(\n(.*\n.*)*)*`, "img"),
           ""
         ); // tất cả hàng cuối
       } else {
         b15 = b15.replace(
-          new RegExp(`\n.*\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img"),
+          new RegExp(`\n.*\n.*\n(Thiếu|trung|thượng|đại) ?(Tá|Tướng) ?${nameSign[k]}(\n(.*\n.*)*)*`, "img"),
           ""
         ); // tất cả hàng cuối
       }
@@ -1257,19 +1253,6 @@ function Push() {
   });
   console.log(lawNumberForPush);
 
-  // fetch("http://localhost:9000/addNewInfoToAsset", {
-  //   method: "POST",
-  //   headers: { "Content-Type": "application/json" },
-  //   body: JSON.stringify({
-  //     lawID: lawNumberForPush,
-  //     lawNameDisplay: lawNameDisplay,
-  //   }),
-  // })
-  //   .then((res) => {
-  //     res.text();
-  //     console.log("success");
-  //   })
-  //   .then((data) => console.log(123));
 }
 
 function addJSONFile() {
@@ -1315,18 +1298,6 @@ function NaviNext() {
     if (!URI.match(/%26page%3D/)) {
       URI = URI + "%26page%3D1";
     }
-
-    // if (currentIndex < 19) {
-    //   nextURI = URI.replace(
-    //     /(?<=AllURL\/).*(?=\?URL)/g,
-    //     `${currentIndex + 1}`
-    //   );
-    // } else {
-    //   let nextPage =
-    //     parseInt(URI.match(/(?<=\%26PageIndex\%3D).*/gim)[0]) + 1;
-    //   nextURI = URI.replace(/(?<=\%26PageIndex\%3D).*/gim, nextPage);
-    //   nextURI = nextURI.replace(/(?<=AllURL\/).*(?=\?URL)/g, 0);
-    // }
 
     window.location.href = nextURI;
   } else {

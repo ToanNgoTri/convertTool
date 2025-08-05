@@ -5,28 +5,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <link href="/scss/index.css" type="text/css" rel="stylesheet" />
+
+              <% if (!URL.match(/PageIndex/)) { URL = URL + "&RowAmount=20&PageIndex=1"; } 
+             let nextPage =  parseInt(URL.match(/(?<=\PageIndex=).*/gim)[0]) + 1; 
+             URL = URL.replace(/(?<=\PageIndex=).*/gim, nextPage); 
+              
+%>
   </head>
 
   <body>
     <div id="container">
       <div id="inner_container">
         <div id="input_container">
-          <Span>lawNumber</Span>
+          <% if (Object.keys(content).length > 0){ %>
+          <span>Danh sách</span>
+          <% } else { %>
+          <span style="margin-bottom: 40">Không có phần tử nào </span>
+          <% } %>
+
           <table>
-          <!-- <textarea class="input_area" id="content_input"> -->
+            <!-- <textarea class="input_area" id="content_input"> -->
             <% for (const item of Object.keys(content)) { %>
             <tr>
-              <td style="border-width: 1px;border-color: black;border-style: solid;">
-                <%= item  %>
+              <td
+                style="
+                  border-width: 1px;
+                  border-color: black;
+                  border-style: solid;
+                "
+              >
+                <%= item %>
               </td>
-              <td style="border-width: 1px;border-color: black;border-style: solid;">
+              <td
+                style="
+                  border-width: 1px;
+                  border-color: black;
+                  border-style: solid;
+                "
+              >
                 <%= content[item] %>
               </td>
-              <td style="border-width: 1px;border-color: black;border-style: solid;">
-            <a href="/URL?URL=<%= content[item] %>" target="_blank">Mở trang Example trong tab mới</a>              </td>
+              <td
+                style="
+                  border-width: 1px;
+                  border-color: black;
+                  border-style: solid;
+                "
+              >
+                <a href="/URL?URL=<%= content[item] %>" target="_blank"
+                  >Mở trang Example trong tab mới</a
+                >
+              </td>
             </tr>
-              <% } %>
-</table>
+            <% } %>
+          </table>
+
+          <form class="input_part__container" action="/check" method="get">
+            <div
+              style="
+                padding: 15px;
+                border: 1px solid black;
+                text-align: center;
+                justify-self: center;
+                cursor: pointer;
+              "
+            >
+              URL
+            </div>
+
+            <input
+              type="text"
+              placeholder="Check URL..."
+              class="input_part__container_input"
+              value="<%= URL %>"
+              name="URL"
+            />
+            <button style="width: 20%" type="submit">Next</button>
+          </form>
+
           <!-- </textarea> -->
         </div>
       </div>
