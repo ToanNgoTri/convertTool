@@ -6,7 +6,6 @@ const bodyParer = require("body-parser");
 const { MongoClient } = require("mongodb");
 app.use(bodyParer.json({ limit: "50mb" }));
 app.use(bodyParer.urlencoded({ limit: "50mb", extended: true }));
-
 app.use(cors());
 
 app.use(express.static("./public"));
@@ -26,12 +25,6 @@ app.get("/abc", async (req, res) => {
     fs.readFileSync("./public/asset/LawMachine.LawContent.json", "utf8")
   );
 
-  // fs.readFile('./public/asset/ObjectLawPair.json',  function (err, data) {
-  //   if (err) throw err;
-  //   console.log('write file successfully');
-  //   data2 = data
-  // });
-
   var data2 = JSON.parse(
     fs.readFileSync("./public/asset/ObjectLawPair.json", "utf8")
   );
@@ -43,13 +36,11 @@ app.get("/abc", async (req, res) => {
     newLawObject[a] = data1[a];
 
     for (let b = 0; b < Object.keys(data1[a].info["lawRelated"]).length; b++) {
-
-      if(
-        !data1[a].info["lawRelated"][Object.keys(data1[a].info["lawRelated"])[b]]
-      )
-        {
-
-
+      if (
+        !data1[a].info["lawRelated"][
+          Object.keys(data1[a].info["lawRelated"])[b]
+        ]
+      ) {
         if (
           data2[
             Object.keys(data1[a].info["lawRelated"])
@@ -73,29 +64,31 @@ app.get("/abc", async (req, res) => {
               ]
             ] = Object.keys(data1[a].info["lawRelated"])[b];
           }
-        } else if (Object.keys(data1[a].info["lawRelated"])[b].match(/Hiến pháp nước/gim)) {
+        } else if (
+          Object.keys(data1[a].info["lawRelated"])[b].match(/Hiến pháp nước/gim)
+        ) {
           const date = new Date(data1[a].info["lawDayActive"]);
-  
-          if(date > new Date('2014-01-01')){
-  
-            newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = '0001/HP'
-          }else if(date > new Date('2002-01-07')){
-            newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = '0003/HP(2001)';
-            
-          }else if(date > new Date('1992-04-15')){
-            newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = '0002/HP(1992)';
-  
-          }else{
-          newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = 0;
-  
+
+          if (date > new Date("2014-01-01")) {
+            newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] =
+              "0001/HP";
+          } else if (date > new Date("2002-01-07")) {
+            newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] =
+              "0003/HP(2001)";
+          } else if (date > new Date("1992-04-15")) {
+            newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] =
+              "0002/HP(1992)";
+          } else {
+            newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = 0;
           }
         } else {
           newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = 0;
         }
-
-        
-      }else{
-        newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] = data1[a].info["lawRelated"][Object.keys(data1[a].info["lawRelated"])[b]]
+      } else {
+        newLawRelated[Object.keys(data1[a].info["lawRelated"])[b]] =
+          data1[a].info["lawRelated"][
+            Object.keys(data1[a].info["lawRelated"])[b]
+          ];
       }
     }
     newLawObject[a].info["lawRelated"] = newLawRelated;
@@ -191,7 +184,6 @@ async function pushLawSearchDescription(info, id) {
     // await client.close();
   }
 }
-
 
 async function eachRun(url) {
   const browser = await puppeteer.launch({ headless: false });
@@ -377,6 +369,42 @@ async function eachRun(url) {
   return r;
 }
 
+async function checkNonExistLaw(url) {
+  const browser = await puppeteer.launch({ headless: false });
+  const page = await browser.newPage();
+  page.setDefaultNavigationTimeout(50000);
+
+  await page.goto(url, { waitUntil: "load" });
+
+  let source = await page.content({ waitUntil: "domcontentloaded" });
+
+  const r = await page.evaluate(async () => {
+    let doc_title = document.querySelectorAll(".doc-title a");
+    let content = {};
+    doc_title.forEach((item) => {
+      // if(!lawPairObject[item.innerText.match(/((\d+\/?\d*\/\D+\-[^(\s|,|.| |\:|\"|\'|\;|\{|\}|”)]+)(?= )|\d+\/?\d*\/QH\d{1,2})/)[0]]){
+
+      content[
+        item.innerText.match(
+          /((\d+\/?\d*\/\D+\-[^(\s|,|.| |\:|\"|\'|\;|\{|\}|”)]+)(?= )|\d+\/?\d*\/QH\d{1,2})/
+        )
+          ? item.innerText.match(
+              /((\d+\/?\d*\/\D+\-[^(\s|,|.| |\:|\"|\'|\;|\{|\}|”)]+)(?= )|\d+\/?\d*\/QH\d{1,2})/
+            )[0]
+          : ""
+      ] = item.href;
+      // }
+    });
+
+    return {
+      content,
+    };
+  });
+
+  await browser.close();
+  return r;
+}
+
 async function allRun(url) {
   const browser = await puppeteer.launch({ headless: false });
   const page = await browser.newPage();
@@ -448,33 +476,35 @@ app.get(`/AllURL/:id`, async (req, res) => {
   });
 });
 
+app.get(`/check`, async (req, res) => {
+  let ObjectLaw = await checkNonExistLaw(req.query.URL);
+
+  let content = {};
+
+  let lawPairObject = await JSON.parse(
+    fs.readFileSync("./public/asset/ObjectLawPair.json", "utf8")
+  );
+
+  for (let a = 0; a < Object.keys(ObjectLaw["content"]).length; a++) {
+    if (!lawPairObject[Object.keys(ObjectLaw["content"])[a].toLowerCase()]) {
+      content[Object.keys(ObjectLaw["content"])[a]] =
+        ObjectLaw["content"][Object.keys(ObjectLaw["content"])[a]];
+    }
+  }
+
+  res.render("lawNonExistView", {
+    content: content,
+    URL: req.query.URL,
+  });
+});
 
 app.post("/push", async (req, res) => {
   pushLawContent(req.body.lawInfo, req.body.dataLaw, req.body.lawNumber);
   pushLawSearch(req.body.lawInfo, req.body.lawNumber, req.body.contentText);
   pushLawSearchDescription(req.body.lawInfo, req.body.lawNumber);
-  
-
 });
 
 app.post("/addedjsonfile", async (req, res) => {
-  // var data2 = JSON.parse(
-  //   fs.readFileSync("./public/asset/allLawID.json", "utf8")
-  // );
-
-  // if (!data2.includes(req.body.lawNumber)) {
-  //   data2.push(req.body.lawNumber);
-  // }
-
-  // fs.writeFile(
-  //   "./public/asset/allLawID.json",
-  //   JSON.stringify(data2),
-  //   function (err, data) {
-  //     if (err) throw err;
-  //     console.log("write file successfully");
-  //   }
-  // );
-
   var data3 = JSON.parse(
     fs.readFileSync("./public/asset/ObjectLawPair.json", "utf8")
   );
@@ -485,8 +515,7 @@ app.post("/addedjsonfile", async (req, res) => {
         .toLowerCase()
         .replace(/( và| của|,|&)/gim, "")
     ] = req.body.lawNumber;
-    data3[req.body.lawNumber.toLowerCase()] =
-    req.body.lawNumber
+    data3[req.body.lawNumber.toLowerCase()] = req.body.lawNumber;
 
     console.log(1);
   } else {
