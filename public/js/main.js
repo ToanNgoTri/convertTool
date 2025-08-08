@@ -1,4 +1,3 @@
-
 function beep() {
   const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
