@@ -104,38 +104,6 @@ app.get("/abc", async (req, res) => {
   );
 });
 
-// app.get("/cde", async (req, res) => {
-
-//   let newLawObject = [];
-// var LawContent = JSON.parse(fs.readFileSync('./public/asset/LawMachine.LawContent.json','utf8'))
-
-//   // fs.readFile('./public/asset/ObjectLawPair.json',  function (err, data) {
-//   //   if (err) throw err;
-//   //   console.log('write file successfully');
-//   //   data2 = data
-//   // });
-
-//   var LawSearch = JSON.parse(fs.readFileSync('./public/asset/LawMachine.LawSearch.json','utf8'))
-
-//           for (let a = 0; a < LawContent.length; a++) {
-
-//             for (let b = 0; b < LawSearch.length; b++) {
-
-//             if(LawContent[a]['_id'] == LawSearch[b]['_id']){
-
-//               LawSearch[b]['info'].lawDaySign = LawContent[a]['info']['lawDaySign']
-//             }
-//             }
-
-//           }
-
-//   fs.writeFile('./public/asset/s.json', JSON.stringify(LawSearch),  function (err, data) {
-//     if (err) throw err;
-//     console.log('write file successfully');
-//   });
-
-// });
-
 async function pushLawContent(info, content, id) {
   try {
     const database = client.db("LawMachine");
@@ -533,6 +501,27 @@ app.post("/addedjsonfile", async (req, res) => {
   );
 });
 
+// app.post(`/pushconvertfulltext`, async (req, res) => {
+//   try {
+//     const database = client.db("LawMachine");
+//     const LawContent = database.collection("LawSearchContent");
+
+//     LawContent.updateOne(
+//       {
+//         _id: req.body.id,
+//       },
+//       {
+//         $set: {
+//           fullText: req.body.fulltext,
+//         },
+//       }
+//     );
+//   } finally {
+//     // Ensures that the client will close when you finish/error
+//     // await client.close();
+//   }
+//   console.log(req.body.id);
+// });
 
 app.listen(9000, function () {
   console.log("Server is running on port " + 9000);
