@@ -501,28 +501,6 @@ app.post("/addedjsonfile", async (req, res) => {
   );
 });
 
-// app.post(`/pushconvertfulltext`, async (req, res) => {
-//   try {
-//     const database = client.db("LawMachine");
-//     const LawContent = database.collection("LawSearchContent");
-
-//     LawContent.updateOne(
-//       {
-//         _id: req.body.id,
-//       },
-//       {
-//         $set: {
-//           fullText: req.body.fulltext,
-//         },
-//       }
-//     );
-//   } finally {
-//     // Ensures that the client will close when you finish/error
-//     // await client.close();
-//   }
-//   console.log(req.body.id);
-// });
-
 app.listen(9000, function () {
   console.log("Server is running on port " + 9000);
 });
