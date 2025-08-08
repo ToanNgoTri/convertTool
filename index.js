@@ -300,13 +300,6 @@ async function eachRun(url) {
         : "";
     }
 
-    // roleSign = roleSign.replace(/^\n(\s)*/gim, "");
-    // roleSign = roleSign.replace(/\(*đã ký[^\w]+/gim, "");
-    // roleSign = roleSign.replace(/\(*đã k(ý|í)\)*/gim, "");
-    // roleSign = roleSign.replace(/\n\[daky\]/gim, "");
-    // roleSign = roleSign.replace(/\s*$/gim, "");
-    // roleSign = roleSign.replace(/^\s*/gim, "");
-
     return {
       content,
       lawNumber,
@@ -319,18 +312,6 @@ async function eachRun(url) {
       roleSign,
     };
 
-    // return {
-    //   content,
-    //   lawNumber:'',
-    //   unitPublish:'',
-    //   lawKind:'',
-    //   nameSign:'',
-    //   lawDaySign:'',
-    //   lawDescription:'',
-    //   lawRelated:'',
-    //   roleSign:'',
-    //   elementContent:(elementContent)
-    // };
   });
 
   await browser.close();
