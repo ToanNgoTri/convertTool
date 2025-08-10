@@ -485,7 +485,7 @@ async function getLawRelated(text, dayActive) {
       const date = new Date(dayActive);
 
       console.log("date", date);
-      if (date > new Date("2015-06-16")) {
+      if (date > new Date("2025-06-16")) {
         lawRelatedObject[Object.keys(lawRelatedObject)[a]] = "52/VBHN-VPQH(2025)";
       } else if (date > new Date("2014-01-01")) {
         lawRelatedObject[Object.keys(lawRelatedObject)[a]] = "0001/HP";
@@ -1540,14 +1540,12 @@ async function getMissingLaw() {
         .then((response) => response.json()) // Chuyển đổi response thành JSON
         .then((ObjectLawPair) => {
           for (let a = 0; a < data.length; a++) {
-            // let newLawRelated = {};
-            // newLawObject[a] = data[a];
-
             for (
               let b = 0;
               b < Object.keys(data[a].info["lawRelated"]).length;
               b++
             ) {
+              if(!data[a].info["lawRelated"][Object.keys(data[a].info["lawRelated"])[b]]){
               if (
                 ObjectLawPair[
                   Object.keys(data[a].info["lawRelated"])
@@ -1583,6 +1581,7 @@ async function getMissingLaw() {
                   }
                 }
               }
+            }
             }
             // newLawObject[a].info["lawRelated"] = newLawRelated;
           }
