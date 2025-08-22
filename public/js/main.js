@@ -638,7 +638,11 @@ function convertPartTwo(partOne) {
     b15 = b15.replace(/^KT\s?.*(\n.*)*/m, "");
   } else if (b15.match(new RegExp(nameSign[0]), "img")) {
     for (let k = 0; k < nameSign.length; k++) {
-      if (
+      
+       if(
+        b15
+          .match(new RegExp(`\n.*\n(Thiếu|trung|thượng|đại) ?(Tá|Tướng) ?${nameSign[k]}(\n(.*\n.*)*)*`, "img"))
+          &&
         b15
           .match(new RegExp(`\n.*\n(Thiếu|trung|thượng|đại) ?(Tá|Tướng) ?${nameSign[k]}(\n(.*\n.*)*)*`, "img"))[0]
           .match(/(THỨ|PHÓ)/gim) &&
@@ -650,7 +654,13 @@ function convertPartTwo(partOne) {
           new RegExp(`\n.*\n(Thiếu|trung|thượng|đại) ?(Tá|Tướng) ?${nameSign[k]}(\n(.*\n.*)*)*`, "img"),
           ""
         ); // tất cả hàng cuối
-      } else {
+      }else if (b15
+          .match(new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img"))[0]
+          ){
+        b15 = b15.replace(
+          new RegExp(`\n.*\n${nameSign[k]}(\n(.*\n.*)*)*`, "img"),
+          "")
+      }else {
         b15 = b15.replace(
           new RegExp(`\n.*\n.*\n(Thiếu|trung|thượng|đại) ?(Tá|Tướng) ?${nameSign[k]}(\n(.*\n.*)*)*`, "img"),
           ""
