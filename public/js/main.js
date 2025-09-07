@@ -1503,7 +1503,7 @@ async function compareLaw() {
 
 let allLawSearchId = [];
 async function getAllLawId() {
-  await fetch("../asset/LawMachine.LawCollection.json")
+  await fetch("../asset/LawMachine.LawSearchDescription.json")
     .then((response) => response.json()) // Chuyển đổi response thành JSON
     .then((data) => {
       for (let a = 0; a < data.length; a++) {
