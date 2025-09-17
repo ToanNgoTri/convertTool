@@ -670,7 +670,8 @@ function convertPartTwo(partOne) {
   }
 
   let b16 = b15.replace(/\n$/gim, ""); // bỏ hàng dư trống ở cuối
-  let b17 = b16.replace(/\n*VĂN PHÒNG QUỐC HỘI(\n.*)*/gim, ""); // bỏ hàng dư trống ở cuối
+  let b17 = b16.replace(/\n*VĂN PHÒNG QUỐC HỘI(\n.*)*/gim, ""); 
+  b17 = b17.replace(/XÁC THỰC VĂN BẢN HỢP NHẤT/gim, "");
 
   return b17;
 }
